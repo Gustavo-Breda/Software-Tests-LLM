@@ -135,7 +135,7 @@ python -m evaluation.metrics
 - Record open decisions (model, orchestration, `N`) in the `plan.md` decision log.
 
 **Don't**
-- Don't delete or rewrite `AV1 - TEMA 2 - GRUPO 4 (2).pdf` (the source report).
+- Don't delete or rewrite `article.pdf` (the source report).
 - Don't commit generated artifacts as if they were source unless asked.
 - Don't add heavy dependencies/frameworks without recording the rationale in `plan.md`.
 - Don't bypass the verification gates (judge, human approval) in the pipeline flow.

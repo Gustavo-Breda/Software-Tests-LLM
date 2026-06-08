@@ -58,7 +58,7 @@ flowchart TD
 | Component | Role | Output |
 |---|---|---|
 | **Agent 0 — Quality Gate** | Reviews the story/criteria for ambiguity, missing criteria, non-verifiable rules, missing data | JSON verdict (`APROVADA` / `PRECISA_DE_ESCLARECIMENTO`) |
-| **Context Builder** | Aggregates project context (glossary, approved examples, screen map, selectors) to reduce hallucination | Assembled prompt context |
+| **Context Builder** | Aggregates project context (glossary, approved examples, screen map, selectors) to reduce hallucination; keeps injected context tight (RAG can increase verbosity — Correia et al.) | Assembled prompt context |
 | **Agent 1 — Test Generation** | Generates positive/negative/edge cases using equivalence partitioning & boundary analysis | Structured test cases (JSON) + traceability matrix |
 | **Agent 2 — LLM-as-a-Judge** | Reviews coverage, requirement fidelity, consistency, automatability; scores each dimension | Approve/reject verdict + suggested omissions |
 | **Repair loop** | Failed cases return to Agent 1 with the judge's diagnosis (bounded iterations) | Revised test cases |
@@ -67,7 +67,7 @@ flowchart TD
 
 ### Prompting techniques
 Persona prompting · context injection · few-shot · structured JSON output ·
-LLM-as-a-Judge · bounded repair loop · multi-candidate generation.
+LLM-as-a-Judge · bounded repair loop · multi-candidate generation *(optional)*.
 
 ---
 
@@ -152,12 +152,24 @@ oracle (gabarito). Metrics follow Silva et al. to allow direct comparison.
 
 ## References
 
-Silva et al. (LLMs in Test Case Generation) · Gheventer et al. (Industrial
-Readiness) · Souza et al. (Functional Test Evolution in the Public Sector) ·
-Correia et al. (Conversational Models vs. Humans — Firefox) · Quattrocchi et al.
-(LLMs & User Stories) · Hernández-Agüero et al. (LLM-Assisted INVEST) · Wang et
-al. · Sakib et al. · Sterling & Oliveira · Qin et al. (DAJ). See the project
-report (`AV1 - TEMA 2 - GRUPO 4 (2).pdf`) for full citations.
+Full citations are in the project report (`article.pdf`). See
+[`references/`](./references/) for verified sources and which PDFs are pending upload.
+
+**Verified online**
+- Correia et al. — *Conversational Models vs. Humans (Firefox).* arXiv:2510.21933
+  (2025); co-authored by advisor Rafael de Mello — justifies the Context Builder.
+- Quattrocchi et al. — *Can LLMs Generate User Stories and Assess Their Quality?*
+  IEEE TSE, 2026 (arXiv:2507.15157).
+- Sterling & Oliveira — *Hybrid Intelligence in Requirements Education.* MDPI
+  Information 17(2):166, 2026.
+- Wang et al. — *Co-Evolving LLM Coder and Unit Tester via RL (CURE).* NeurIPS
+  2025 (arXiv:2506.03136).
+- Qin et al. — *DAJ: Data-Reweighted LLM Judge.* arXiv:2601.22230 (2026, preprint).
+- Sakib et al. — *From Reviews to Requirements.* arXiv:2603.28163 (2026, preprint).
+
+**Course-attached / pending upload** — Silva et al. (LLMs in Test Case
+Generation) · Gheventer et al. (Industrial Readiness) · Souza et al. (Functional
+Test Evolution in the Public Sector) · Hernández-Agüero et al. (LLM-Assisted INVEST).
 
 ---
 

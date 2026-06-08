@@ -90,7 +90,9 @@ unwieldy. **Status: TBD — record the choice here once made.**
 
 ### 3.3 Other decisions to record
 - Max repair iterations `N` (suggest 2–3) to avoid loops.
-- Whether to enable multi-candidate generation in Agent 1 (judge picks best).
+- Multi-candidate generation in Agent 1 (judge picks best) — **optional/stretch**;
+  the report lists it as "when viable" and the README marks it optional. Inspired
+  by Best-of-N (Wang et al., CURE). Adopt only if time allows.
 - JSON validation strategy (schema lib vs. hand-rolled).
 
 ---
@@ -229,6 +231,11 @@ Key contracts (fields summarized; mirror the report exactly in `schemas/`):
 - **Summarizer →** `{ resumo{}, falhas[], cobertura_por_criterio[],
   alertas_de_qualidade[], proximos_passos[] }`
 
+**Agent 0 rubric → INVEST.** Cross-reference Agent 0's quality checks with the
+INVEST criteria (Independent, Negotiable, Valuable, Estimable, Small, Testable)
+so the gate traces cleanly to Hernández-Agüero et al. and Quattrocchi et al.
+(both show LLMs assess story quality reliably given a defined criteria framework).
+
 **Codegen rules (Agent 3):** PyTest + Selenium; Page Object Model (no raw
 selectors in test functions); prefer `data-testid`; `WebDriverWait` with explicit
 conditions; one `test_{id}_{desc}` per case with an ID/objective comment; test
@@ -258,6 +265,18 @@ methodology) for direct comparison.
 - Judge recall — % of human-found problems the judge also detected.
 - Perceived effort — analyst review time vs. manual authoring time for the same stories.
 
+**Methodology notes**
+- *Silva et al. comparison (Phase 8) is pending the source PDF.* Once provided,
+  map our metric definitions 1:1 to theirs; until then, treat the definitions
+  above as our own baseline. (Required file in [`references/`](./references/).)
+- *Apples-to-apples:* also run a **bare Agent 1 baseline** (zero/one-shot, no
+  RAG, no judge) so the full pipeline can be compared against a Silva-style
+  single-prompt baseline (ablation).
+- *Incorrect-fact rate:* denominator = all generated cases; measure **both
+  pre- and post-repair** to show the repair loop's effect.
+- *Judge precision/recall:* stratify by case type (positive / negative / edge)
+  so easy positive cases can't inflate the score (cf. DAJ distribution-shift findings).
+
 ---
 
 ## 9. Risks & Mitigations
@@ -280,3 +299,9 @@ methodology) for direct comparison.
 - [ ] Max repair iterations `N`: ______
 - [ ] Multi-candidate generation enabled? ______
 - [ ] JSON validation approach: ______
+
+**Pending source materials** (upload to [`references/`](./references/)):
+- [ ] Silva et al. (drives §8 metrics & Phase 8 comparison — highest priority)
+- [ ] Gheventer et al.
+- [ ] Souza et al. (backs the `data-testid` decision)
+- [ ] Hernández-Agüero et al. (also needs a DOI/URL)
