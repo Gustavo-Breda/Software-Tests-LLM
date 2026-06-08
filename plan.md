@@ -65,18 +65,32 @@ deferred** to implementation, chosen by cost, latency, instruction-following,
 and team access. The architecture, prompts, and inter-agent flow are
 **model-independent**. Track decisions here as they are made.
 
-### 3.1 LLM model — candidates
+### 3.1 LLM model / provider — candidates
+
+The pipeline runs through a **provider-agnostic client**, so models are swapped
+via config (`.env`: `LLM_PROVIDER`, `LLM_MODEL`). Two provider families:
+
+**Closed (API):**
 | Option | Pros | Cons / risks |
 |---|---|---|
-| GPT-5 (or current OpenAI flagship) | Strong instruction-following, JSON mode | Cost; API access/quotas |
+| GPT-5 (or current OpenAI flagship) | Strong instruction-following, JSON mode | Cost; API quotas; proprietary dependency |
 | Claude Sonnet 4.6 | Strong on long structured prompts, reliable JSON | Cost; access |
 | Gemini 2.5 Pro | Large context, competitive cost | Variable JSON adherence |
+
+**Open (local, via Ollama):**
+| Option | Pros | Cons / risks |
+|---|---|---|
+| Llama 3.1 / Qwen2.5 / DeepSeek / Mistral | No API cost or vendor lock-in; runs offline; addresses the "last-mile"/industrial-readiness gap (Gheventer et al.) | Weaker instruction-following & JSON adherence; needs local compute (GPU helps) |
+
+> Ollama serves an **OpenAI-compatible API** (`http://ollama:11434/v1`), so the
+> same client code reaches both families — only `.env` changes. Running open
+> models locally lets us **compare closed vs. open** on the same stories, a
+> direct test of Gheventer et al.'s industrial-readiness concern (see §8).
 
 > Note (Silva et al.): top-tier models tend to **plateau** on test-case
 > generation — prompt design matters more than model choice. Do not bet success
 > on one model; compensate with prompt design, structured context, and
-> multi-stage review. Keep the LLM client provider-agnostic so models are
-> swappable.
+> multi-stage review.
 
 ### 3.2 Orchestration — candidates
 | Option | Pros | Cons / risks |
@@ -132,6 +146,13 @@ generated/
 evaluation/
   metrics.py                  # precision/recall/F1, judge precision/recall, etc.
   results/
+docker/
+  pipeline.Dockerfile         # Python + pytest + selenium client
+  backend.Dockerfile
+  frontend.Dockerfile
+docker-compose.yml            # services: ollama, pipeline, backend, frontend, selenium
+.env.example                  # LLM_PROVIDER/LLM_MODEL + API keys (no secrets)
+references/                   # cited papers + verification notes
 ```
 
 ---
@@ -141,19 +162,26 @@ evaluation/
 Phases are ordered to unblock dependencies (the PoC app and context assets must
 exist before scripts can run). Each phase lists deliverables and a done-check.
 
-### Phase 0 — Setup & decisions
-- Initialize repo tooling (Python env, lint/format, `requirements`/`pyproject`).
-- Record §3 decisions (model, orchestration, `N`) as they are made.
-- Provision LLM API access/keys (see `AGENTS.md` for secret handling).
-- **Done when:** `pipeline/llm_client.py` can make a round-trip call to the chosen model.
+### Phase 0 — Setup & decisions (Docker)
+- Author `docker-compose.yml` + Dockerfiles for `ollama`, `pipeline`, `backend`,
+  `frontend`, `selenium`; `docker compose up -d --build` brings the stack up.
+- Add `.env.example` (`LLM_PROVIDER`, `LLM_MODEL`, `LLM_BASE_URL`, optional API
+  keys); keep `.env` git-ignored.
+- Record §3 decisions (provider/model, orchestration, `N`) as they are made.
+- Provide **≥1 closed model** (API key) **and ≥1 open model**
+  (`docker compose exec ollama ollama pull <model>`) so both can be benchmarked.
+- **Done when:** `docker compose run --rm pipeline python -m pipeline.llm_client --ping`
+  succeeds against both a closed provider and the local `ollama` service.
 
 ### Phase 1 — Proof-of-Concept web app
 - FastAPI backend with endpoints for the 5 stories (auth, register, create/list/
   filter/cancel requests) and explicit business rules (e.g., 60s lockout after 5
   failures; field-length validations).
 - Angular frontend with `data-testid` on every interactive element from day one.
-- Seed/test data that is stable and reproducible.
-- **Done when:** all 5 flows work manually and selectors are documented.
+- Backend and frontend run as `docker compose` services; generated tests reach
+  the app through the `selenium` service.
+- Seed/test data that is stable and reproducible (seeded on container start).
+- **Done when:** `docker compose up` serves all 5 flows and selectors are documented.
 
 ### Phase 2 — Context assets & Context Builder
 - Author `glossary.md` and `ui_map.json` (screen map + selectors) for the PoC.
@@ -276,6 +304,9 @@ methodology) for direct comparison.
   pre- and post-repair** to show the repair loop's effect.
 - *Judge precision/recall:* stratify by case type (positive / negative / edge)
   so easy positive cases can't inflate the score (cf. DAJ distribution-shift findings).
+- *Closed vs. open models:* run the full pipeline with ≥1 closed model and ≥1
+  open model (via Ollama) on the same stories; report all §8 metrics per model —
+  a direct test of Gheventer et al.'s industrial-readiness concern.
 
 ---
 
@@ -294,7 +325,7 @@ methodology) for direct comparison.
 
 ## 10. Decision Log (fill in as you build)
 
-- [ ] LLM model chosen: ______ — rationale: ______
+- [ ] LLM provider(s) + model(s) chosen (closed API and/or open via Ollama): ______ — rationale: ______
 - [ ] Orchestration approach chosen: ______ — rationale: ______
 - [ ] Max repair iterations `N`: ______
 - [ ] Multi-candidate generation enabled? ______

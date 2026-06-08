@@ -40,41 +40,59 @@ poc-app/
 data/          # user_stories/ (inputs), golden/ (human oracle)
 generated/     # pipeline outputs: test_cases/, scripts/, reports/
 evaluation/    # metrics.py + results/
+references/    # cited papers + verification notes
+docker/        # Dockerfiles: pipeline, backend, frontend
+docker-compose.yml  # services: ollama, pipeline, backend, frontend, selenium
+.env.example   # LLM_PROVIDER/LLM_MODEL + API keys (no secrets)
 ```
 
 ---
 
 ## Environment & setup
 
-- **Platform:** Windows. Default shell is **PowerShell** — use PowerShell syntax
-  (`$env:VAR`, `$null`, backtick for line continuation), not bash-isms.
-- **Python:** 3.13 (see `python --version`). Use a virtual environment.
-- **Node/Angular:** required only for `poc-app/frontend`.
-- **PDF text extraction** (the report) uses `pypdf`: `pip install pypdf`.
+This project runs in **Docker** — no host Python/Node toolchain required. Every
+service is a container orchestrated by `docker-compose.yml`:
 
-> Commands below are the *intended* workflow. Verify a script exists before
-> running it; if it doesn't yet, scaffold it per `plan.md` rather than guessing.
+| Service | Image / build | Purpose |
+|---|---|---|
+| `ollama` | `ollama/ollama` | Local server for **open models** (Llama, Qwen, DeepSeek, Mistral…) on port 11434 |
+| `pipeline` | `docker/pipeline.Dockerfile` | Runs the agents + the generated PyTest/Selenium tests |
+| `backend` | `docker/backend.Dockerfile` | FastAPI PoC backend |
+| `frontend` | `docker/frontend.Dockerfile` | Angular PoC frontend |
+| `selenium` | `selenium/standalone-chromium` | Browser for executing generated tests |
 
-```powershell
-# Python env
-python -m venv .venv; .\.venv\Scripts\Activate.ps1
-pip install -r requirements.txt        # once it exists
+- **Host:** any OS with Docker (Windows uses Docker Desktop + WSL2). All commands
+  below are cross-platform — no PowerShell-specific syntax needed.
+- **Models:** closed providers (Anthropic/OpenAI/Google) are reached via API keys
+  in `.env`; open models run locally via the `ollama` service (no key needed).
+- The LLM client is **provider-agnostic** — switch via `.env` (`LLM_PROVIDER`,
+  `LLM_MODEL`), no code changes (see `plan.md` §3.1).
 
-# Run the pipeline on a user story (planned entrypoint)
-python -m pipeline.pipeline --story data/user_stories/US-01.json
+> Commands below are the *intended* workflow. Verify a service/script exists
+> before running; if it doesn't yet, scaffold it per `plan.md` rather than guessing.
 
-# PoC app
-# backend:
-uvicorn poc-app.backend.main:app --reload
-# frontend:
-#   cd poc-app/frontend; npm install; npm start
+```bash
+# Build & start the full stack
+docker compose up -d --build
 
-# Run generated Selenium/PyTest scripts
-pytest generated/scripts
+# Pull an open model into the ollama service (first run only)
+docker compose exec ollama ollama pull llama3.1
+
+# Run the pipeline on a user story
+docker compose run --rm pipeline python -m pipeline.pipeline --story data/user_stories/US-01.json
+
+# Run generated Selenium/PyTest scripts (against the selenium + backend services)
+docker compose run --rm pipeline pytest generated/scripts
 
 # Compute evaluation metrics
-python -m evaluation.metrics
+docker compose run --rm pipeline python -m evaluation.metrics
+
+# Tear down
+docker compose down
 ```
+
+> Need to extract text from `article.pdf`? Run it in a container too:
+> `docker compose run --rm pipeline python -c "from pypdf import PdfReader; ..."`
 
 ---
 
@@ -85,8 +103,10 @@ python -m evaluation.metrics
   Do not inline large prompts in code. The v1 text is in the AV1 report (§8).
 - **Outputs are strict JSON** — no prose outside the JSON. Validate every agent
   output against its schema in `pipeline/schemas/` before passing it downstream.
-- **Keep the LLM client provider-agnostic.** The pipeline must not bet on one
-  model (see `plan.md` §3). Models/keys are config, not hardcoded.
+- **Keep the LLM client provider-agnostic.** Support both API providers
+  (Anthropic/OpenAI/Google) and local **open models via Ollama**; pick with
+  `LLM_PROVIDER`/`LLM_MODEL` in `.env`. The pipeline must not bet on one model
+  (see `plan.md` §3.1). Models/keys are config, never hardcoded.
 - **Bounded repair loop.** The Agent 2 → Agent 1 repair branch must respect a max
   iteration count (`N`) to avoid infinite loops.
 - **Traceability is mandatory.** Every test case maps to ≥1 acceptance criterion
@@ -119,11 +139,16 @@ python -m evaluation.metrics
 
 ---
 
-## Secrets
+## Secrets & configuration
 
-- **Never commit API keys.** Read them from environment variables
-  (e.g. `$env:ANTHROPIC_API_KEY` / `$env:OPENAI_API_KEY` / `$env:GOOGLE_API_KEY`).
-- Provide a `.env.example` (no real values) and ensure `.env` is git-ignored.
+- Configuration lives in `.env` (git-ignored); ship `.env.example` with no real
+  values. `docker-compose.yml` injects it into the services.
+- **Never commit API keys.** Closed-provider keys (`ANTHROPIC_API_KEY`,
+  `OPENAI_API_KEY`, `GOOGLE_API_KEY`) belong in `.env` only.
+- **Open models via Ollama need no key** — set `LLM_PROVIDER=ollama` and
+  `LLM_BASE_URL=http://ollama:11434/v1` (Ollama serves an OpenAI-compatible API).
+- Select the active model with `LLM_PROVIDER` + `LLM_MODEL` so closed and open
+  models are swappable without code changes.
 
 ---
 

@@ -75,7 +75,9 @@ LLM-as-a-Judge · bounded repair loop · multi-candidate generation *(optional)*
 
 A small web app built by the team to exercise the pipeline. **Backend: FastAPI ·
 Frontend: Angular.** Interactive elements are tagged with `data-testid` from the
-start to avoid the unstable-selector problem.
+start to avoid the unstable-selector problem. The whole stack runs in **Docker**,
+and the pipeline can drive **closed API models or local open models** (via an
+`ollama` service), so both can be benchmarked on the same stories.
 
 Covered flows: authentication, profile-based permissions, field validation,
 persistence, and operations with explicit business rules.
@@ -121,7 +123,7 @@ oracle (gabarito). Metrics follow Silva et al. to allow direct comparison.
 │   ├── context/              # context builder, glossary, ui_map
 │   ├── prompts/              # one file per prompt (see plan.md §8)
 │   ├── schemas/              # JSON schemas / models for agent I/O
-│   ├── llm_client.py         # provider-agnostic LLM wrapper
+│   ├── llm_client.py         # provider-agnostic (API + Ollama)
 │   └── pipeline.py           # orchestration + repair branch
 ├── poc-app/
 │   ├── backend/              # FastAPI
@@ -130,7 +132,11 @@ oracle (gabarito). Metrics follow Silva et al. to allow direct comparison.
 │   ├── user_stories/         # the 5 stories as structured input
 │   └── golden/               # human oracle / gabarito
 ├── generated/                # pipeline outputs (test cases, scripts, reports)
-└── evaluation/               # metrics computation & results
+├── evaluation/               # metrics computation & results
+├── references/               # cited papers + verification notes
+├── docker/                   # Dockerfiles (pipeline, backend, frontend)
+├── docker-compose.yml        # services: ollama, pipeline, backend, frontend, selenium
+└── .env.example              # LLM_PROVIDER/LLM_MODEL + API keys (no secrets)
 ```
 
 > The codebase is in an early stage. The structure above is the target layout
