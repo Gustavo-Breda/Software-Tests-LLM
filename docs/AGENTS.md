@@ -43,7 +43,7 @@ pipeline/      # the QA assistant pipeline (Python)
   settings.py  # configuration loader
 poc-app/
   backend/     # FastAPI
-  frontend/    # Angular
+  frontend/    # React
 data/          # user_stories/ (inputs), golden/ (human oracle)
 generated/     # pipeline outputs: test_cases/, scripts/, reports/
 evaluation/    # metrics.py + results/
@@ -64,10 +64,10 @@ service is a container orchestrated by `docker-compose.yml`:
 | Service | Image / build | Purpose |
 |---|---|---|
 | `ollama` | `ollama/ollama` | Local server for **open models** (Llama, Qwen, DeepSeek, Mistral…) on port 11434 |
-| `pipeline` | `docker/pipeline.Dockerfile` | Runs the agents + the generated PyTest/Selenium tests |
-| `backend` | `docker/backend.Dockerfile` | FastAPI PoC backend |
-| `frontend` | `docker/frontend.Dockerfile` | Angular PoC frontend |
-| `selenium` | `selenium/standalone-chromium` | Browser for executing generated tests |
+| `pipeline` | `docker/Dockerfile.pipeline` | Runs the agents + the generated PyTest/Selenium tests |
+| `backend` | `docker/Dockerfile.backend` | FastAPI PoC backend |
+| `frontend` | `docker/Dockerfile.frontend` | React PoC frontend |
+| `selenium` | `selenium/standalone-chrome:latest` | Browser for executing generated tests |
 
 - **Host:** any OS with Docker (Windows uses Docker Desktop + WSL2). All commands
   below are cross-platform — no PowerShell-specific syntax needed.

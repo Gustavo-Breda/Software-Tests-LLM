@@ -19,7 +19,7 @@ coverage report.
 
 **In scope**
 - The 6-component pipeline (Agents 0–3, Context Builder, Summarizer) + repair loop.
-- A PoC web app (FastAPI + Angular) covering 5 user stories.
+- A PoC web app (FastAPI + React) covering 5 user stories.
 - A human oracle (gabarito) and an evaluation harness for the metrics in Section 8.
 
 **Out of scope**
@@ -144,7 +144,7 @@ pipeline/
   settings.py                 # configuration loader
 poc-app/
   backend/                    # FastAPI
-  frontend/                   # Angular
+  frontend/                   # React
 data/
   user_stories/               # US-01..US-05 as structured input
   golden/                     # human oracle (expected test cases)
@@ -179,8 +179,8 @@ exist before scripts can run). Each phase lists deliverables and a done-check.
 
 ### [ ] Phase 1 — Proof-of-Concept web app
 - [ ] FastAPI backend with endpoints for the 5 stories (auth, register, create/list/ filter/cancel requests) and explicit business rules (e.g., 60s lockout after 5 failures; field-length validations).
-- [ ] Angular frontend with `data-testid` on every interactive element from day one.
-- [ ] Backend and frontend run as `docker compose` services; generated tests reach the app through the `selenium` service.
+- [ ] React frontend with `data-testid` on every interactive element from day one.
+- [x] Backend and frontend run as `docker compose` services; generated tests reach the app through the `selenium` service.
 - [ ] Seed/test data that is stable and reproducible (seeded on container start).
 - [ ] **Done when:** `docker compose up` serves all 5 flows and selectors are documented.
 
