@@ -1,22 +1,11 @@
-# Secrets & local config
+# environment
 .env
 
-# Python
-__pycache__/
-*.py[cod]
-.venv/
-.pytest_cache/
-
-# Node / Angular
-node_modules/
-poc-app/frontend/dist/
-
-# Pipeline outputs (regenerated; commit only when asked)
-generated/
-
-# Ollama model data (if mounted locally)
-ollama-data/
-
-# OS / editor
+# editor
 .DS_Store
 Thumbs.db
+
+# python cache
+__pycache__
+*.pyc
+*.pyo

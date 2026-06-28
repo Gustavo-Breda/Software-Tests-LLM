@@ -1,0 +1,11 @@
+# node_modules should be ignored to prevent host machine dependencies from overriding the container's environment
+node_modules
+
+# exclude local git history to keep the image smaller
+.git
+
+# exclude compiled files to the container
+dist
+
+# exclude python cache
+__pycache__

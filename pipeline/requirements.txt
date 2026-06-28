@@ -1,0 +1,12 @@
+# enviroment
+python-dotenv>=1.0
+
+# LLM SDKs
+ollama>=0.3
+anthropic>=0.34
+google-genai>=1.5,<2.0
+
+# utilities
+jsonschema>=4.25,<5.0
+httpx>=0.28,<1.0
+tqdm>=4.67,<5.0

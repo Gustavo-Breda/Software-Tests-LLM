@@ -1,0 +1,22 @@
+# python image
+FROM python:3.11-slim
+
+# dir
+WORKDIR /app
+
+# install system dependencies
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    curl \
+    && rm -rf /var/lib/apt/lists/*
+
+# copying the requirements for cache optimization
+COPY pipeline/requirements.txt .
+
+# install dependencies
+RUN pip install --no-cache-dir -r requirements.txt
+
+# copying the codebase
+COPY . .
+
+# running the pipeline
+CMD ["python", "-m", "pipeline.workflow.runner"]

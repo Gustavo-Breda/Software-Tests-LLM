@@ -20,7 +20,7 @@ coverage report.
 **In scope**
 - The 6-component pipeline (Agents 0–3, Context Builder, Summarizer) + repair loop.
 - A PoC web app (FastAPI + Angular) covering 5 user stories.
-- A human oracle (gabarito) and an evaluation harness for the metrics in §8.
+- A human oracle (gabarito) and an evaluation harness for the metrics in Section 8.
 
 **Out of scope**
 - Production-grade scale, multi-tenant systems, or CI/CD integration of the pipeline.
@@ -85,7 +85,7 @@ via config (`.env`: `LLM_PROVIDER`, `LLM_MODEL`). Two provider families:
 > Ollama serves an **OpenAI-compatible API** (`http://ollama:11434/v1`), so the
 > same client code reaches both families — only `.env` changes. Running open
 > models locally lets us **compare closed vs. open** on the same stories, a
-> direct test of Gheventer et al.'s industrial-readiness concern (see §8).
+> direct test of Gheventer et al.'s industrial-readiness concern (see Section 8).
 
 > Note (Silva et al.): top-tier models tend to **plateau** on test-case
 > generation — prompt design matters more than model choice. Do not bet success
@@ -117,7 +117,7 @@ unwieldy. **Status: TBD — record the choice here once made.**
 pipeline/
   agents/
     agent0_quality_gate.py
-    agent1_generate.py        # also used for repair (prompt 8.4)
+    agent1_generate.py        # also used for repair
     agent2_judge.py
     agent3_codegen.py
     summarizer.py
@@ -125,6 +125,12 @@ pipeline/
     context_builder.py
     glossary.md               # domain glossary (human-authored)
     ui_map.json               # screen → data-testid selectors (human-authored)
+  llm/                        # provider-agnostic LLM clients (factory + providers)
+    adapter.py
+    claude.py
+    factory.py
+    gemini.py
+    ollama_client.py
   prompts/
     01_quality_gate.txt
     02_generate.txt
@@ -133,8 +139,9 @@ pipeline/
     05_codegen.txt
     06_summarize.txt
   schemas/                    # JSON schema / models per agent I/O
-  llm_client.py               # provider-agnostic wrapper (model swappable)
-  pipeline.py                 # orchestration + repair branch + retry limit
+  workflow/                   # orchestrator of pipeline steps
+    runner.py
+  settings.py                 # configuration loader
 poc-app/
   backend/                    # FastAPI
   frontend/                   # Angular
@@ -147,9 +154,10 @@ evaluation/
   metrics.py                  # precision/recall/F1, judge precision/recall, etc.
   results/
 docker/
-  pipeline.Dockerfile         # Python + pytest + selenium client
-  backend.Dockerfile
-  frontend.Dockerfile
+  Dockerfile.backend
+  Dockerfile.frontend
+  Dockerfile.ollama
+  Dockerfile.pipeline
 docker-compose.yml            # services: ollama, pipeline, backend, frontend, selenium
 .env.example                  # LLM_PROVIDER/LLM_MODEL + API keys (no secrets)
 references/                   # cited papers + verification notes
@@ -162,65 +170,49 @@ references/                   # cited papers + verification notes
 Phases are ordered to unblock dependencies (the PoC app and context assets must
 exist before scripts can run). Each phase lists deliverables and a done-check.
 
-### Phase 0 — Setup & decisions (Docker)
-- Author `docker-compose.yml` + Dockerfiles for `ollama`, `pipeline`, `backend`,
-  `frontend`, `selenium`; `docker compose up -d --build` brings the stack up.
-- Add `.env.example` (`LLM_PROVIDER`, `LLM_MODEL`, `LLM_BASE_URL`, optional API
-  keys); keep `.env` git-ignored.
-- Record §3 decisions (provider/model, orchestration, `N`) as they are made.
-- Provide **≥1 closed model** (API key) **and ≥1 open model**
-  (`docker compose exec ollama ollama pull <model>`) so both can be benchmarked.
-- **Done when:** `docker compose run --rm pipeline python -m pipeline.llm_client --ping`
-  succeeds against both a closed provider and the local `ollama` service.
+### [x] Phase 0 — Setup & decisions (Docker)
+- [x] Author `docker-compose.yml` + Dockerfiles for `ollama`, `pipeline`, `backend`, `frontend`, `selenium`; `docker compose up -d --build` brings the stack up.
+- [x] Add `.env.example` (`LLM_PROVIDER`, `LLM_MODEL`, `LLM_BASE_URL`, optional API keys); keep `.env` git-ignored.
+- [x] Record Section 3 decisions (provider/model, orchestration, `N`) as they are made.
+- [x] Provide **≥1 closed model** (API key) **and ≥1 open model** (`docker compose exec ollama ollama pull <model>`) so both can be benchmarked.
+- [x] **Done when:** `docker compose run --rm pipeline` successfully executes a test query against the local `ollama` service (e.g. Llama 3) and verifies client setup.
 
-### Phase 1 — Proof-of-Concept web app
-- FastAPI backend with endpoints for the 5 stories (auth, register, create/list/
-  filter/cancel requests) and explicit business rules (e.g., 60s lockout after 5
-  failures; field-length validations).
-- Angular frontend with `data-testid` on every interactive element from day one.
-- Backend and frontend run as `docker compose` services; generated tests reach
-  the app through the `selenium` service.
-- Seed/test data that is stable and reproducible (seeded on container start).
-- **Done when:** `docker compose up` serves all 5 flows and selectors are documented.
+### [ ] Phase 1 — Proof-of-Concept web app
+- [ ] FastAPI backend with endpoints for the 5 stories (auth, register, create/list/ filter/cancel requests) and explicit business rules (e.g., 60s lockout after 5 failures; field-length validations).
+- [ ] Angular frontend with `data-testid` on every interactive element from day one.
+- [ ] Backend and frontend run as `docker compose` services; generated tests reach the app through the `selenium` service.
+- [ ] Seed/test data that is stable and reproducible (seeded on container start).
+- [ ] **Done when:** `docker compose up` serves all 5 flows and selectors are documented.
 
-### Phase 2 — Context assets & Context Builder
-- Author `glossary.md` and `ui_map.json` (screen map + selectors) for the PoC.
-- Implement `context_builder.py` to assemble glossary, approved examples, screen
-  map, and selectors into prompt context (RAG-style injection).
-- **Done when:** Context Builder produces a complete context blob for each story.
+### [ ] Phase 2 — Context assets & Context Builder
+- [ ] Author `glossary.md` and `ui_map.json` (screen map + selectors) for the PoC.
+- [ ] Implement `context_builder.py` to assemble glossary, approved examples, screen map, and selectors into prompt context (RAG-style injection).
+- [ ] **Done when:** Context Builder produces a complete context blob for each story.
 
-### Phase 3 — Agents 0 & 1
-- Implement Agent 0 (quality gate) and Agent 1 (test-case generation) with the
-  prompts in §7; enforce JSON-only outputs validated against schemas.
-- **Done when:** the 5 stories pass Agent 0 (or produce actionable clarifications)
-  and Agent 1 emits valid structured test cases with a traceability matrix.
+### [ ] Phase 3 — Agents 0 & 1
+- [ ] Implement Agent 0 (quality gate) and Agent 1 (test-case generation) with the prompts in Section 7; enforce JSON-only outputs validated against schemas.
+- [ ] **Done when:** the 5 stories pass Agent 0 (or produce actionable clarifications) and Agent 1 emits valid structured test cases with a traceability matrix.
 
-### Phase 4 — Agent 2 (judge) + repair loop
-- Implement Agent 2 (LLM-as-a-Judge) scoring coverage, fidelity, clarity,
-  automatability; route rejected cases back through Agent 1 (repair prompt) with
-  bounded retries `N`.
-- **Done when:** rejected cases are repaired and re-judged; loop terminates within `N`.
+### [ ] Phase 4 — Agent 2 (judge) + repair loop
+- [ ] Implement Agent 2 (LLM-as-a-Judge) scoring coverage, fidelity, clarity, automatability; route rejected cases back through Agent 1 (repair prompt) with bounded retries `N`.
+- [ ] **Done when:** rejected cases are repaired and re-judged; loop terminates within `N`.
 
-### Phase 5 — Agent 3 (codegen)
-- Implement Agent 3: generate `conftest.py`, `pages.py`, `test_*.py` using Page
-  Object Model, `data-testid` selectors, `WebDriverWait` (no `time.sleep`).
-  Record unresolved selectors in `pendencias_de_automacao`.
-- **Done when:** generated scripts import and collect under PyTest without syntax errors.
+### [ ] Phase 5 — Agent 3 (codegen)
+- [ ] Implement Agent 3: generate `conftest.py`, `pages.py`, `test_*.py` using Page Object Model, `data-testid` selectors, `WebDriverWait` (no `time.sleep`). Record unresolved selectors in `pendencias_de_automacao`.
+- [ ] **Done when:** generated scripts import and collect under PyTest without syntax errors.
 
-### Phase 6 — Summarizer & execution
-- Run generated scripts against the PoC; feed PyTest output + Selenium logs +
-  error evidence into the Summarization Agent.
-- **Done when:** a coverage/execution report classifies each failure cause and
-  maps coverage per acceptance criterion.
+### [ ] Phase 6 — Summarizer & execution
+- [ ] Run generated scripts against the PoC; feed PyTest output + Selenium logs + error evidence into the Summarization Agent.
+- [ ] **Done when:** a coverage/execution report classifies each failure cause and maps coverage per acceptance criterion.
 
-### Phase 7 — Evaluation
-- Build the human oracle (gabarito) for the 5 stories.
-- Implement `evaluation/metrics.py` and compute all §8 metrics.
-- Record perceived-effort timings (pipeline review vs. manual authoring).
-- **Done when:** a metrics table is produced and reproducible.
+### [ ] Phase 7 — Evaluation
+- [ ] Build the human oracle (gabarito) for the 5 stories.
+- [ ] Implement `evaluation/metrics.py` and compute all Section 8 metrics.
+- [ ] Record perceived-effort timings (pipeline review vs. manual authoring).
+- [ ] **Done when:** a metrics table is produced and reproducible.
 
-### Phase 8 — Final report (AV2)
-- Consolidate results, compare with Silva et al., document limitations.
+### [ ] Phase 8 — Final report (AV2)
+- [ ] Consolidate results, compare with Silva et al., document limitations.
 
 ---
 
@@ -305,7 +297,7 @@ methodology) for direct comparison.
 - *Judge precision/recall:* stratify by case type (positive / negative / edge)
   so easy positive cases can't inflate the score (cf. DAJ distribution-shift findings).
 - *Closed vs. open models:* run the full pipeline with ≥1 closed model and ≥1
-  open model (via Ollama) on the same stories; report all §8 metrics per model —
+  open model (via Ollama) on the same stories; report all Section 8 metrics per model —
   a direct test of Gheventer et al.'s industrial-readiness concern.
 
 ---
@@ -323,16 +315,14 @@ methodology) for direct comparison.
 
 ---
 
-## 10. Decision Log (fill in as you build)
-
-- [ ] LLM provider(s) + model(s) chosen (closed API and/or open via Ollama): ______ — rationale: ______
-- [ ] Orchestration approach chosen: ______ — rationale: ______
+- [x] LLM provider(s) + model(s) chosen (closed API and/or open via Ollama): Ollama (Llama 3) for local open model, Gemini 2.5/Claude 3.5 for closed models — rationale: Swappable via `.env`, allowing local vs. closed model comparison.
+- [x] Orchestration approach chosen: Plain Python script (`pipeline/workflow/runner.py`) — rationale: Keeps dependencies light and provides maximum control.
 - [ ] Max repair iterations `N`: ______
 - [ ] Multi-candidate generation enabled? ______
-- [ ] JSON validation approach: ______
+- [x] JSON validation approach: `jsonschema` (from requirements.txt)
 
 **Pending source materials** (upload to [`references/`](./references/)):
-- [ ] Silva et al. (drives §8 metrics & Phase 8 comparison — highest priority)
+- [ ] Silva et al. (drives Section 8 metrics & Phase 8 comparison — highest priority)
 - [ ] Gheventer et al.
 - [ ] Souza et al. (backs the `data-testid` decision)
 - [ ] Hernández-Agüero et al. (also needs a DOI/URL)

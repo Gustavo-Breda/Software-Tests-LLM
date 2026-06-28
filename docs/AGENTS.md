@@ -30,10 +30,17 @@ pipeline/      # the QA assistant pipeline (Python)
   agents/      # agent0_quality_gate, agent1_generate (+repair), agent2_judge,
                # agent3_codegen, summarizer
   context/     # context_builder.py, glossary.md, ui_map.json
+  llm/         # provider-agnostic LLM clients (factory + providers)
+    adapter.py
+    claude.py
+    factory.py
+    gemini.py
+    ollama_client.py
   prompts/     # one .txt per agent — the v1 prompts come from the AV1 report
   schemas/     # JSON schemas / models for agent inputs & outputs
-  llm_client.py# provider-agnostic LLM wrapper (model is swappable)
-  pipeline.py  # orchestration + repair branch + retry limit
+  workflow/    # orchestrator of pipeline steps
+    runner.py
+  settings.py  # configuration loader
 poc-app/
   backend/     # FastAPI
   frontend/    # Angular
@@ -41,9 +48,10 @@ data/          # user_stories/ (inputs), golden/ (human oracle)
 generated/     # pipeline outputs: test_cases/, scripts/, reports/
 evaluation/    # metrics.py + results/
 references/    # cited papers + verification notes
-docker/        # Dockerfiles: pipeline, backend, frontend
+docker/        # Dockerfiles: pipeline, backend, frontend, ollama
 docker-compose.yml  # services: ollama, pipeline, backend, frontend, selenium
 .env.example   # LLM_PROVIDER/LLM_MODEL + API keys (no secrets)
+```,StartLine:29,TargetContent:
 ```
 
 ---

@@ -2,7 +2,8 @@ from __future__ import annotations
 
 from typing import List
 
-from ..config import Settings, get_settings
+from ..settings import Settings, get_settings
+
 from .adapter import LLMClient
 from .claude import ClaudeClient
 from .gemini import GeminiClient
@@ -15,7 +16,7 @@ def get_client(identifier: str, settings: Settings | None = None) -> LLMClient:
     Examples
     --------
     >>> get_client("ollama:llama3")
-    >>> get_client("gemini")            # uses GEMINI_MODEL from .env
+    >>> get_client("gemini")
     >>> get_client("claude:claude-3-5-sonnet-latest")
     """
     settings = settings or get_settings()
@@ -42,6 +43,7 @@ def get_client(identifier: str, settings: Settings | None = None) -> LLMClient:
             model=model or settings.claude_model,
             api_key=settings.anthropic_api_key or "",
         )
+    
     raise ValueError(f"Unknown LLM provider: {provider!r}")
 
 

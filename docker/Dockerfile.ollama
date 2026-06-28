@@ -1,0 +1,12 @@
+# ollama image
+FROM ollama/ollama:latest
+
+# executing the pulling
+COPY ./docker/pull-models.sh /pull-models.sh
+RUN chmod +x /pull-models.sh
+
+# healthcheck for Ollama services
+HEALTHCHECK --interval=5s --timeout=3s --start-period=10s --retries=20 \ 
+    CMD ollama list >/dev/null 2>&1 || exit 1
+
+ENTRYPOINT ["/pull-models.sh"]

@@ -1,0 +1,23 @@
+# node image
+FROM node:22-alpine
+
+# corepack to enable using pnpm
+RUN corepack enable
+
+# dir
+WORKDIR /app
+
+# copying the dependencies first
+COPY app/frontend/package.json app/frontend/pnpm-lock.yaml* ./
+
+# installing the dependencies
+RUN pnpm install
+
+# copying the codebase
+COPY app/frontend/ .
+
+# expose the container port
+EXPOSE 5173
+
+# start server in dev-mode
+CMD ["pnpm", "run", "dev", "--", "--host"]

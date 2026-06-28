@@ -71,6 +71,36 @@ LLM-as-a-Judge · bounded repair loop · multi-candidate generation *(optional)*
 
 ---
 
+## Getting Started
+
+Follow the steps below to configure and spin up the entire environment (database, frontend, backend, selenium, and the pipeline running a local LLM):
+
+### 1. Configure Environment Variables
+Copy the example environment file:
+```bash
+cp .env.example .env
+```
+*(Optional)* If you plan to use closed models (such as Gemini or Claude), populate the respective API keys (`GOOGLE_API_KEY`, `ANTHROPIC_API_KEY`) in the `.env` file.
+
+### 2. Start the Docker Containers
+Build and run the full stack in the background:
+```bash
+docker compose up -d --build
+```
+This builds and starts:
+- **ollama**: Local LLM server, which automatically pulls and loads the `llama3` model on first run.
+- **backend**: FastAPI application (exposed on host port `8001`).
+- **frontend**: Angular application (exposed on host port `5173`).
+- **selenium**: Standalone Chrome browser for test execution (ports `4444` and `7900`).
+
+### 3. Run the Pipeline
+To execute the pipeline container and run the integration test query (which pings the local Llama 3 instance to verify the connection):
+```bash
+docker compose run --rm pipeline
+```
+
+---
+
 ## Proof-of-Concept Application
 
 A small web app built by the team to exercise the pipeline. **Backend: FastAPI ·
@@ -116,8 +146,8 @@ oracle (gabarito). Metrics follow Silva et al. to allow direct comparison.
 ```
 .
 ├── README.md                 # this file
-├── AGENTS.md                 # guide for coding agents working in this repo
-├── plan.md                   # implementation plan & milestones
+├── docs/AGENTS.md            # guide for coding agents working in this repo
+├── docs/PLAN.md               implementation plan & milestones
 ├── pipeline/                 # the QA assistant pipeline
 │   ├── agents/               # agent 0–3, repair, summarizer
 │   ├── context/              # context builder, glossary, ui_map
@@ -125,22 +155,21 @@ oracle (gabarito). Metrics follow Silva et al. to allow direct comparison.
 │   ├── schemas/              # JSON schemas / models for agent I/O
 │   ├── llm_client.py         # provider-agnostic (API + Ollama)
 │   └── pipeline.py           # orchestration + repair branch
-├── poc-app/
+├── app/
 │   ├── backend/              # FastAPI
-│   └── frontend/             # Angular
+│   └── frontend/             # Angular -> React + Vite
 ├── data/
 │   ├── user_stories/         # the 5 stories as structured input
 │   └── golden/               # human oracle / gabarito
 ├── generated/                # pipeline outputs (test cases, scripts, reports)
 ├── evaluation/               # metrics computation & results
-├── references/               # cited papers + verification notes
 ├── docker/                   # Dockerfiles (pipeline, backend, frontend)
 ├── docker-compose.yml        # services: ollama, pipeline, backend, frontend, selenium
 └── .env.example              # LLM_PROVIDER/LLM_MODEL + API keys (no secrets)
 ```
 
 > The codebase is in an early stage. The structure above is the target layout
-> described in `plan.md`; not all directories exist yet.
+> described in `docs/PLAN.md`; not all directories exist yet.
 
 ---
 
@@ -159,7 +188,7 @@ oracle (gabarito). Metrics follow Silva et al. to allow direct comparison.
 ## References
 
 Full citations are in the project report (`article.pdf`). See
-[`references/`](./references/) for verified sources and which PDFs are pending upload.
+[`docs/REFERENCES`] for verified sources and which PDFs are pending upload.
 
 **Verified online**
 - Correia et al. — *Conversational Models vs. Humans (Firefox).* arXiv:2510.21933

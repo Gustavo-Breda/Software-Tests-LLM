@@ -1,0 +1,33 @@
+# python image
+FROM python:3.11-slim
+
+# dir
+WORKDIR /app
+
+# backkend configs
+ENV PYTHONDONTWRITEBYTECODE=1
+ENV PYTHONUNBUFFERED=1
+ENV POETRY_HOME="/opt/poetry"
+ENV PATH="$POETRY_HOME/bin:$PATH"
+
+# slim apt image
+RUN apt-get update && \
+    apt-get install -y --no-install-recommends curl build-essential && \
+    curl -sSL https://install.python-poetry.org | python3 - && \
+    rm -rf /var/lib/apt/lists/*
+
+# copying the dependencies first
+COPY app/backend/pyproject.toml app/backend/poetry.lock* ./
+
+# installing the depedencies from pyproject.toml
+RUN poetry config virtualenvs.create false && \
+    poetry install --no-interaction --no-ansi --no-root --only main
+
+# copying the codebase
+COPY app/backend/ .
+
+# expose the container port
+EXPOSE 8000
+
+# start uvicorn server with FastAPI
+CMD ["uvicorn", "src.main:app", "--host", "0.0.0.0", "--port", "8000"]
