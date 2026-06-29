@@ -43,12 +43,15 @@ class OllamaClient(LLMClient):
         )
         elapsed = time.perf_counter() - start
 
+        msg = getattr(response, "message", None)
+        text = getattr(msg, "content", None) or ""
+
         return LLMResponse(
-            text=response.get("message", {}).get("content", ""),
+            text=text,
             model=self.model,
             provider=self.provider,
             latency_seconds=elapsed,
-            prompt_tokens=response.get("prompt_eval_count"),
-            completion_tokens=response.get("eval_count"),
-            raw=dict(response),
+            prompt_tokens=getattr(response, "prompt_eval_count", None),
+            completion_tokens=getattr(response, "eval_count", None),
+            raw={},
         )

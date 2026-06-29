@@ -30,7 +30,7 @@ services:
         ports:
             - "8001:8000"
         volumes:
-            - ./app/backend:/app\
+            - ./app/backend:/app
         networks:
             - llm-tests-network
 
@@ -64,9 +64,14 @@ services:
         build:
             context: .
             dockerfile: docker/Dockerfile.pipeline
+        depends_on:
+            ollama:
+                condition: service_healthy
         volumes:
             - .:/app
         environment:
+            - LLM_PROVIDER=${LLM_PROVIDER:-ollama}
+            - LLM_MODEL=${LLM_MODEL:-llama3}
             - GOOGLE_API_KEY=${GOOGLE_API_KEY}
             - ANTHROPIC_API_KEY=${ANTHROPIC_API_KEY}
             - GEMINI_MODEL=${GEMINI_MODEL}

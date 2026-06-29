@@ -4,8 +4,8 @@ This plan turns the AV1 report into a buildable project. It defines scope, the
 target architecture, open technical decisions, a phased roadmap with milestones,
 the data contracts between agents, and the evaluation methodology.
 
-> Companion docs: [`README.md`](./README.md) (overview) and
-> [`AGENTS.md`](./AGENTS.md) (how coding agents should work in this repo).
+> Companion docs: [`README.md`](../README.md) (overview) and
+> [`AGENTS.md`](../AGENTS.md) (how coding agents should work in this repo).
 
 ---
 
@@ -142,7 +142,7 @@ pipeline/
   workflow/                   # orchestrator of pipeline steps
     runner.py
   settings.py                 # configuration loader
-poc-app/
+app/
   backend/                    # FastAPI
   frontend/                   # React
 data/
@@ -179,7 +179,7 @@ exist before scripts can run). Each phase lists deliverables and a done-check.
 
 ### [ ] Phase 1 — Proof-of-Concept web app
 - [ ] FastAPI backend with endpoints for the 5 stories (auth, register, create/list/ filter/cancel requests) and explicit business rules (e.g., 60s lockout after 5 failures; field-length validations).
-- [ ] React frontend with `data-testid` on every interactive element from day one.
+- [ ] React frontend with `data-testid` on every interactive element from day one (scaffold exists, no PoC UI yet).
 - [x] Backend and frontend run as `docker compose` services; generated tests reach the app through the `selenium` service.
 - [ ] Seed/test data that is stable and reproducible (seeded on container start).
 - [ ] **Done when:** `docker compose up` serves all 5 flows and selectors are documented.
@@ -315,7 +315,8 @@ methodology) for direct comparison.
 
 ---
 
-- [x] LLM provider(s) + model(s) chosen (closed API and/or open via Ollama): Ollama (Llama 3) for local open model, Gemini 2.5/Claude 3.5 for closed models — rationale: Swappable via `.env`, allowing local vs. closed model comparison.
+- [x] LLM provider(s) + model(s) chosen (closed API and/or open via Ollama): Ollama (Llama 3) for local open model, Gemini 2.5 Flash/Claude Sonnet 4.6 for closed models — rationale: Swappable via `.env`, allowing local vs. closed model comparison.
+- [x] Active provider/model selection: `LLM_PROVIDER` + `LLM_MODEL` env vars select the active provider at runtime; `pipeline/workflow/runner.py` reads these and calls `factory.get_client()` — no code changes needed to switch models.
 - [x] Orchestration approach chosen: Plain Python script (`pipeline/workflow/runner.py`) — rationale: Keeps dependencies light and provides maximum control.
 - [ ] Max repair iterations `N`: ______
 - [ ] Multi-candidate generation enabled? ______
