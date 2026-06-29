@@ -1,0 +1,65 @@
+# QA Assistant PoC — local stack
+#
+# Phase 1 services:
+#   backend  — FastAPI on :8000  (Swagger UI at /docs)
+#   frontend — Angular via nginx on :8080
+#
+# Services for later phases (selenium, ollama, pipeline) are commented below.
+
+services:
+
+  backend:
+    build:
+      context: ./backend
+    image: qa-assistant/backend:dev
+    container_name: qa-poc-backend
+    environment:
+      DATABASE_URL: sqlite:////data/app.db
+      JWT_SECRET: ${JWT_SECRET:-dev-secret-change-me}
+      RESET_DB_ON_STARTUP: "1"   # deterministic state for tests
+      CORS_ORIGINS: "http://localhost:4200,http://localhost:8080"
+    ports:
+      - "8000:8000"
+    volumes:
+      - backend_data:/data
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://localhost:8000/api/health').read()"]
+      interval: 10s
+      timeout: 3s
+      retries: 5
+
+  frontend:
+    build:
+      context: ./frontend
+    image: qa-assistant/frontend:dev
+    container_name: qa-poc-frontend
+    ports:
+      - "8080:80"
+    depends_on:
+      backend:
+        condition: service_healthy
+
+  # ---- Added in Phase 6 (test execution) ----
+  # selenium:
+  #   image: selenium/standalone-chromium:131.0
+  #   container_name: qa-poc-selenium
+  #   shm_size: 2gb
+  #   ports:
+  #     - "4444:4444"
+  #     - "7900:7900"  # noVNC for debugging
+  #   depends_on:
+  #     - backend
+  #     - frontend
+
+  # ---- Added alongside the pipeline (Phase 3+) ----
+  # ollama:
+  #   image: ollama/ollama:latest
+  #   container_name: qa-poc-ollama
+  #   ports:
+  #     - "11434:11434"
+  #   volumes:
+  #     - ollama_models:/root/.ollama
+
+volumes:
+  backend_data:
+  # ollama_models:
