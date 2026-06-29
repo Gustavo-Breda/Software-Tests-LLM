@@ -160,7 +160,9 @@ docker/
   Dockerfile.pipeline
 docker-compose.yml            # services: ollama, pipeline, backend, frontend, selenium
 .env.example                  # LLM_PROVIDER/LLM_MODEL + API keys (no secrets)
-references/                   # cited papers + verification notes
+docs/
+  REFERENCES.md             # cited papers + verification notes
+  article.pdf               # source report (do not delete)
 ```
 
 ---
@@ -177,12 +179,13 @@ exist before scripts can run). Each phase lists deliverables and a done-check.
 - [x] Provide **≥1 closed model** (API key) **and ≥1 open model** (`docker compose exec ollama ollama pull <model>`) so both can be benchmarked.
 - [x] **Done when:** `docker compose run --rm pipeline` successfully executes a test query against the local `ollama` service (e.g. Llama 3) and verifies client setup.
 
-### [ ] Phase 1 — Proof-of-Concept web app
-- [ ] FastAPI backend with endpoints for the 5 stories (auth, register, create/list/ filter/cancel requests) and explicit business rules (e.g., 60s lockout after 5 failures; field-length validations).
-- [ ] React frontend with `data-testid` on every interactive element from day one (scaffold exists, no PoC UI yet).
-- [x] Backend and frontend run as `docker compose` services; generated tests reach the app through the `selenium` service.
-- [ ] Seed/test data that is stable and reproducible (seeded on container start).
-- [ ] **Done when:** `docker compose up` serves all 5 flows and selectors are documented.
+### [x] Phase 1 — Proof-of-Concept web app
+- [x] FastAPI backend: auth, register, create/list/filter/cancel requests; 60s lockout after 5 failures; field-length validations; JWT + bcrypt; SQLite with `RESET_DB_ON_STARTUP`. Poetry for deps. Pytest suite: 21 tests covering US-01..US-05 (SQLAlchemy 2.0, Pydantic v2).
+- [x] React frontend with `data-testid` on every interactive element; React Router v6; AuthProvider context; typed fetch layer with `ApiError` class. pnpm + Vite.
+- [x] Backend and frontend run as `docker compose` services.
+- [x] Seed/test data that is stable and reproducible (seeded on container start).
+- [x] `pipeline/context/ui_map.json` created with all selectors documented.
+- [ ] **Done when:** `docker compose up` serves all 5 flows end-to-end (pending integration test).
 
 ### [ ] Phase 2 — Context assets & Context Builder
 - [ ] Author `glossary.md` and `ui_map.json` (screen map + selectors) for the PoC.
@@ -288,7 +291,7 @@ methodology) for direct comparison.
 **Methodology notes**
 - *Silva et al. comparison (Phase 8) is pending the source PDF.* Once provided,
   map our metric definitions 1:1 to theirs; until then, treat the definitions
-  above as our own baseline. (Required file in [`references/`](./references/).)
+  above as our own baseline. (Required file in [`docs/`](./).)
 - *Apples-to-apples:* also run a **bare Agent 1 baseline** (zero/one-shot, no
   RAG, no judge) so the full pipeline can be compared against a Silva-style
   single-prompt baseline (ablation).
@@ -322,7 +325,7 @@ methodology) for direct comparison.
 - [ ] Multi-candidate generation enabled? ______
 - [x] JSON validation approach: `jsonschema` (from requirements.txt)
 
-**Pending source materials** (upload to [`references/`](./references/)):
+**Pending source materials** (upload to [`docs/`](./)):
 - [ ] Silva et al. (drives Section 8 metrics & Phase 8 comparison — highest priority)
 - [ ] Gheventer et al.
 - [ ] Souza et al. (backs the `data-testid` decision)

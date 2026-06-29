@@ -90,7 +90,7 @@ docker compose up -d --build
 This builds and starts:
 - **ollama**: Local LLM server, which automatically pulls and loads the `llama3` model on first run.
 - **backend**: FastAPI application (exposed on host port `8001`).
-- **frontend**: Angular application (exposed on host port `5173`).
+- **frontend**: React + Vite application (exposed on host port `5173`).
 - **selenium**: Standalone Chrome browser for test execution (ports `4444` and `7900`).
 
 ### 3. Run the Pipeline
@@ -104,7 +104,7 @@ docker compose run --rm pipeline
 ## Proof-of-Concept Application
 
 A small web app built by the team to exercise the pipeline. **Backend: FastAPI ·
-Frontend: Angular.** Interactive elements are tagged with `data-testid` from the
+Frontend: React + Vite.** Interactive elements are tagged with `data-testid` from the
 start to avoid the unstable-selector problem. The whole stack runs in **Docker**,
 and the pipeline can drive **closed API models or local open models** (via an
 `ollama` service), so both can be benchmarked on the same stories.
@@ -153,11 +153,11 @@ oracle (gabarito). Metrics follow Silva et al. to allow direct comparison.
 │   ├── context/              # context builder, glossary, ui_map
 │   ├── prompts/              # one file per prompt (see plan.md §8)
 │   ├── schemas/              # JSON schemas / models for agent I/O
-│   ├── llm_client.py         # provider-agnostic (API + Ollama)
-│   └── pipeline.py           # orchestration + repair branch
+│   ├── llm/                  # provider-agnostic clients (factory + providers)
+│   └── workflow/             # orchestration + repair branch
 ├── app/
-│   ├── backend/              # FastAPI
-│   └── frontend/             # Angular -> React + Vite
+│   ├── backend/              # FastAPI (see app/backend/README.md)
+│   └── frontend/             # React + Vite (see app/frontend/README.md)
 ├── data/
 │   ├── user_stories/         # the 5 stories as structured input
 │   └── golden/               # human oracle / gabarito
@@ -187,8 +187,8 @@ oracle (gabarito). Metrics follow Silva et al. to allow direct comparison.
 
 ## References
 
-Full citations are in the project report (`article.pdf`). See
-[`docs/REFERENCES`] for verified sources and which PDFs are pending upload.
+Full citations are in the project report (`docs/article.pdf`). See
+[`docs/REFERENCES.md`](docs/REFERENCES.md) for verified sources and which PDFs are pending upload.
 
 **Verified online**
 - Correia et al. — *Conversational Models vs. Humans (Firefox).* arXiv:2510.21933
