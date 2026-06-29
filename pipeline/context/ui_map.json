@@ -1,93 +1,93 @@
 {
-  "_comment": "Screen map + selectors for the PoC. The 'api' section is the contract finalised by Phase 1 backend; 'screens' will be populated as Phase 1 frontend lands. Used by the Context Builder (Phase 2) and Agent 3 codegen (Phase 5).",
+    "_comment": "Screen map + selectors for the PoC. The 'api' section is the contract finalised by Phase 1 backend; 'screens' will be populated as Phase 1 frontend lands. Used by the Context Builder (Phase 2) and Agent 3 codegen (Phase 5).",
 
-  "base_urls": {
-    "frontend": "http://localhost:5173",
-    "backend":  "http://localhost:8001"
-  },
+    "base_urls": {
+        "frontend": "http://localhost:5173",
+        "backend":  "http://localhost:8001"
+    },
 
-  "api": {
-    "auth": {
-      "register": { "method": "POST", "path": "/api/auth/register", "story": "US-02" },
-      "login":    { "method": "POST", "path": "/api/auth/login",    "story": "US-01" },
-      "me":       { "method": "GET",  "path": "/api/auth/me" }
+    "api": {
+        "auth": {
+            "register": { "method": "POST", "path": "/api/auth/register", "story": "US-02" },
+            "login":    { "method": "POST", "path": "/api/auth/login",    "story": "US-01" },
+            "me":       { "method": "GET",  "path": "/api/auth/me" }
+        },
+        "requests": {
+            "create": { "method": "POST", "path": "/api/requests",                       "story": "US-03" },
+            "list":   { "method": "GET",  "path": "/api/requests",                       "story": "US-04", "query": ["status", "priority", "scope"] },
+            "get":    { "method": "GET",  "path": "/api/requests/{id}" },
+            "cancel": { "method": "POST", "path": "/api/requests/{id}/cancel",           "story": "US-05" }
+        }
     },
-    "requests": {
-      "create": { "method": "POST", "path": "/api/requests",                       "story": "US-03" },
-      "list":   { "method": "GET",  "path": "/api/requests",                       "story": "US-04", "query": ["status", "priority", "scope"] },
-      "get":    { "method": "GET",  "path": "/api/requests/{id}" },
-      "cancel": { "method": "POST", "path": "/api/requests/{id}/cancel",           "story": "US-05" }
-    }
-  },
 
-  "screens": {
-    "login": {
-      "route": "/login",
-      "story": "US-01",
-      "selectors": {
-        "input_email":      "[data-testid=login-email]",
-        "input_password":   "[data-testid=login-password]",
-        "btn_submit":       "[data-testid=login-submit]",
-        "link_to_register": "[data-testid=login-go-register]",
-        "error_message":    "[data-testid=login-error]",
-        "lockout_message":  "[data-testid=login-lockout]"
-      }
+    "screens": {
+        "login": {
+            "route": "/login",
+            "story": "US-01",
+            "selectors": {
+                "input_email":      "[data-testid=login-email]",
+                "input_password":   "[data-testid=login-password]",
+                "btn_submit":       "[data-testid=login-submit]",
+                "link_to_register": "[data-testid=login-go-register]",
+                "error_message":    "[data-testid=login-error]",
+                "lockout_message":  "[data-testid=login-lockout]"
+            }
+        },
+        "register": {
+            "route": "/register",
+            "story": "US-02",
+            "selectors": {
+                "input_name":     "[data-testid=register-name]",
+                "input_email":    "[data-testid=register-email]",
+                "input_password": "[data-testid=register-password]",
+                "btn_submit":     "[data-testid=register-submit]",
+                "link_to_login":  "[data-testid=register-go-login]",
+                "error_message":  "[data-testid=register-error]",
+                "success_toast":  "[data-testid=register-success]"
+            }
+        },
+        "requests_list": {
+            "route": "/requests",
+            "story": "US-04",
+            "selectors": {
+                "filter_status":      "[data-testid=filter-status]",
+                "filter_priority":    "[data-testid=filter-priority]",
+                "btn_new_request":    "[data-testid=requests-new]",
+                "btn_logout":         "[data-testid=requests-logout]",
+                "table":              "[data-testid=requests-table]",
+                "row":                "[data-testid=request-row]",
+                "row_title":          "[data-testid=request-row-title]",
+                "row_status":         "[data-testid=request-row-status]",
+                "row_priority":       "[data-testid=request-row-priority]",
+                "row_btn_cancel":     "[data-testid=request-row-cancel]",
+                "empty_state":        "[data-testid=requests-empty]"
+            }
+        },
+        "request_create": {
+            "route": "/requests/new",
+            "story": "US-03",
+            "selectors": {
+                "input_title":       "[data-testid=request-title]",
+                "input_description": "[data-testid=request-description]",
+                "select_priority":   "[data-testid=request-priority]",
+                "btn_submit":        "[data-testid=request-submit]",
+                "btn_cancel":        "[data-testid=request-cancel]",
+                "error_message":     "[data-testid=request-error]"
+            }
+        },
+        "request_cancel_dialog": {
+            "story": "US-05",
+            "selectors": {
+                "dialog":            "[data-testid=cancel-dialog]",
+                "dialog_title":      "[data-testid=cancel-dialog-title]",
+                "btn_confirm":       "[data-testid=cancel-confirm]",
+                "btn_back":          "[data-testid=cancel-back]"
+            }
+        }
     },
-    "register": {
-      "route": "/register",
-      "story": "US-02",
-      "selectors": {
-        "input_name":     "[data-testid=register-name]",
-        "input_email":    "[data-testid=register-email]",
-        "input_password": "[data-testid=register-password]",
-        "btn_submit":     "[data-testid=register-submit]",
-        "link_to_login":  "[data-testid=register-go-login]",
-        "error_message":  "[data-testid=register-error]",
-        "success_toast":  "[data-testid=register-success]"
-      }
-    },
-    "requests_list": {
-      "route": "/requests",
-      "story": "US-04",
-      "selectors": {
-        "filter_status":      "[data-testid=filter-status]",
-        "filter_priority":    "[data-testid=filter-priority]",
-        "btn_new_request":    "[data-testid=requests-new]",
-        "btn_logout":         "[data-testid=requests-logout]",
-        "table":              "[data-testid=requests-table]",
-        "row":                "[data-testid=request-row]",
-        "row_title":          "[data-testid=request-row-title]",
-        "row_status":         "[data-testid=request-row-status]",
-        "row_priority":       "[data-testid=request-row-priority]",
-        "row_btn_cancel":     "[data-testid=request-row-cancel]",
-        "empty_state":        "[data-testid=requests-empty]"
-      }
-    },
-    "request_create": {
-      "route": "/requests/new",
-      "story": "US-03",
-      "selectors": {
-        "input_title":       "[data-testid=request-title]",
-        "input_description": "[data-testid=request-description]",
-        "select_priority":   "[data-testid=request-priority]",
-        "btn_submit":        "[data-testid=request-submit]",
-        "btn_cancel":        "[data-testid=request-cancel]",
-        "error_message":     "[data-testid=request-error]"
-      }
-    },
-    "request_cancel_dialog": {
-      "story": "US-05",
-      "selectors": {
-        "dialog":            "[data-testid=cancel-dialog]",
-        "dialog_title":      "[data-testid=cancel-dialog-title]",
-        "btn_confirm":       "[data-testid=cancel-confirm]",
-        "btn_back":          "[data-testid=cancel-back]"
-      }
-    }
-  },
 
-  "seed_users": [
-    { "email": "alice@example.com", "password": "Senha123", "note": "owns 4 requests across all statuses; preferred for US-04/US-05 demos" },
-    { "email": "bob@example.com",   "password": "Senha123", "note": "owns 2 requests; used to verify ownership rules" }
-  ]
+    "seed_users": [
+        { "email": "alice@example.com", "password": "Senha123", "note": "owns 4 requests across all statuses; preferred for US-04/US-05 demos" },
+        { "email": "bob@example.com",   "password": "Senha123", "note": "owns 2 requests; used to verify ownership rules" }
+    ]
 }
