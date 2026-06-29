@@ -1,7 +1,7 @@
 import os
-from datetime import datetime, timedelta, timezone
 
 from jose import jwt, JWTError
+from datetime import datetime, timedelta, timezone
 from passlib.context import CryptContext
 
 JWT_SECRET = os.getenv("JWT_SECRET", "dev-secret-change-me")

@@ -1,27 +1,27 @@
 * { box-sizing: border-box; }
 
 html, body {
-  margin: 0;
-  padding: 0;
-  font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
-  font-size: 16px;
-  color: #1f2937;
-  background: #f7f7f9;
-  min-height: 100vh;
+    margin: 0;
+    padding: 0;
+    font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+    font-size: 16px;
+    color: #1f2937;
+    background: #f7f7f9;
+    min-height: 100vh;
 }
 
 a { color: #2563eb; text-decoration: none; }
 a:hover { text-decoration: underline; }
 
 button {
-  font: inherit;
-  cursor: pointer;
-  padding: 0.55rem 1rem;
-  border-radius: 6px;
-  border: 1px solid #2563eb;
-  background: #2563eb;
-  color: white;
-  transition: background 0.12s;
+    font: inherit;
+    cursor: pointer;
+    padding: 0.55rem 1rem;
+    border-radius: 6px;
+    border: 1px solid #2563eb;
+    background: #2563eb;
+    color: white;
+    transition: background 0.12s;
 }
 button:hover:not(:disabled) { background: #1d4ed8; }
 button:disabled { opacity: 0.55; cursor: not-allowed; }
@@ -30,18 +30,18 @@ button.danger { background: #dc2626; border-color: #dc2626; }
 button.danger:hover:not(:disabled) { background: #b91c1c; }
 
 input, select, textarea {
-  font: inherit;
-  width: 100%;
-  padding: 0.55rem 0.75rem;
-  border-radius: 6px;
-  border: 1px solid #d1d5db;
-  background: white;
-  color: inherit;
+    font: inherit;
+    width: 100%;
+    padding: 0.55rem 0.75rem;
+    border-radius: 6px;
+    border: 1px solid #d1d5db;
+    background: white;
+    color: inherit;
 }
 input:focus, select:focus, textarea:focus {
-  outline: 2px solid #2563eb;
-  outline-offset: 1px;
-  border-color: #2563eb;
+    outline: 2px solid #2563eb;
+    outline-offset: 1px;
+    border-color: #2563eb;
 }
 
 label { display: block; margin-bottom: 0.35rem; font-weight: 500; font-size: 0.9rem; }

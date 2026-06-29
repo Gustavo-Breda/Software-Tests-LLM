@@ -1,4 +1,4 @@
-from .conftest import auth_header
+from .conftest import *
 
 
 ############################ US-03 — Create request ############################

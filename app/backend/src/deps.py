@@ -1,12 +1,12 @@
 from collections.abc import Iterator
 
+from sqlalchemy.orm import Session
 from fastapi import Depends, HTTPException, status
 from fastapi.security import OAuth2PasswordBearer
-from sqlalchemy.orm import Session
 
-from .database import SessionLocal
-from .models import User
-from .security import decode_access_token
+from .models import *
+from .security import *
+from .database import *
 
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/api/auth/login", auto_error=False)
 

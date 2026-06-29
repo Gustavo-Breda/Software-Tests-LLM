@@ -1,9 +1,10 @@
+import enum
+
 from datetime import datetime, timezone
 from sqlalchemy import String, ForeignKey, Enum as SAEnum
 from sqlalchemy.orm import Mapped, mapped_column, relationship
-import enum
 
-from .database import Base
+from .database import *
 
 
 def _utcnow() -> datetime:

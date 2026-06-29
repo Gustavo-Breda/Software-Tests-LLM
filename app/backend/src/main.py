@@ -1,11 +1,11 @@
 import os
-from contextlib import asynccontextmanager
 
 from fastapi import FastAPI
+from contextlib import asynccontextmanager
 from fastapi.middleware.cors import CORSMiddleware
 
+from .seed import *
 from .routers import auth, requests as requests_router
-from .seed import reset_and_seed
 
 
 @asynccontextmanager

@@ -4,9 +4,9 @@ from fastapi import APIRouter, Depends, HTTPException, Query, status
 from sqlalchemy import select
 from sqlalchemy.orm import Session
 
-from ..deps import get_db, get_current_user
-from ..models import ServiceRequest, RequestStatus, RequestPriority, User
-from ..schemas import RequestCreateIn, RequestOut, RequestListOut
+from ..deps import *
+from ..models import *
+from ..schemas import *
 
 router = APIRouter(prefix="/api/requests", tags=["requests"])
 

@@ -1,13 +1,13 @@
 import os
+import pytest
+
+from fastapi.testclient import TestClient
+
+from src.main import create_app
 
 os.environ["DATABASE_URL"] = "sqlite:////tmp/test_qa_poc.db"
 os.environ["RESET_DB_ON_STARTUP"] = "1"
 os.environ.setdefault("JWT_SECRET", "test-secret")
-
-import pytest
-from fastapi.testclient import TestClient
-from src.main import create_app
-
 
 @pytest.fixture()
 def client():
