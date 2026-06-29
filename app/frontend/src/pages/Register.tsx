@@ -1,45 +1,49 @@
 import { useState, FormEvent } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
+
 import * as api from '../api'
 
 const PASSWORD_RE = /^(?=.*[A-Za-z])(?=.*\d).+$/
 
 export default function Register() {
-  const navigate = useNavigate()
+    const navigate = useNavigate()
 
-  const [name, setName] = useState('')
-  const [email, setEmail] = useState('')
-  const [password, setPassword] = useState('')
-  const [error, setError] = useState<string | null>(null)
-  const [success, setSuccess] = useState(false)
-  const [submitting, setSubmitting] = useState(false)
+    const [name, setName] = useState('')
+    const [email, setEmail] = useState('')
+    const [password, setPassword] = useState('')
+    const [error, setError] = useState<string | null>(null)
+    const [success, setSuccess] = useState(false)
+    const [submitting, setSubmitting] = useState(false)
 
-  function validate(): string | null {
-    if (name.trim().length < 3 || name.trim().length > 80)
-      return 'Nome deve ter entre 3 e 80 caracteres.'
-    if (password.length < 8 || !PASSWORD_RE.test(password))
-      return 'Mínimo 8 caracteres, com ao menos uma letra e um número.'
-    return null
-  }
-
-  async function handleSubmit(e: FormEvent) {
-    e.preventDefault()
-    const msg = validate()
-    if (msg) { setError(msg); return }
-    setError(null)
-    setSubmitting(true)
-    try {
-      await api.register(name.trim(), email, password)
-      setSuccess(true)
-      setTimeout(() => navigate('/login'), 1200)
-    } catch (err) {
-      if (err instanceof api.ApiError && err.status === 409) setError('E-mail já cadastrado.')
-      else if (err instanceof api.ApiError && err.status === 422) setError('Dados inválidos. Verifique os campos.')
-      else setError('Não foi possível cadastrar. Tente novamente.')
-    } finally {
-      setSubmitting(false)
+    function validate(): string | null {
+        if (name.trim().length < 3 || name.trim().length > 80)
+            return 'Nome deve ter entre 3 e 80 caracteres.'
+        if (password.length < 8 || !PASSWORD_RE.test(password))
+            return 'Mínimo 8 caracteres, com ao menos uma letra e um número.'
+        return null
     }
-  }
+
+    async function handleSubmit(e: FormEvent) {
+        e.preventDefault()
+        const msg = validate()
+        if (msg) { 
+            setError(msg)
+            return 
+        }
+        setError(null)
+        setSubmitting(true)
+        try {
+            await api.register(name.trim(), email, password)
+            setSuccess(true)
+            setTimeout(() => navigate('/login'), 1200)
+        } catch (err) {
+            if (err instanceof api.ApiError && err.status === 409) setError('E-mail já cadastrado.')
+            else if (err instanceof api.ApiError && err.status === 422) setError('Dados inválidos. Verifique os campos.')
+            else setError('Não foi possível cadastrar. Tente novamente.')
+        } finally {
+            setSubmitting(false)
+        }
+    }
 
   return (
     <div className="auth-shell">

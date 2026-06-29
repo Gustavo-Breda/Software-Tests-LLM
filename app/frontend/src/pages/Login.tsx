@@ -1,38 +1,41 @@
 import { useState, FormEvent } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
+
 import { useAuth } from '../auth'
+
 import * as api from '../api'
 
 export default function Login() {
-  const { persistAuth } = useAuth()
-  const navigate = useNavigate()
+    const navigate = useNavigate()
+    
+    const { persistAuth } = useAuth() 
 
-  const [email, setEmail] = useState('')
-  const [password, setPassword] = useState('')
-  const [error, setError] = useState<string | null>(null)
-  const [lockoutSeconds, setLockoutSeconds] = useState<number | null>(null)
-  const [submitting, setSubmitting] = useState(false)
+    const [email, setEmail] = useState('')
+    const [password, setPassword] = useState('')
+    const [error, setError] = useState<string | null>(null)
+    const [lockoutSeconds, setLockoutSeconds] = useState<number | null>(null)
+    const [submitting, setSubmitting] = useState(false)
 
   async function handleSubmit(e: FormEvent) {
-    e.preventDefault()
-    setError(null)
-    setLockoutSeconds(null)
-    setSubmitting(true)
-    try {
-      const res = await api.login(email, password)
-      persistAuth(res)
-      navigate('/requests')
-    } catch (err) {
-      if (err instanceof api.ApiError && err.status === 423) {
-        const retry = Number(err.headers.get('Retry-After'))
-        setLockoutSeconds(Number.isFinite(retry) && retry > 0 ? retry : 60)
-      } else {
-        setError('E-mail ou senha inválidos.')
-      }
-    } finally {
-      setSubmitting(false)
+        e.preventDefault()
+        setError(null)
+        setLockoutSeconds(null)
+        setSubmitting(true)
+        try {
+            const res = await api.login(email, password)
+            persistAuth(res)
+            navigate('/requests')
+        } catch (err) {
+            if (err instanceof api.ApiError && err.status === 423) {
+                const retry = Number(err.headers.get('Retry-After'))
+                setLockoutSeconds(Number.isFinite(retry) && retry > 0 ? retry : 60)
+            } else {
+                setError('E-mail ou senha inválidos.')
+            }
+        } finally {
+            setSubmitting(false)
+        }
     }
-  }
 
   return (
     <div className="auth-shell">

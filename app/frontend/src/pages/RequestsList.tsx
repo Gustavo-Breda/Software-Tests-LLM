@@ -1,67 +1,70 @@
 import { useState, useEffect, useCallback } from 'react'
 import { useNavigate } from 'react-router-dom'
+
 import { useAuth } from '../auth'
-import * as api from '../api'
-import type { ServiceRequest, RequestStatus, RequestPriority } from '../types'
 import { STATUS_LABELS, PRIORITY_LABELS } from '../types'
+import type { ServiceRequest, RequestStatus, RequestPriority } from '../types'
+
+import * as api from '../api'
 
 export default function RequestsList() {
-  const { user, token, logout } = useAuth()
-  const navigate = useNavigate()
+    const navigate = useNavigate()
 
-  const [items, setItems] = useState<ServiceRequest[]>([])
-  const [loading, setLoading] = useState(true)
-  const [statusFilter, setStatusFilter] = useState<RequestStatus | ''>('')
-  const [priorityFilter, setPriorityFilter] = useState<RequestPriority | ''>('')
+    const { user, token, logout } = useAuth()
 
-  const [pendingCancel, setPendingCancel] = useState<ServiceRequest | null>(null)
-  const [cancelling, setCancelling] = useState(false)
-  const [cancelError, setCancelError] = useState<string | null>(null)
+    const [items, setItems] = useState<ServiceRequest[]>([])
+    const [loading, setLoading] = useState(true)
+    const [statusFilter, setStatusFilter] = useState<RequestStatus | ''>('')
+    const [priorityFilter, setPriorityFilter] = useState<RequestPriority | ''>('')
 
-  const reload = useCallback(() => {
-    if (!token) return
-    setLoading(true)
-    api.listRequests(token, statusFilter || undefined, priorityFilter || undefined)
-      .then(res => setItems(res.items))
-      .catch(() => {})
-      .finally(() => setLoading(false))
-  }, [token, statusFilter, priorityFilter])
+    const [pendingCancel, setPendingCancel] = useState<ServiceRequest | null>(null)
+    const [cancelling, setCancelling] = useState(false)
+    const [cancelError, setCancelError] = useState<string | null>(null)
+
+    const reload = useCallback(() => {
+        if (!token) return
+        setLoading(true)
+        api.listRequests(token, statusFilter || undefined, priorityFilter || undefined)
+            .then(res => setItems(res.items))
+            .catch(() => {})
+            .finally(() => setLoading(false))
+    }, [token, statusFilter, priorityFilter])
 
   useEffect(() => { reload() }, [reload])
 
-  function handleLogout() {
-    logout()
-    navigate('/login')
-  }
+    function handleLogout() {
+        logout()
+        navigate('/login')
+    }
 
-  function isCancellable(r: ServiceRequest) {
-    return r.status === 'aberta' || r.status === 'em_analise'
-  }
+    function isCancellable(r: ServiceRequest) {
+        return r.status === 'aberta' || r.status === 'em_analise'
+    }
 
-  function askCancel(r: ServiceRequest) {
-    setCancelError(null)
-    setPendingCancel(r)
-  }
+    function askCancel(r: ServiceRequest) {
+        setCancelError(null)
+        setPendingCancel(r)
+    }
 
-  function dismissCancel() {
-    setPendingCancel(null)
-    setCancelError(null)
-  }
+    function dismissCancel() {
+        setPendingCancel(null)
+        setCancelError(null)
+    }
 
   function confirmCancel() {
-    if (!pendingCancel || !token) return
-    setCancelling(true)
-    api.cancelRequest(token, pendingCancel.id)
-      .then(() => {
-        setCancelling(false)
-        setPendingCancel(null)
-        reload()
-      })
-      .catch((err: unknown) => {
-        setCancelling(false)
-        setCancelError(err instanceof api.ApiError ? err.message : 'Não foi possível cancelar a solicitação.')
-      })
-  }
+        if (!pendingCancel || !token) return
+        setCancelling(true)
+        api.cancelRequest(token, pendingCancel.id)
+            .then(() => {
+                setCancelling(false)
+                setPendingCancel(null)
+                reload()
+            })
+            .catch((err: unknown) => {
+                setCancelling(false)
+                setCancelError(err instanceof api.ApiError ? err.message : 'Não foi possível cancelar a solicitação.')
+            })
+    }
 
   return (
     <>

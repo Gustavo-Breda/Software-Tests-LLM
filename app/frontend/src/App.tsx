@@ -21,15 +21,15 @@ function GuestGuard({ children }: { children: ReactNode }) {
 export default function App() {
     return (
         <AuthProvider>
-        <BrowserRouter>
-            <Routes>
-            <Route path="/login" element={<GuestGuard><Login /></GuestGuard>} />
-            <Route path="/register" element={<GuestGuard><Register /></GuestGuard>} />
-            <Route path="/requests" element={<AuthGuard><RequestsList /></AuthGuard>} />
-            <Route path="/requests/new" element={<AuthGuard><CreateRequest /></AuthGuard>} />
-            <Route path="*" element={<Navigate to="/requests" replace />} />
-            </Routes>
-        </BrowserRouter>
+            <BrowserRouter>
+                <Routes>
+                    <Route path="/login" element={<GuestGuard><Login /></GuestGuard>} />
+                    <Route path="/register" element={<GuestGuard><Register /></GuestGuard>} />
+                    <Route path="/requests" element={<AuthGuard><RequestsList /></AuthGuard>} />
+                    <Route path="/requests/new" element={<AuthGuard><CreateRequest /></AuthGuard>} />
+                    <Route path="*" element={<Navigate to="/requests" replace />} />
+                </Routes>
+            </BrowserRouter>
         </AuthProvider>
     )
 }
