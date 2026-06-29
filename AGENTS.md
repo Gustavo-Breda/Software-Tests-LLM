@@ -4,9 +4,8 @@ Guidance for AI coding agents (Claude Code, Cursor, Copilot, etc.) working in
 this repository. Humans: see [`README.md`](./README.md) for the project overview
 and [`docs/PLAN.md`](./docs/PLAN.md) for the full roadmap and data contracts.
 
-> **Repo stage:** Phase 0 complete. Phase 1 (PoC web app) in progress.
-> The target layout is partially scaffolded — always verify a path exists before
-> editing or running it.
+> **Repo stage:** Phase 1 complete (pending integration test in Docker). Phase 2
+> (Context Builder) is next. Always verify a path exists before editing or running it.
 
 ---
 
@@ -70,8 +69,8 @@ Follow this order every session:
 | LLM client layer (`pipeline/llm/`) | ✅ Phase 0 done |
 | Settings & env loader (`pipeline/settings.py`) | ✅ Phase 0 done |
 | Workflow runner stub (`pipeline/workflow/runner.py`) | ✅ Phase 0 done |
-| PoC backend — FastAPI (`app/backend/`) | 🔧 Stub only — Phase 1 |
-| PoC frontend — React (`app/frontend/`) | 🔧 Scaffold only — Phase 1 |
+| PoC backend — FastAPI (`app/backend/`) | ✅ Phase 1 done (FastAPI + SQLite + pytest) |
+| PoC frontend — React (`app/frontend/`) | ✅ Phase 1 done (React + Vite + data-testid) |
 | Pipeline agents 0–3, Summarizer | ❌ Phase 3–5 |
 | Context builder, glossary, ui_map | ❌ Phase 2 |
 | Prompts (`pipeline/prompts/`), schemas (`pipeline/schemas/`) | ❌ Phase 3+ |
