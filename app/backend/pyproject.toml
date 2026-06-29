@@ -1,7 +1,7 @@
 [tool.poetry]
 name = "backend"
 version = "0.1.0"
-description = "QA Assistant PoC backend — FastAPI app covering US-01..US-05"
+description = "Backend for a LLM test assistant"
 readme = "README.md"
 
 [tool.poetry.dependencies]

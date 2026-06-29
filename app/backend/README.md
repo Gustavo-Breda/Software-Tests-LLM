@@ -1,4 +1,4 @@
-# Backend — QA Assistant PoC
+# Backend — POC
 
 FastAPI application covering the 5 user stories (US-01..US-05). Uses SQLite by default; the database is reset and reseeded on every startup for reproducible test execution.
 
