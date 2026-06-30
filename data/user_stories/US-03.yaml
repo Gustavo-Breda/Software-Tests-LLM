@@ -1,0 +1,34 @@
+id: US-03
+title: Criar nova solicitação de serviço
+persona: Usuário autenticado
+acao: abrir uma nova solicitação informando título, descrição e prioridade
+beneficio: registrar formalmente o pedido para acompanhamento posterior
+
+touched_screens: [request_create, requests_list]
+touched_endpoints: [requests.create]
+
+acceptance_criteria:
+  - id: CA-03.1
+    description: >-
+      Com título (5-100), descrição (10-500) e prioridade válida
+      (baixa, media ou alta), a solicitação é criada com 201. O
+      servidor atribui automaticamente status "aberta" e a data
+      atual em created_at; o cliente não pode sobrescrever esses
+      campos. Em seguida o usuário volta para a lista e a nova
+      solicitação aparece no topo.
+    tipo: positivo
+
+  - id: CA-03.2
+    description: >-
+      Campos obrigatórios vazios ou em branco (após strip), título
+      menor que 5 ou maior que 100, descrição menor que 10 ou maior
+      que 500, e prioridade fora do enum retornam 422 e a
+      solicitação não é criada.
+    tipo: negativo
+
+  - id: CA-03.3
+    description: >-
+      Tentar criar uma solicitação sem estar autenticado (sem
+      header Authorization Bearer ou com token inválido) retorna
+      401. Tokens expirados também caem nesse mesmo caminho.
+    tipo: borda

@@ -187,10 +187,10 @@ exist before scripts can run). Each phase lists deliverables and a done-check.
 - [x] `pipeline/context/ui_map.json` created with all selectors documented.
 - [ ] **Done when:** `docker compose up` serves all 5 flows end-to-end (pending integration test).
 
-### [ ] Phase 2 — Context assets & Context Builder
-- [ ] Author `glossary.md` and `ui_map.json` (screen map + selectors) for the PoC.
-- [ ] Implement `context_builder.py` to assemble glossary, approved examples, screen map, and selectors into prompt context (RAG-style injection).
-- [ ] **Done when:** Context Builder produces a complete context blob for each story.
+### [x] Phase 2 — Context assets & Context Builder
+- [x] Author `glossary.md` and `ui_map.json` (screen map + selectors) for the PoC.
+- [x] Implement `context_builder.py` to assemble glossary, approved examples, screen map, and selectors into prompt context (RAG-style injection).
+- [x] **Done when:** Context Builder produces a complete context blob for each story.
 
 ### [ ] Phase 3 — Agents 0 & 1
 - [ ] Implement Agent 0 (quality gate) and Agent 1 (test-case generation) with the prompts in Section 7; enforce JSON-only outputs validated against schemas.

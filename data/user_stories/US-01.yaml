@@ -1,0 +1,35 @@
+id: US-01
+title: Realizar login com e-mail e senha
+persona: Usuário cadastrado
+acao: realizar login com meu e-mail e senha
+beneficio: acessar a tela de solicitações e gerenciar meus chamados
+
+# Telas e endpoints que esta story toca (usado pelo Context Builder
+# como filtro caso necessário; o builder também consegue inferir pelo
+# campo "story" no ui_map.json, então este bloco é opcional).
+touched_screens: [login, requests_list]
+touched_endpoints: [auth.login, auth.me]
+
+acceptance_criteria:
+  - id: CA-01.1
+    description: >-
+      Com e-mail cadastrado e senha correta, o login é bem-sucedido,
+      retorna 200 com token JWT no corpo, e o usuário é redirecionado
+      para a tela de listagem de solicitações.
+    tipo: positivo
+
+  - id: CA-01.2
+    description: >-
+      Com e-mail inexistente ou senha incorreta, o login retorna
+      401 com a mensagem genérica "E-mail ou senha inválidos." — a
+      mesma mensagem para os dois casos, sem revelar se o e-mail
+      existe.
+    tipo: negativo
+
+  - id: CA-01.3
+    description: >-
+      Após 5 tentativas falhas consecutivas no mesmo e-mail, a conta
+      é bloqueada por 60 segundos. Durante o bloqueio, qualquer
+      tentativa (incluindo senha correta) retorna 423 Locked com
+      header Retry-After. Login bem-sucedido reseta o contador.
+    tipo: borda

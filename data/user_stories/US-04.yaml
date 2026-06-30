@@ -1,0 +1,34 @@
+id: US-04
+title: Listar e filtrar minhas solicitações
+persona: Usuário autenticado
+acao: visualizar minhas solicitações e filtrá-las por status e prioridade
+beneficio: acompanhar o andamento dos meus pedidos de forma organizada
+
+touched_screens: [requests_list]
+touched_endpoints: [requests.list]
+
+acceptance_criteria:
+  - id: CA-04.1
+    description: >-
+      Sem filtros aplicados (scope=own é o padrão), o endpoint
+      retorna apenas as solicitações do próprio usuário,
+      ordenadas por created_at descendente (mais recentes
+      primeiro). Solicitações de outros usuários não aparecem.
+    tipo: positivo
+
+  - id: CA-04.2
+    description: >-
+      Os filtros de status e prioridade são combináveis. Aplicar
+      status=aberta e priority=alta retorna apenas o subconjunto
+      do próprio usuário que satisfaz ambas as condições. Cada
+      filtro pode ser usado isoladamente também.
+    tipo: positivo
+
+  - id: CA-04.3
+    description: >-
+      Quando o filtro não retorna nenhum item, a resposta é 200
+      com items=[] e total=0 (não 404). Na UI, a mensagem
+      "Nenhuma solicitação encontrada." é exibida e os controles
+      de filtro continuam visíveis, permitindo o usuário relaxar
+      os filtros sem recarregar.
+    tipo: borda

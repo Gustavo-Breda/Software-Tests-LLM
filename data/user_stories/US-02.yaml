@@ -1,0 +1,32 @@
+id: US-02
+title: Cadastrar nova conta de usuário
+persona: Visitante sem conta
+acao: criar uma conta informando nome, e-mail e senha
+beneficio: passar a ter acesso ao sistema e abrir solicitações
+
+touched_screens: [register, login]
+touched_endpoints: [auth.register]
+
+acceptance_criteria:
+  - id: CA-02.1
+    description: >-
+      Com nome (3 a 80 caracteres), e-mail em formato válido e senha
+      com pelo menos 8 caracteres contendo ao menos uma letra e um
+      número, o cadastro é bem-sucedido (201). Mensagem de sucesso
+      é exibida e o usuário é redirecionado para o login.
+    tipo: positivo
+
+  - id: CA-02.2
+    description: >-
+      Tentar cadastrar com um e-mail já existente retorna 409 com a
+      mensagem "E-mail já cadastrado.". O usuário existente
+      permanece inalterado.
+    tipo: negativo
+
+  - id: CA-02.3
+    description: >-
+      Senha sem número (apenas letras), senha sem letra (apenas
+      números), senha curta (<8) ou nome fora de 3-80 caracteres
+      retornam 422 e o cadastro não é criado. Validações são
+      verificadas em conjunto, não isoladamente.
+    tipo: borda
