@@ -1,0 +1,34 @@
+id: US-05
+title: Cancelar uma solicitação não finalizada
+persona: Usuário autenticado dono da solicitação
+acao: cancelar uma solicitação que ainda esteja em curso
+beneficio: desistir do pedido antes que ele seja processado
+
+touched_screens: [requests_list, request_cancel_dialog]
+touched_endpoints: [requests.cancel, requests.get]
+
+acceptance_criteria:
+  - id: CA-05.1
+    description: >-
+      Para uma solicitação própria em status "aberta" ou
+      "em_analise", o cancelamento é bem-sucedido (200). O servidor
+      seta status="cancelada" e cancelled_at=agora(). A UI exibe um
+      dialog de confirmação que mostra o TÍTULO da solicitação
+      antes de chamar o endpoint.
+    tipo: positivo
+
+  - id: CA-05.2
+    description: >-
+      Tentar cancelar solicitação de outro usuário retorna 403 com
+      mensagem "Você não pode cancelar uma solicitação de outro
+      usuário.". Tentar cancelar solicitação inexistente retorna
+      404. A própria solicitação não é alterada em nenhum caso.
+    tipo: negativo
+
+  - id: CA-05.3
+    description: >-
+      Tentar cancelar uma solicitação que já está em "cancelada" ou
+      "finalizada" retorna 409 com mensagem "Somente solicitações
+      'aberta' ou 'em análise' podem ser canceladas.". A
+      solicitação não é alterada.
+    tipo: borda

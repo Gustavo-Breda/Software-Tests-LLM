@@ -4,8 +4,8 @@ Guidance for AI coding agents (Claude Code, Cursor, Copilot, etc.) working in
 this repository. Humans: see [`README.md`](./README.md) for the project overview
 and [`docs/PLAN.md`](./docs/PLAN.md) for the full roadmap and data contracts.
 
-> **Repo stage:** Phase 1 complete (pending integration test in Docker). Phase 2
-> (Context Builder) is next. Always verify a path exists before editing or running it.
+> **Repo stage:** Phases 1 and 2 complete. Phase 3 (Agents 0 & 1) is next.
+> Always verify a path exists before editing or running it.
 
 ---
 
@@ -72,7 +72,7 @@ Follow this order every session:
 | PoC backend — FastAPI (`app/backend/`) | ✅ Phase 1 done (FastAPI + SQLite + pytest) |
 | PoC frontend — React (`app/frontend/`) | ✅ Phase 1 done (React + Vite + data-testid) |
 | Pipeline agents 0–3, Summarizer | ❌ Phase 3–5 |
-| Context builder, glossary, ui_map | ❌ Phase 2 |
+| Context builder, glossary, ui_map | ✅ Phase 2 done |
 | Prompts (`pipeline/prompts/`), schemas (`pipeline/schemas/`) | ❌ Phase 3+ |
 | Evaluation harness (`evaluation/`) | ❌ Phase 7 |
 

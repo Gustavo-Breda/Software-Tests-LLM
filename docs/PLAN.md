@@ -187,10 +187,10 @@ exist before scripts can run). Each phase lists deliverables and a done-check.
 - [x] `pipeline/context/ui_map.json` created with all selectors documented.
 - [ ] **Done when:** `docker compose up` serves all 5 flows end-to-end (pending integration test).
 
-### [ ] Phase 2 — Context assets & Context Builder
-- [ ] Author `glossary.md` and `ui_map.json` (screen map + selectors) for the PoC.
-- [ ] Implement `context_builder.py` to assemble glossary, approved examples, screen map, and selectors into prompt context (RAG-style injection).
-- [ ] **Done when:** Context Builder produces a complete context blob for each story.
+### [x] Phase 2 — Context assets & Context Builder
+- [x] Author `glossary.md` and `ui_map.json` (screen map + selectors) for the PoC.
+- [x] Implement `context_builder.py` to assemble glossary, approved examples, screen map, and selectors into prompt context (RAG-style injection).
+- [x] **Done when:** Context Builder produces a complete context blob for each story.
 
 ### [ ] Phase 3 — Agents 0 & 1
 - [ ] Implement Agent 0 (quality gate) and Agent 1 (test-case generation) with the prompts in Section 7; enforce JSON-only outputs validated against schemas.
@@ -324,6 +324,7 @@ methodology) for direct comparison.
 - [ ] Max repair iterations `N`: ______
 - [ ] Multi-candidate generation enabled? ______
 - [x] JSON validation approach: `jsonschema` (from requirements.txt)
+- [x] Context Builder design (Phase 2): (1) Filter aggressively per story — each blob only includes the screens and endpoints that story actually touches; the full ui_map would inflate the blob ~50% without benefit. (2) Include the full glossary (~5 KB) in every blob — it is compact and coeso; splitting by story would create inconsistency risk. (3) Single few-shot example per blob — more examples increase tokens without clear marginal gain; story-specific examples can be added if coverage gaps appear. (4) Section order: glossary → API → UI → seed → example → story — LLM loads all vocabulary before reading the task (rationale: Correia et al., 2025 on RAG verbosity risk).
 
 **Pending source materials** (upload to [`docs/`](./)):
 - [ ] Silva et al. (drives Section 8 metrics & Phase 8 comparison — highest priority)
