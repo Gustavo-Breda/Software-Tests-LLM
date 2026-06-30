@@ -12,7 +12,7 @@ context verbosity (Correia et al., 2025).
 
 Run from the repo root:
 
-    python -m pipeline.context.test_context_builder
+    python -m pipeline.context.verify_context_builder
 
 Exit code is non-zero if any story fails verification.
 """

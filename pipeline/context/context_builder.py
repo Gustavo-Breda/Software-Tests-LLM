@@ -103,8 +103,9 @@ class ContextBlob:
 
     @property
     def token_estimate(self) -> int:
-        # Rough heuristic: ~4 chars per token for PT-BR mixed with code.
-        return self.char_count // 4
+        # PT-BR prose mixed with code runs ~3–3.5 chars/token; use 3.5 to avoid
+        # underestimating context budget for downstream agents.
+        return int(self.char_count / 3.5)
 
     def section_titles(self) -> list[str]:
         return [s.title for s in self.sections]
@@ -152,6 +153,7 @@ class ContextBuilder:
         """Bind to the standard repo layout. ``repo_root`` defaults to two
         levels up from this file (``pipeline/context/context_builder.py``)."""
         if repo_root is None:
+            # parents[0]=context, parents[1]=pipeline, parents[2]=repo_root
             repo_root = Path(__file__).resolve().parents[2]
         return cls(
             glossary_path=repo_root / "pipeline" / "context" / "glossary.md",

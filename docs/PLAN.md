@@ -324,6 +324,7 @@ methodology) for direct comparison.
 - [ ] Max repair iterations `N`: ______
 - [ ] Multi-candidate generation enabled? ______
 - [x] JSON validation approach: `jsonschema` (from requirements.txt)
+- [x] Context Builder design (Phase 2): (1) Filter aggressively per story — each blob only includes the screens and endpoints that story actually touches; the full ui_map would inflate the blob ~50% without benefit. (2) Include the full glossary (~5 KB) in every blob — it is compact and coeso; splitting by story would create inconsistency risk. (3) Single few-shot example per blob — more examples increase tokens without clear marginal gain; story-specific examples can be added if coverage gaps appear. (4) Section order: glossary → API → UI → seed → example → story — LLM loads all vocabulary before reading the task (rationale: Correia et al., 2025 on RAG verbosity risk).
 
 **Pending source materials** (upload to [`docs/`](./)):
 - [ ] Silva et al. (drives Section 8 metrics & Phase 8 comparison — highest priority)
