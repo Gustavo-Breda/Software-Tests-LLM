@@ -17,7 +17,7 @@ RUN apt-get update && \
     rm -rf /var/lib/apt/lists/*
 
 # copying the dependencies first
-COPY app/backend/pyproject.toml app/backend/poetry.lock* ./
+COPY app/backend/pyproject.toml app/backend/poetry.lock ./
 
 # installing the depedencies from pyproject.toml
 RUN poetry config virtualenvs.create false && \

@@ -1,5 +1,3 @@
-from datetime import datetime, timezone
-
 from fastapi import APIRouter, Depends, HTTPException, Query, status
 from sqlalchemy import select
 from sqlalchemy.orm import Session
@@ -63,7 +61,7 @@ def cancel_request(
     if req.status not in (RequestStatus.ABERTA, RequestStatus.EM_ANALISE):
         raise HTTPException(status.HTTP_409_CONFLICT, "Somente solicitações 'aberta' ou 'em análise' podem ser canceladas.")
     req.status = RequestStatus.CANCELADA
-    req.cancelled_at = datetime.now(timezone.utc).replace(tzinfo=None)
+    req.cancelled_at = _utcnow()
     db.commit()
     db.refresh(req)
     return req

@@ -17,6 +17,8 @@ export default function RequestsList() {
     const [statusFilter, setStatusFilter] = useState<RequestStatus | ''>('')
     const [priorityFilter, setPriorityFilter] = useState<RequestPriority | ''>('')
 
+    const [loadError, setLoadError] = useState<string | null>(null)
+
     const [pendingCancel, setPendingCancel] = useState<ServiceRequest | null>(null)
     const [cancelling, setCancelling] = useState(false)
     const [cancelError, setCancelError] = useState<string | null>(null)
@@ -24,9 +26,10 @@ export default function RequestsList() {
     const reload = useCallback(() => {
         if (!token) return
         setLoading(true)
+        setLoadError(null)
         api.listRequests(token, statusFilter || undefined, priorityFilter || undefined)
             .then(res => setItems(res.items))
-            .catch(() => {})
+            .catch(() => setLoadError('Não foi possível carregar as solicitações.'))
             .finally(() => setLoading(false))
     }, [token, statusFilter, priorityFilter])
 
@@ -119,7 +122,9 @@ export default function RequestsList() {
         </div>
 
         {loading ? (
-          <div className="empty">Carregando…</div>
+          <div className="empty" data-testid="requests-loading">Carregando…</div>
+        ) : loadError ? (
+          <div className="error" data-testid="requests-load-error">{loadError}</div>
         ) : items.length === 0 ? (
           <div className="empty" data-testid="requests-empty">
             Nenhuma solicitação encontrada.

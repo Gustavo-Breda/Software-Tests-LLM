@@ -23,6 +23,7 @@ def main() -> None:
         print(f"Error instantiating client: {e}")
         sys.exit(1)
         
+    # TODO(Phase 3): replace with real pipeline prompt loaded from pipeline/prompts/
     prompt = "Quanto é 1 + 1?"
     print(f"Sending prompt to LLM: '{prompt}'")
     

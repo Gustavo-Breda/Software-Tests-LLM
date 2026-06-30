@@ -91,7 +91,7 @@ This builds and starts:
 - **ollama**: Local LLM server, which automatically pulls and loads the `llama3` model on first run.
 - **backend**: FastAPI application (exposed on host port `8001`).
 - **frontend**: React + Vite application (exposed on host port `5173`).
-- **selenium**: Standalone Chrome browser for test execution (ports `4444` and `7900`).
+- **selenium**: Standalone Chrome browser for test execution (ports `4444` and `7900`) — commented out until Phase 6.
 
 ### 3. Run the Pipeline
 To execute the pipeline container and run the integration test query (which pings the local Llama 3 instance to verify the connection):
@@ -146,7 +146,7 @@ oracle (gabarito). Metrics follow Silva et al. to allow direct comparison.
 ```
 .
 ├── README.md                 # this file
-├── docs/AGENTS.md            # guide for coding agents working in this repo
+├── AGENTS.md                 # guide for coding agents working in this repo
 ├── docs/PLAN.md               implementation plan & milestones
 ├── pipeline/                 # the QA assistant pipeline
 │   ├── agents/               # agent 0–3, repair, summarizer
