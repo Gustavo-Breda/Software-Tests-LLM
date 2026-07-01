@@ -73,30 +73,117 @@ LLM-as-a-Judge · bounded repair loop.
 
 ## Getting Started
 
-Follow the steps below to configure and spin up the entire environment (database, frontend, backend, selenium, and the pipeline running a local LLM):
+Everything runs inside Docker. No Python or Node installation needed on the host.
 
-### 1. Configure Environment Variables
-Copy the example environment file:
+### 1. Configure environment
+
 ```bash
 cp .env.example .env
 ```
-*(Optional)* If you plan to use closed models (such as Gemini or Claude), populate the respective API keys (`GOOGLE_API_KEY`, `ANTHROPIC_API_KEY`) in the `.env` file.
 
-### 2. Start the Docker Containers
-Build and run the full stack in the background:
+Edit `.env` to set the LLM provider and model. For local inference, no API key is needed:
+
+```env
+LLM_PROVIDER=ollama
+LLM_MODEL=llama3
+```
+
+To use a closed model, add the corresponding key:
+
+```env
+# Gemini
+LLM_PROVIDER=gemini
+LLM_MODEL=gemini-3.1-flash
+GOOGLE_API_KEY=your-key-here
+
+# Claude
+LLM_PROVIDER=claude
+LLM_MODEL=claude-sonnet-4-6
+ANTHROPIC_API_KEY=your-key-here
+```
+
+### 2. Build and start the stack
+
 ```bash
 docker compose up -d --build
 ```
-This builds and starts:
-- **ollama**: Local LLM server, which automatically pulls and loads the `llama3` model on first run.
-- **backend**: FastAPI application (exposed on host port `8001`).
-- **frontend**: React + Vite application (exposed on host port `5173`).
-- **selenium**: Standalone Chrome browser for test execution (ports `4444` and `7900`) — commented out until Phase 6.
 
-### 3. Run the Pipeline
-To execute the pipeline container and run the integration test query (which pings the local Llama 3 instance to verify the connection):
+Services started:
+| Service | URL | Purpose |
+|---|---|---|
+| `ollama` | — | Local open models (Llama, Qwen, DeepSeek, Mistral…) |
+| `backend` | http://localhost:8001 | FastAPI PoC app |
+| `frontend` | http://localhost:5173 | React PoC app |
+| `selenium` | — | Browser for Selenium tests (enabled in Phase 6) |
+
+### 3. Pull a local model (first run only, when using Ollama)
+
 ```bash
-docker compose run --rm pipeline
+docker compose exec ollama ollama pull llama3
+```
+
+### 4. Verify the stack
+
+Open http://localhost:5173 in a browser. Log in with one of the seed users:
+
+| E-mail | Password |
+|---|---|
+| `alice@example.com` | `secret123` |
+| `bob@example.com` | `bobpass1` |
+
+### 5. Run the pipeline
+
+```bash
+# Default provider from .env
+docker compose run --rm pipeline python -m pipeline.workflow.runner
+
+# Override provider inline without editing .env
+docker compose run --rm \
+  -e LLM_PROVIDER=gemini \
+  -e LLM_MODEL=gemini-3.1-flash \
+  pipeline python -m pipeline.workflow.runner
+```
+
+### 6. Work with the Context Builder (Phase 2)
+
+The Context Builder assembles the RAG-style prompt context that is injected into all agents.
+
+```bash
+# List available user stories
+docker compose run --rm pipeline python -m pipeline.context.context_builder --list
+
+# Inspect the full context blob for a specific story
+docker compose run --rm pipeline python -m pipeline.context.context_builder US-01
+
+# Dump context blobs for all stories at once
+docker compose run --rm pipeline python -m pipeline.context.context_builder --all
+
+# Verify that every blob is complete (all required sections, criteria, selectors)
+docker compose run --rm pipeline python -m pipeline.context.verify_context_builder
+```
+
+### 7. Run backend tests
+
+```bash
+docker compose run --rm backend pytest -v
+```
+
+### 8. Run generated Selenium scripts (Phase 5+)
+
+```bash
+docker compose run --rm pipeline pytest generated/scripts
+```
+
+### 9. Compute evaluation metrics (Phase 7+)
+
+```bash
+docker compose run --rm pipeline python -m evaluation.metrics
+```
+
+### 10. Tear down
+
+```bash
+docker compose down
 ```
 
 ---
@@ -145,31 +232,39 @@ oracle (gabarito). Metrics follow Silva et al. to allow direct comparison.
 
 ```
 .
-├── README.md                 # this file
-├── AGENTS.md                 # guide for coding agents working in this repo
-├── docs/PLAN.md               implementation plan & milestones
-├── pipeline/                 # the QA assistant pipeline
-│   ├── agents/               # agent 0–3, repair, summarizer
-│   ├── context/              # context builder, glossary, ui_map
-│   ├── prompts/              # one file per prompt (see plan.md §8)
-│   ├── schemas/              # JSON schemas / models for agent I/O
-│   ├── llm/                  # provider-agnostic clients (factory + providers)
-│   └── workflow/             # orchestration + repair branch
+├── README.md                  # this file
+├── AGENTS.md                  # guide for coding agents working in this repo
+├── docs/PLAN.md               # implementation plan & milestones
+├── pipeline/                  # the QA assistant pipeline (Python)
+│   ├── agents/                # agent0–3 + summarizer stubs (Phase 3–6)
+│   ├── context/               # context builder + assets
+│   │   ├── models.py          #   UserStory, ContextSection, ContextBlob
+│   │   ├── builder.py         #   ContextBuilder + REQUIRED_SECTIONS
+│   │   ├── verify.py          #   VerificationResult + verify_complete()
+│   │   ├── context_builder.py #   CLI: python -m pipeline.context.context_builder
+│   │   ├── verify_context_builder.py  # CLI: verify all stories
+│   │   ├── glossary.md        #   domain glossary (human-authored)
+│   │   ├── ui_map.json        #   screen → data-testid selectors (human-authored)
+│   │   └── examples/          #   approved few-shot examples (.json)
+│   ├── prompts/               # one .txt per agent (Phase 3+)
+│   ├── schemas/               # JSON schemas per agent I/O (Phase 3+)
+│   ├── llm/                   # provider-agnostic clients (factory + providers)
+│   └── workflow/              # orchestration + repair branch
 ├── app/
-│   ├── backend/              # FastAPI (see app/backend/README.md)
-│   └── frontend/             # React + Vite (see app/frontend/README.md)
+│   ├── backend/               # FastAPI PoC app
+│   └── frontend/              # React + Vite PoC app
 ├── data/
-│   ├── user_stories/         # the 5 stories as structured input
-│   └── golden/               # human oracle / gabarito
-├── generated/                # pipeline outputs (test cases, scripts, reports)
-├── evaluation/               # metrics computation & results
-├── docker/                   # Dockerfiles (pipeline, backend, frontend)
-├── docker-compose.yml        # services: ollama, pipeline, backend, frontend, selenium
-└── .env.example              # LLM_PROVIDER/LLM_MODEL + API keys (no secrets)
+│   ├── user_stories/          # the 5 stories as structured input (.yaml)
+│   └── golden/                # human oracle / gabarito (Phase 7)
+├── generated/                 # pipeline outputs (test cases, scripts, reports)
+├── evaluation/                # metrics computation & results (Phase 7)
+├── docker/                    # Dockerfiles (pipeline, backend, frontend, ollama)
+├── docker-compose.yml         # services: ollama, pipeline, backend, frontend, selenium
+└── .env.example               # LLM_PROVIDER/LLM_MODEL + API keys (no secrets)
 ```
 
-> The codebase is in an early stage. The structure above is the target layout
-> described in `docs/PLAN.md`; not all directories exist yet.
+> Phases 0–2 are complete. Directories marked Phase 3+ are scaffolded as stubs
+> but not yet implemented. See `docs/PLAN.md` for the full roadmap.
 
 ---
 

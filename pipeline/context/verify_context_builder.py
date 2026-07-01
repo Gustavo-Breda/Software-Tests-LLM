@@ -1,6 +1,6 @@
 import sys
 
-from .context_builder import ContextBuilder, verify_complete, REQUIRED_SECTIONS
+from . import ContextBuilder, verify_complete, REQUIRED_SECTIONS
 
 
 def main() -> int:

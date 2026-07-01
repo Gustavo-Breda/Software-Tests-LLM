@@ -83,7 +83,15 @@ Follow this order every session:
 ```
 pipeline/              # the QA assistant pipeline (Python)
   agents/              # agent0–3 + summarizer (Phase 3–5, not yet scaffolded)
-  context/             # context_builder.py, glossary.md, ui_map.json (Phase 2)
+  context/             # context builder split into focused modules (Phase 2 done)
+    models.py          #   UserStory, ContextSection, ContextBlob
+    builder.py         #   ContextBuilder + REQUIRED_SECTIONS
+    verify.py          #   VerificationResult + verify_complete()
+    context_builder.py #   CLI entry point
+    verify_context_builder.py  # verification CLI
+    glossary.md        #   domain glossary
+    ui_map.json        #   screen → data-testid selectors
+    examples/          #   approved few-shot examples
   llm/                 # provider-agnostic LLM clients
     adapter.py         # base class + LLMResponse dataclass
     factory.py         # get_client("provider:model", settings)

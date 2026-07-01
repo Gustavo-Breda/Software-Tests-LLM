@@ -126,9 +126,14 @@ pipeline/
     agent3_codegen.py
     summarizer.py
   context/
-    context_builder.py
+    models.py                 # UserStory, ContextSection, ContextBlob
+    builder.py                # ContextBuilder + REQUIRED_SECTIONS
+    verify.py                 # VerificationResult + verify_complete()
+    context_builder.py        # CLI: python -m pipeline.context.context_builder
+    verify_context_builder.py # CLI: verify all stories
     glossary.md               # domain glossary (human-authored)
     ui_map.json               # screen → data-testid selectors (human-authored)
+    examples/                 # approved few-shot examples (.json)
   llm/                        # provider-agnostic LLM clients (factory + providers)
     adapter.py
     claude.py
