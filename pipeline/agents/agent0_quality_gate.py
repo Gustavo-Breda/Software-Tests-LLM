@@ -100,7 +100,7 @@ def _validate_strict_gate(data: dict[str, Any]) -> None:
         raise AgentOutputError(
             "Strict gate violation: APROVADA requires derivavel=true and problemas=[]."
         )
-    if status == "PRECISA_DE_ESCLARECIMENTO" and derivavel and not problemas:
+    if status == "PRECISA_DE_ESCLARECIMENTO" and (derivavel or not problemas):
         raise AgentOutputError(
             "Strict gate violation: PRECISA_DE_ESCLARECIMENTO requires at least one problem or derivavel=false."
         )

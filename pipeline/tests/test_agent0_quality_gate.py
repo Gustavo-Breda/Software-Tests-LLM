@@ -116,3 +116,21 @@ def test_agent0_rejects_inconsistent_strict_gate_json():
 
     with pytest.raises(AgentOutputError, match="Strict gate violation"):
         agent0_quality_gate.run(_blob(), client)
+
+
+def test_agent0_rejects_clarification_with_derivavel_true():
+    payload = _clarification_payload()
+    payload["derivavel"] = True
+    client = FakeClient(json.dumps(payload))
+
+    with pytest.raises(AgentOutputError, match="Strict gate violation"):
+        agent0_quality_gate.run(_blob(), client)
+
+
+def test_agent0_rejects_clarification_without_problems():
+    payload = _clarification_payload()
+    payload["problemas"] = []
+    client = FakeClient(json.dumps(payload))
+
+    with pytest.raises(AgentOutputError, match="Strict gate violation"):
+        agent0_quality_gate.run(_blob(), client)

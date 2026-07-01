@@ -201,9 +201,9 @@ exist before scripts can run). Each phase lists deliverables and a done-check.
 - [x] Implement `context_builder.py` to assemble glossary, approved examples, screen map, and selectors into prompt context (RAG-style injection).
 - [x] **Done when:** Context Builder produces a complete context blob for each story.
 
-### [ ] Phase 3 — Agents 0 & 1
-- [ ] Implement Agent 0 (quality gate) and Agent 1 (test-case generation) with the prompts in Section 7; enforce JSON-only outputs validated against schemas.
-- [ ] **Done when:** the 5 stories pass Agent 0 (or produce actionable clarifications) and Agent 1 emits valid structured test cases with a traceability matrix.
+### [x] Phase 3 — Agents 0 & 1
+- [x] Implement Agent 0 (quality gate) and Agent 1 (test-case generation) with the prompts in Section 7; enforce JSON-only outputs validated against schemas.
+- [x] **Done when:** the 5 stories pass Agent 0 (or produce actionable clarifications) and Agent 1 emits valid structured test cases with a traceability matrix.
 
 ### [ ] Phase 4 — Agent 2 (judge) + repair loop
 - [ ] Implement Agent 2 (LLM-as-a-Judge) scoring coverage, fidelity, clarity, automatability; route rejected cases back through Agent 1 (repair prompt) with bounded retries `N`.
