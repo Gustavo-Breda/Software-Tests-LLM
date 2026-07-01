@@ -1,8 +1,6 @@
-from __future__ import annotations
-
 import time
 
-from typing import Any, Optional
+from typing import Any
 
 from .adapter import LLMClient, LLMResponse
 
@@ -25,7 +23,7 @@ class OllamaClient(LLMClient):
         self,
         prompt: str,
         *,
-        system: Optional[str] = None,
+        system: str | None = None,
         temperature: float = 0.2,
         max_tokens: int = 1024,
     ) -> LLMResponse:

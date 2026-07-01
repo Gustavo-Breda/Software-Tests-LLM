@@ -1,5 +1,3 @@
-from __future__ import annotations
-
 import os
 import sys
 
@@ -8,7 +6,6 @@ from pipeline.llm.factory import get_client
 
 
 def main() -> None:
-    """Main entry point for the pipeline runner."""
     settings = get_settings()
 
     provider = os.getenv("LLM_PROVIDER", "ollama")
@@ -22,11 +19,11 @@ def main() -> None:
     except Exception as e:
         print(f"Error instantiating client: {e}")
         sys.exit(1)
-        
+
     # TODO(Phase 3): replace with real pipeline prompt loaded from pipeline/prompts/
     prompt = "Quanto é 1 + 1?"
     print(f"Sending prompt to LLM: '{prompt}'")
-    
+
     try:
         response = client.complete(prompt, max_tokens=100)
         print("\n=== LLM Response ===")
@@ -38,6 +35,7 @@ def main() -> None:
     except Exception as e:
         print(f"Error completing request: {e}")
         sys.exit(1)
+
 
 if __name__ == "__main__":
     main()

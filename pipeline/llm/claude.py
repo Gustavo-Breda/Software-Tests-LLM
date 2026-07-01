@@ -1,8 +1,6 @@
-from __future__ import annotations
-
 import time
 
-from typing import Any, Optional
+from typing import Any
 
 from .adapter import LLMClient, LLMResponse
 
@@ -21,14 +19,14 @@ class ClaudeClient(LLMClient):
             ) from exc
         if not api_key:
             raise ValueError("ANTHROPIC_API_KEY is not set.")
-        
+
         self._client = Anthropic(api_key=api_key)
 
     def complete(
         self,
         prompt: str,
         *,
-        system: Optional[str] = None,
+        system: str | None = None,
         temperature: float = 0.2,
         max_tokens: int = 1024,
     ) -> LLMResponse:
@@ -41,7 +39,7 @@ class ClaudeClient(LLMClient):
             messages=[{"role": "user", "content": prompt}],
         )
         elapsed = time.perf_counter() - start
-        
+
         usage = getattr(response, "usage", None)
 
         return LLMResponse(

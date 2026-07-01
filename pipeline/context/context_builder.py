@@ -1,35 +1,3 @@
-"""Context Builder — Phase 2.
-
-Assembles project context (glossary, approved examples, screen map, selectors,
-seed data, story + criteria) into a single markdown "context blob" that
-downstream agents inject into their prompts as RAG-style ground truth.
-
-Design principles (see ``docs/PLAN.md`` and Correia et al., 2025):
-
-* **Filter aggressively per story.** Only the screens, endpoints, and selectors
-  that the story actually touches go into the blob. Including the full
-  ``ui_map.json`` would pollute the prompt and increase verbosity.
-* **Fixed section order.** Reference material first (glossary, API, UI, seed),
-  then few-shot example, then the story itself — so the LLM has all
-  vocabulary loaded before it reads the task.
-* **Markdown output.** Single string ready to be concatenated with a prompt
-  template. No tool-specific structure invented.
-
-Public API
-----------
-``ContextBuilder.from_repo(repo_root)`` → builder bound to the standard repo
-layout. ``builder.build(story_id)`` → ``ContextBlob`` with ``.text`` (markdown)
-and metadata. ``builder.build_all()`` → list of blobs for every story under
-``data/user_stories/``.
-
-CLI
----
-``python -m pipeline.context.context_builder US-02`` prints the blob.
-``python -m pipeline.context.context_builder --all`` prints every blob.
-``python -m pipeline.context.context_builder --list`` lists known story IDs.
-"""
-from __future__ import annotations
-
 import json
 import sys
 
@@ -40,11 +8,8 @@ from typing import Any
 import yaml
 
 
-# --------------------------------------------------------------------- types
-
 @dataclass(frozen=True)
 class UserStory:
-    """Structured form of a YAML file under ``data/user_stories/``."""
     id: str
     title: str
     persona: str
@@ -71,8 +36,6 @@ class UserStory:
 
 @dataclass
 class ContextSection:
-    """One titled block of the rendered blob. Order is determined by the
-    caller; this dataclass only handles rendering."""
     title: str
     body: str
 
@@ -82,7 +45,6 @@ class ContextSection:
 
 @dataclass
 class ContextBlob:
-    """Complete context blob for one story."""
     story_id: str
     story: UserStory
     sections: list[ContextSection]
@@ -111,10 +73,6 @@ class ContextBlob:
         return [s.title for s in self.sections]
 
 
-# ------------------------------------------------------------------- builder
-
-# Required sections — used by ``verify_complete`` and by tests to assert that
-# every story produces a "complete" blob (the Phase 2 done-check).
 REQUIRED_SECTIONS: tuple[str, ...] = (
     "Glossário de Domínio",
     "Contrato da API (endpoints relevantes)",
@@ -146,12 +104,8 @@ class ContextBuilder:
         self._examples_dir = examples_dir
         self._stories_dir = stories_dir
 
-    # --- factories -----------------------------------------------------
-
     @classmethod
     def from_repo(cls, repo_root: Path | None = None) -> "ContextBuilder":
-        """Bind to the standard repo layout. ``repo_root`` defaults to two
-        levels up from this file (``pipeline/context/context_builder.py``)."""
         if repo_root is None:
             # parents[0]=context, parents[1]=pipeline, parents[2]=repo_root
             repo_root = Path(__file__).resolve().parents[2]
@@ -161,8 +115,6 @@ class ContextBuilder:
             examples_dir=repo_root / "pipeline" / "context" / "examples",
             stories_dir=repo_root / "data" / "user_stories",
         )
-
-    # --- public --------------------------------------------------------
 
     def list_stories(self) -> list[str]:
         return sorted(p.stem for p in self._stories_dir.glob("*.yaml"))
@@ -203,11 +155,8 @@ class ContextBuilder:
     def build_all(self) -> list[ContextBlob]:
         return [self.build(sid) for sid in self.list_stories()]
 
-    # --- section renderers --------------------------------------------
-
     def _render_glossary(self) -> str:
-        # Strip the top-level "# Glossário..." header from the file so it
-        # nests cleanly under our H2 section title.
+        # Strip the top-level "# Glossário..." header so it nests under our H2.
         lines = self._glossary_text.splitlines()
         if lines and lines[0].startswith("# "):
             lines = lines[1:]
@@ -311,15 +260,7 @@ class ContextBuilder:
             lines.append(f"- **{cid}**{tag}: {desc}")
         return "\n".join(lines)
 
-    # --- helpers -------------------------------------------------------
-
     def _relevant_endpoints(self, story: UserStory) -> dict[str, dict[str, Any]]:
-        """Return endpoints from ``ui_map.api`` relevant to ``story``.
-
-        An endpoint is relevant if either:
-          (a) its ``story`` field matches ``story.id``, or
-          (b) its dotted name (e.g. ``auth.me``) is in ``story.touched_endpoints``.
-        """
         api = self._ui_map.get("api", {})
         wanted: set[str] = set(story.touched_endpoints or [])
         result: dict[str, dict[str, Any]] = {}
@@ -347,11 +288,6 @@ class ContextBuilder:
         return result
 
     def _best_example(self, story: UserStory) -> dict[str, Any] | None:
-        """Pick the example file most relevant to ``story``.
-
-        Priority: same story → any example. Returns the first match by
-        filesystem order to keep the choice deterministic.
-        """
         if not self._examples_dir.is_dir():
             return None
         files = sorted(self._examples_dir.glob("*.json"))
@@ -371,8 +307,6 @@ class ContextBuilder:
         return same_story if same_story is not None else fallback
 
 
-# ------------------------------------------------------- verification helpers
-
 @dataclass
 class VerificationResult:
     story_id: str
@@ -385,8 +319,6 @@ class VerificationResult:
 
 
 def verify_complete(blob: ContextBlob) -> VerificationResult:
-    """Check that the blob contains every required section and at least
-    minimal evidence of story-relevant content (selectors, criteria IDs)."""
     titles = blob.section_titles()
     missing = [t for t in REQUIRED_SECTIONS if t not in titles]
 
@@ -418,12 +350,10 @@ def verify_complete(blob: ContextBlob) -> VerificationResult:
     )
 
 
-# ----------------------------------------------------------------------- CLI
-
 def _cli(argv: list[str]) -> int:
     builder = ContextBuilder.from_repo()
     if not argv or argv[0] in {"-h", "--help"}:
-        print(__doc__)
+        print("usage: python -m pipeline.context.context_builder [--list | --all | <story_id>]")
         print(f"Stories disponíveis: {', '.join(builder.list_stories()) or '(nenhuma)'}")
         return 0
     if argv[0] == "--list":

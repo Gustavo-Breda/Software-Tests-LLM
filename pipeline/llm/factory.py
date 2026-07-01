@@ -1,7 +1,3 @@
-from __future__ import annotations
-
-from typing import List
-
 from ..settings import Settings, get_settings
 
 from .adapter import LLMClient
@@ -11,14 +7,6 @@ from .ollama_client import OllamaClient
 
 
 def get_client(identifier: str, settings: Settings | None = None) -> LLMClient:
-    """Instantiate a client from an ``<provider>[:<model>]`` identifier.
-
-    Examples
-    --------
-    >>> get_client("ollama:llama3")
-    >>> get_client("gemini")
-    >>> get_client("claude:claude-3-5-sonnet-latest")
-    """
     settings = settings or get_settings()
 
     if ":" in identifier:
@@ -43,14 +31,13 @@ def get_client(identifier: str, settings: Settings | None = None) -> LLMClient:
             model=model or settings.claude_model,
             api_key=settings.anthropic_api_key or "",
         )
-    
+
     raise ValueError(f"Unknown LLM provider: {provider!r}")
 
 
-def list_available_clients(settings: Settings | None = None) -> List[str]:
-    """Return the identifiers that *could* be instantiated given current env."""
+def list_available_clients(settings: Settings | None = None) -> list[str]:
     settings = settings or get_settings()
-    available: List[str] = [f"ollama:{m}" for m in settings.ollama_models]
+    available: list[str] = [f"ollama:{m}" for m in settings.ollama_models]
     if settings.google_api_key:
         available.append(f"gemini:{settings.gemini_model}")
     if settings.anthropic_api_key:

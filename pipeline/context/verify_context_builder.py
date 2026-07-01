@@ -1,23 +1,3 @@
-"""Phase 2 done-check.
-
-Runs the Context Builder against every story under ``data/user_stories/``
-and asserts that each blob is complete:
-
-* All required sections are present.
-* The story ID and every acceptance-criterion ID appear in the rendered text.
-* At least one ``data-testid`` selector is in the blob.
-
-Also prints size statistics (chars / approx. tokens) so we can keep an eye on
-context verbosity (Correia et al., 2025).
-
-Run from the repo root:
-
-    python -m pipeline.context.verify_context_builder
-
-Exit code is non-zero if any story fails verification.
-"""
-from __future__ import annotations
-
 import sys
 
 from .context_builder import ContextBuilder, verify_complete, REQUIRED_SECTIONS
@@ -54,7 +34,6 @@ def main() -> int:
             all_ok = False
         print()
 
-    # Tabela resumo
     print("Resumo")
     print(f"  {'Story':<8} {'OK':<4} {'Chars':>7} {'~Tokens':>9} {'Critérios':>10}")
     for sid, ok, chars, toks, crit in rows:

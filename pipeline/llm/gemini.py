@@ -1,13 +1,11 @@
-from __future__ import annotations
-
 import time
 
-from typing import Any, Optional
+from typing import Any
 
 from .adapter import LLMClient, LLMResponse
 
 
-# models that support the ThinkingConfig API (budget for internal reasoning).
+# models that support ThinkingConfig
 _THINKING_MODELS = ("gemini-2.5-flash", "gemini-2.5-pro", "gemini-3.1-flash")
 
 # thinking budget for reproducibility
@@ -15,6 +13,7 @@ _THINKING_BUDGET = 8_192
 
 # minimum total token budget for thinking models (thinking + output combined)
 _GEMINI_MIN_OUTPUT_TOKENS = 16_384
+
 
 class GeminiClient(LLMClient):
     provider = "gemini"
@@ -31,7 +30,7 @@ class GeminiClient(LLMClient):
             ) from exc
         if not api_key:
             raise ValueError("GOOGLE_API_KEY is not set.")
-        
+
         self._genai = genai
         self._client = genai.Client(api_key=api_key)
         self._types = genai_types
@@ -40,16 +39,14 @@ class GeminiClient(LLMClient):
         self,
         prompt: str,
         *,
-        system: Optional[str] = None,
+        system: str | None = None,
         temperature: float = 0.2,
         max_tokens: int = 1024,
     ) -> LLMResponse:
         response = None
         finish_reason = None
 
-        is_thinking_model = (
-            any(self.model.startswith(m) for m in _THINKING_MODELS)
-        )
+        is_thinking_model = any(self.model.startswith(m) for m in _THINKING_MODELS)
         thinking_config = (
             self._types.ThinkingConfig(thinking_budget=_THINKING_BUDGET)
             if is_thinking_model
@@ -66,7 +63,7 @@ class GeminiClient(LLMClient):
         )
 
         # retry up to 3 times on transient server/quota errors so one API call does not abort the entire experiment run.
-        last_exc: Optional[Exception] = None
+        last_exc: Exception | None = None
 
         start = time.perf_counter()
         for attempt in range(3):
@@ -89,11 +86,9 @@ class GeminiClient(LLMClient):
                 raise
         elapsed = time.perf_counter() - start
 
-        # 
         if response is None:
             raise RuntimeError("Gemini API failed after retries") from last_exc
-        
-        #
+
         candidates = getattr(response, "candidates", None) or []
         if candidates:
             fr = getattr(candidates[0], "finish_reason", None)
@@ -101,14 +96,12 @@ class GeminiClient(LLMClient):
                 getattr(fr, "name", str(fr)) if fr is not None else None
             )
 
-        # getting the response from gemini
         response_text = ""
         try:
             response_text = response.text or ""
         except ValueError:
             pass
-        
-        # group tokens metric
+
         usage = getattr(response, "usage_metadata", None)
         prompt_tokens = getattr(usage, "prompt_token_count", None) if usage else None
         completion_tokens = getattr(usage, "candidates_token_count", None) if usage else None
