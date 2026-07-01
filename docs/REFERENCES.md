@@ -1,23 +1,66 @@
 # References
 
 Source citations for the QA Assistant Agent project (see [`../article.pdf`](../article.pdf)).
-Status reflects a reference-verification pass on 2026-06-08.
+Status reflects a reference-verification pass on 2026-06-08; upload tracking updated 2026-06-30.
 
-## To upload here (not findable online)
+## Uploaded (available in `docs/`)
 
-Drop the PDFs in this folder with these filenames:
+The following PDFs have been added to `docs/` under their original filenames. Their compressed
+content streams cannot be extracted without `pdftotext`/`pdfplumber` — add a note here once
+the key excerpts (methodology, metrics) have been read and cross-referenced with PLAN.md §8.
 
-- `silva-llm-test-case-generation.pdf` — Silva, L. et al. *Investigating the Use
-  of LLMs in Test Case Generation.* **Highest priority** — it underpins the
-  evaluation metrics (`../plan.md` §8) and the Phase 8 comparison.
-- `gheventer-industrial-readiness.pdf` — Gheventer, A. et al. *Generative AI
-  Solutions for Software Quality: Assessing Industrial Readiness.*
-- `souza-functional-test-evolution.pdf` — Souza, B. P. et al. *A Journey of
-  Functional Test Evolution in the Public Sector.* (Backs the `data-testid` decision.)
+**Silva, L. et al. (2026)** — *Investigating the Use of LLMs in Test Case Generation.*
+Journal of Software Engineering Research and Development. UFRJ group (including advisor
+Rafael de Mello). File: `Todos e Tema 2- Silva et al., 2026.pdf`
+
+Controlled study: GPT-4o, DeepSeek, Gemini 1.5 Flash × 10 real user stories (Brazilian
+judicial system) × zero/one-shot × 3 repetitions = 180 runs, 1,528 test cases. Oracle:
+production-validated test cases by experienced testers. Metrics: Precision, Recall, F1
+against Travassos et al. (1999) defect taxonomy — Incorrect Fact, Inconsistency, Ambiguity,
+Omission; correctness is **all-or-nothing** (one defect = entire case Defective). Results:
+72.68% correct; F1 plateau 0.58–0.65 across all models (no statistically significant
+difference); one-shot improves precision but hurts recall; omission (FN) is dominant failure.
+**Phase 8 comparison baseline:** the bare Agent 1 (zero/one-shot, no RAG, no judge) run
+in this project replicates this protocol — target Precision ~0.72, Recall ~0.56, F1 ~0.62.
+Replication package: https://github.com/leonardocesarc/testcase
+
+---
+
+**Gheventer, A. et al. (2026)** — *Generative AI Solutions for Software Quality: Assessing
+Industrial Readiness.* Software Quality Journal. In Press. UFRJ group. File: `Todos- Gheventer et al., 2026.pdf`
+
+Rapid Multivocal Literature Review (RMLR): 732 publications screened (Scopus + grey
+literature); 22 selected (9 scientific + 13 grey); 24 Gen AI solutions identified including
+GitHub Copilot, Snyk, Testim, GitLab Duo. Inter-rater: Linear Weighted Cohen's Kappa 0.45–0.70.
+Main finding: field is "emerging but immature" — academic prototypes dominate, nearly all lack
+industrial validation, formal support, or production-readiness. Three structural barriers:
+(1) *Last Mile Problem* (research-to-production gap); (2) *Strategic Adoption Dilemma* (closed
+models → vendor lock-in vs. open models → GPU cost; Ollama cited as lower-barrier CPU option);
+(3) *Scarcity of Realistic Public Data*. Cite in PLAN.md §3.1 and §8 to justify closed-vs-open
+model comparison and Ollama use. Cite in §9 Risks for API version instability finding (silent
+updates broke pipelines — Kang et al. 2024). Zenodo: https://zenodo.org/records/17096048
+
+---
+
+**Souza, B. P. et al. (2025)** — *A Journey of Functional Test Evolution in the Public Sector.*
+SAST'25. UFRJ + UNIRIO + UFF + CAPGov-COPPETEC. File: `Tema 2- de Souza et al., 2025.pdf`
+
+Experience report: 10-year partnership maintaining a large-scale legal system for a Brazilian
+public institution. Documents 4 maturity stages (ad-hoc → manual → Selenium IDE → fully
+automated). Key finding: "random generation of form element identifiers" was one of three
+primary barriers to automation; fix was mandating consistent naming conventions across teams.
+**Directly justifies the `data-testid` convention** used throughout the PoC frontend and
+`ui_map.json` — empirical evidence from real Brazilian public-sector production experience
+that naming stability is a precondition for reliable automation. Cite in AGENTS.md.
+
+---
+
+## Still needed (not yet uploaded)
+
 - `hernandez-aguero-invest.pdf` — Hernández-Agüero, E.; Quesada-López, C.;
   Chaves-Sánchez, J. P. *LLM-Assisted INVEST Evaluation and Improvement of User
-  Stories: An Industrial Replication Study.* (Not marked attached, but no public
-  URL/DOI was found — please add the DOI/link too.)
+  Stories: An Industrial Replication Study.* (No public URL/DOI found — upload PDF
+  and add DOI/link.)
 
 ## Verified online (no upload needed)
 

@@ -87,10 +87,13 @@ via config (`.env`: `LLM_PROVIDER`, `LLM_MODEL`). Two provider families:
 > models locally lets us **compare closed vs. open** on the same stories, a
 > direct test of Gheventer et al.'s industrial-readiness concern (see Section 8).
 
-> Note (Silva et al.): top-tier models tend to **plateau** on test-case
-> generation — prompt design matters more than model choice. Do not bet success
-> on one model; compensate with prompt design, structured context, and
-> multi-stage review.
+> Note (Silva et al. 2026): A controlled study with GPT-4o, DeepSeek, and Gemini 1.5 Flash
+> on 10 real user stories found a **performance plateau** — no statistically significant
+> difference between models in F1-Score (range 0.58–0.65, zero-shot). Model choice should
+> be guided by cost and latency rather than expected quality difference. One-shot prompting
+> improves precision but increases omissions vs. zero-shot; neither dominates in F1.
+> The dominant failure mode is **omission** (FN), not incorrect content. Compensate with
+> structured domain context, explicit acceptance criteria, and the multi-stage judge+repair loop.
 
 ### 3.2 Orchestration — candidates
 | Option | Pros | Cons / risks |
@@ -103,10 +106,11 @@ branch and bounded retries; introduce a framework only if state handling becomes
 unwieldy. **Status: TBD — record the choice here once made.**
 
 ### 3.3 Other decisions to record
-- Max repair iterations `N` (suggest 2–3) to avoid loops.
-- Multi-candidate generation in Agent 1 (judge picks best) — **optional/stretch**;
-  the report lists it as "when viable" and the README marks it optional. Inspired
-  by Best-of-N (Wang et al., CURE). Adopt only if time allows.
+- Max repair iterations `N`: **3** — sufficient to correct systematic IncorrectFact/Omission
+  patterns observed by Silva et al. (2026) without risk of infinite loops.
+- Multi-candidate generation: **Deferred** — Silva et al. found no statistically significant
+  gain from any single prompting variation; invest effort in prompt design and RAG context
+  rather than multi-candidate overhead. (Best-of-N via Wang et al./CURE remains a stretch goal.)
 - JSON validation strategy (schema lib vs. hand-rolled).
 
 ---
@@ -289,9 +293,18 @@ methodology) for direct comparison.
 - Perceived effort — analyst review time vs. manual authoring time for the same stories.
 
 **Methodology notes**
-- *Silva et al. comparison (Phase 8) is pending the source PDF.* Once provided,
-  map our metric definitions 1:1 to theirs; until then, treat the definitions
-  above as our own baseline. (Required file in [`docs/`](./).)
+- *Silva et al. (2026) baseline established.* Their metrics are Precision, Recall, and F1-Score
+  computed against a human-expert oracle using the Travassos et al. (1999) defect taxonomy
+  (IncorrectFact, Inconsistency, Ambiguity, Omission). Correctness is **all-or-nothing**: one
+  defect in a multi-step case makes the entire case Defective. The bare Agent 1 baseline in
+  this project (zero/one-shot, no RAG, no judge) **replicates Silva et al.'s protocol** — use
+  identical oracle construction (domain experts, production-validated) and the same three
+  metrics for direct comparison. Expected baseline: Precision ~0.72, Recall ~0.56, F1 ~0.62
+  (zero-shot). Replication package: https://github.com/leonardocesarc/testcase
+- *Selector strategy grounded in Souza et al. (2025)*: a 10-year experience report on Selenium
+  automation in a Brazilian legal system identified "random generation of form element identifiers"
+  as one of the three primary barriers to test automation. The `data-testid` convention adopted
+  throughout this project is the prescribed solution to that antipattern.
 - *Apples-to-apples:* also run a **bare Agent 1 baseline** (zero/one-shot, no
   RAG, no judge) so the full pipeline can be compared against a Silva-style
   single-prompt baseline (ablation).
@@ -314,20 +327,21 @@ methodology) for direct comparison.
 | Fragile selectors break scripts | `data-testid` from day one; maintain `ui_map.json`; Page Object Model |
 | Story quality determines output quality | Agent 0 gate before any generation |
 | Model lock-in / access issues | Provider-agnostic `llm_client`; keep prompts model-independent |
-| Repair loop non-termination | Bounded retries `N` |
+| API version instability / model drift | Pin exact model versions in `.env.example`; lock Ollama model tags; run baseline before updating model version (Gheventer et al. 2026 cite Kang et al. 2024: silent GPT-3.5 updates broke output format and automated pipelines) |
+| Repair loop non-termination | Bounded retries `N = 3` |
 
 ---
 
 - [x] LLM provider(s) + model(s) chosen (closed API and/or open via Ollama): Ollama (Llama 3) for local open model, Gemini 2.5 Flash/Claude Sonnet 4.6 for closed models — rationale: Swappable via `.env`, allowing local vs. closed model comparison.
 - [x] Active provider/model selection: `LLM_PROVIDER` + `LLM_MODEL` env vars select the active provider at runtime; `pipeline/workflow/runner.py` reads these and calls `factory.get_client()` — no code changes needed to switch models.
 - [x] Orchestration approach chosen: Plain Python script (`pipeline/workflow/runner.py`) — rationale: Keeps dependencies light and provides maximum control.
-- [ ] Max repair iterations `N`: ______
-- [ ] Multi-candidate generation enabled? ______
+- [x] Max repair iterations `N`: **3** — grounded in Silva et al. (2026) failure-mode analysis (IncorrectFact/Omission patterns correctable in ≤3 cycles)
+- [x] Multi-candidate generation: **Deferred** — no significant gain observed across prompting variations in Silva et al.; out of scope for AV2.
 - [x] JSON validation approach: `jsonschema` (from requirements.txt)
 - [x] Context Builder design (Phase 2): (1) Filter aggressively per story — each blob only includes the screens and endpoints that story actually touches; the full ui_map would inflate the blob ~50% without benefit. (2) Include the full glossary (~5 KB) in every blob — it is compact and coeso; splitting by story would create inconsistency risk. (3) Single few-shot example per blob — more examples increase tokens without clear marginal gain; story-specific examples can be added if coverage gaps appear. (4) Section order: glossary → API → UI → seed → example → story — LLM loads all vocabulary before reading the task (rationale: Correia et al., 2025 on RAG verbosity risk).
 
 **Pending source materials** (upload to [`docs/`](./)):
-- [ ] Silva et al. (drives Section 8 metrics & Phase 8 comparison — highest priority)
-- [ ] Gheventer et al.
-- [ ] Souza et al. (backs the `data-testid` decision)
+- [x] Silva et al. — uploaded as `docs/Todos e Tema 2- Silva et al., 2026.pdf` (content not yet cross-referenced — requires pdfplumber extraction)
+- [x] Gheventer et al. — uploaded as `docs/Todos- Gheventer et al., 2026.pdf` (SLR; Kitchenham procedures; tools: Copilot, Snyk, Testim, GitLab Duo; Cohen's Kappa for inter-rater agreement)
+- [x] Souza et al. — uploaded as `docs/Tema 2- de Souza et al., 2025.pdf` (backs `data-testid` strategy)
 - [ ] Hernández-Agüero et al. (also needs a DOI/URL)
