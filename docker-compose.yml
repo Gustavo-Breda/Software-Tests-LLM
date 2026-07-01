@@ -1,98 +1,97 @@
 name: LLM-tests
 
 services:
-    ollama:
-        container_name: LLM-tests-ollama
-        build:
-            context: .
-            dockerfile: docker/Dockerfile.ollama
-        environment:
-            - OLLAMA_MODELS=${OLLAMA_MODELS:-llama3}
-            - OLLAMA_KEEP_ALIVE=0
-        ports:
-            - "11434:11434"
-        volumes:
-            - ollama_data:/root/.ollama
-        healthcheck:
-            test: ["CMD-SHELL", "ollama list >/dev/null 2>&1 || exit 1"]
-            interval: 5s
-            timeout: 10s
-            retries: 20
-            start_period: 10s
-        networks:
-            - llm-tests-network
+  ollama:
+    container_name: LLM-tests-ollama
+    build:
+      context: .
+      dockerfile: docker/Dockerfile.ollama
+    environment:
+      - OLLAMA_PULL_MODELS=${OLLAMA_PULL_MODELS:-llama3}
+      - OLLAMA_KEEP_ALIVE=0
+    ports:
+      - "11434:11434"
+    volumes:
+      - ollama_data:/root/.ollama
+    healthcheck:
+      test: ["CMD-SHELL", "ollama list >/dev/null 2>&1 || exit 1"]
+      interval: 5s
+      timeout: 10s
+      retries: 20
+      start_period: 10s
+    networks:
+      - llm-tests-network
 
-    backend:
-        container_name: LLM-tests-backend
-        build:
-            context: ./
-            dockerfile: docker/Dockerfile.backend
-        ports:
-            - "8001:8000"
-        volumes:
-            - ./app/backend:/app
-            - backend_data:/data
-        environment:
-            - JWT_SECRET=${JWT_SECRET:-dev-secret-change-me}
-            - JWT_EXPIRES_HOURS=${JWT_EXPIRES_HOURS:-8}
-            - RESET_DB_ON_STARTUP=${RESET_DB_ON_STARTUP:-1}
-            - DATABASE_URL=sqlite:////data/app.db
-            - CORS_ORIGINS=http://localhost:5173,http://frontend:5173
-        networks:
-            - llm-tests-network
+  backend:
+    container_name: LLM-tests-backend
+    build:
+      context: ./
+      dockerfile: docker/Dockerfile.backend
+    ports:
+      - "8001:8000"
+    volumes:
+      - ./app/backend:/app
+      - backend_data:/data
+    environment:
+      - JWT_SECRET=${JWT_SECRET:-dev-secret-change-me}
+      - JWT_EXPIRES_HOURS=${JWT_EXPIRES_HOURS:-8}
+      - RESET_DB_ON_STARTUP=${RESET_DB_ON_STARTUP:-1}
+      - DATABASE_URL=sqlite:////data/app.db
+      - CORS_ORIGINS=http://localhost:5173,http://frontend:5173
+    networks:
+      - llm-tests-network
 
-    frontend:
-        container_name: LLM-tests-frontend
-        build:
-            context: ./
-            dockerfile: docker/Dockerfile.frontend
-        volumes:
-            - ./app/frontend:/app
-            - /app/node_modules
-        ports:
-            - "5173:5173"
-        environment:
-            - CHOKIDAR_USEPOLLING=true
-            - VITE_API_BASE_URL=http://localhost:8001
-        networks:
-            - llm-tests-network
+  frontend:
+    container_name: LLM-tests-frontend
+    build:
+      context: ./
+      dockerfile: docker/Dockerfile.frontend
+    volumes:
+      - ./app/frontend:/app
+      - /app/node_modules
+    ports:
+      - "5173:5173"
+    environment:
+      - CHOKIDAR_USEPOLLING=true
+      - VITE_API_BASE_URL=http://localhost:8001
+    networks:
+      - llm-tests-network
 
-    # selenium:
-    #     container_name: LLM-tests-selenium
-    #     image: selenium/standalone-chrome:latest
-    #     ports:
-    #         - "4444:4444"
-    #         - "7900:7900"
-    #     shm_size: "2gb"
-    #     networks:
-    #         - llm-tests-network
+  # selenium:
+  #     container_name: LLM-tests-selenium
+  #     image: selenium/standalone-chrome:latest
+  #     ports:
+  #         - "4444:4444"
+  #         - "7900:7900"
+  #     shm_size: "2gb"
+  #     networks:
+  #         - llm-tests-network
 
-    pipeline:
-        container_name: LLM-tests-pipeline
-        build:
-            context: .
-            dockerfile: docker/Dockerfile.pipeline
-        depends_on:
-            ollama:
-                condition: service_healthy
-        volumes:
-            - .:/app
-        environment:
-            - LLM_PROVIDER=${LLM_PROVIDER:-ollama}
-            - LLM_MODEL=${LLM_MODEL:-llama3}
-            - GOOGLE_API_KEY=${GOOGLE_API_KEY}
-            - ANTHROPIC_API_KEY=${ANTHROPIC_API_KEY}
-            - GEMINI_MODEL=${GEMINI_MODEL}
-            - CLAUDE_MODEL=${CLAUDE_MODEL}
-            - OLLAMA_BASE_URL=http://ollama:11434
-            - OLLAMA_MODELS=${OLLAMA_MODELS}
-        networks:
-            - llm-tests-network
+  pipeline:
+    container_name: LLM-tests-pipeline
+    build:
+      context: .
+      dockerfile: docker/Dockerfile.pipeline
+    depends_on:
+      ollama:
+        condition: service_healthy
+    volumes:
+      - .:/app
+    network_mode: host
+    environment:
+      - LLM_PROVIDER=${LLM_PROVIDER:-ollama}
+      - LLM_MODEL=${LLM_MODEL:-llama3}
+      - GOOGLE_API_KEY=${GOOGLE_API_KEY}
+      - ANTHROPIC_API_KEY=${ANTHROPIC_API_KEY}
+      - GEMINI_MODEL=${GEMINI_MODEL}
+      - CLAUDE_MODEL=${CLAUDE_MODEL}
+      - OLLAMA_BASE_URL=${OLLAMA_BASE_URL:-http://localhost:11434}
+      - OLLAMA_PULL_MODELS=${OLLAMA_PULL_MODELS}
 
 networks:
-    llm-tests-network:
-        driver: bridge
+  llm-tests-network:
+    driver: bridge
 
 volumes:
-    ollama_data:
-    backend_data:
+  ollama_data:
+  backend_data:

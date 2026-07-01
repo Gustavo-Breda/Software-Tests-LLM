@@ -33,3 +33,10 @@ acceptance_criteria:
       tentativa (incluindo senha correta) retorna 423 Locked com
       header Retry-After. Login bem-sucedido reseta o contador.
     tipo: borda
+
+  - id: CA-01.4
+    description: >-
+      Tentar realizar login com um e-mail em formato inválido (ex:
+      'email_sem_arroba') retorna 422 Unprocessable Entity e o login
+      não é efetuado.
+    tipo: negativo

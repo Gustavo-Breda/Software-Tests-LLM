@@ -68,12 +68,13 @@ Follow this order every session:
 | Docker stack (`ollama`, `pipeline`, `backend`, `frontend`) | ✅ Phase 0 done |
 | LLM client layer (`pipeline/llm/`) | ✅ Phase 0 done |
 | Settings & env loader (`pipeline/settings.py`) | ✅ Phase 0 done |
-| Workflow runner stub (`pipeline/workflow/runner.py`) | ✅ Phase 0 done |
+| Workflow runner (`pipeline/workflow/runner.py`) | ✅ Phase 3 started (runs Agent 0 and Agent 1) |
 | PoC backend — FastAPI (`app/backend/`) | ✅ Phase 1 done (FastAPI + SQLite + pytest) |
 | PoC frontend — React (`app/frontend/`) | ✅ Phase 1 done (React + Vite + data-testid) |
-| Pipeline agents 0–3, Summarizer | ❌ Phase 3–5 |
+| Agents 0–1 quality gate + test generation | ✅ Phase 3 started (schemas + JSON validation + runner integration) |
+| Pipeline agents 2–3, Summarizer | ❌ Phase 4–6 |
 | Context builder, glossary, ui_map | ✅ Phase 2 done |
-| Prompts (`pipeline/prompts/`), schemas (`pipeline/schemas/`) | ❌ Phase 3+ |
+| Prompts (`pipeline/prompts/`), schemas (`pipeline/schemas/`) | 🚧 Agent 0–1 done; Agent 2+ pending |
 | Evaluation harness (`evaluation/`) | ❌ Phase 7 |
 
 ---
@@ -82,7 +83,7 @@ Follow this order every session:
 
 ```
 pipeline/              # the QA assistant pipeline (Python)
-  agents/              # agent0–3 + summarizer (Phase 3–5, not yet scaffolded)
+  agents/              # agent0–1 implemented; agent2–3 + summarizer pending
   context/             # context builder split into focused modules (Phase 2 done)
     models.py          #   UserStory, ContextSection, ContextBlob
     builder.py         #   ContextBuilder + REQUIRED_SECTIONS
@@ -98,8 +99,8 @@ pipeline/              # the QA assistant pipeline (Python)
     claude.py          # Anthropic Claude client
     gemini.py          # Google Gemini client (thinking-model support)
     ollama_client.py   # Ollama client (OpenAI-compatible local models)
-  prompts/             # one .txt per agent — Phase 3+, not yet created
-  schemas/             # JSON schemas per agent I/O — Phase 3+
+  prompts/             # one .txt per agent
+  schemas/             # JSON schemas per agent I/O
   workflow/
     runner.py          # entry point; reads LLM_PROVIDER/LLM_MODEL from env
   settings.py          # configuration loader (reads .env)

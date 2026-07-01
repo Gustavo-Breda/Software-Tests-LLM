@@ -250,10 +250,13 @@ iterate. **Outputs are strict JSON, no prose outside the JSON.**
 
 Key contracts (fields summarized; mirror the report exactly in `schemas/`):
 
-- **Agent 0 →** `{ status, derivavel, observacao_formato, problemas[], recomendacao }`
+- **Agent 0 →** `{ status, derivavel, justificativa_derivabilidade,
+  observacao_formato, problemas[]{ criterio_id, tipo, descricao, impacto_em_testes,
+  pergunta_para_o_product_owner }, recomendacao }`
 - **Agent 1 →** `{ test_cases[]{ id, titulo, objetivo, criterios_cobertos[], tipo,
   prioridade, pre_condicoes[], dados_de_teste{}, passos[], resultado_esperado,
-  automatizavel, observacoes }, matriz_rastreabilidade[], alertas[] }`
+  automatizavel, observacoes }, matriz_rastreabilidade[]{ criterio, casos[] },
+  alertas[] }`
 - **Agent 2 →** `{ status_geral, pontuacao{cobertura, fidelidade_ao_requisito,
   clareza, automatizabilidade}, casos_aprovados[], casos_reprovados[],
   problemas[], cenarios_omitidos_sugeridos[], decisao }`

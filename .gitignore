@@ -3,6 +3,7 @@
 
 # local verification / scratch notes (não subir)
 VERIFICATION.txt
+generated/
 
 # editor
 .DS_Store
