@@ -67,7 +67,7 @@ flowchart TD
 
 ### Prompting techniques
 Persona prompting · context injection · few-shot · structured JSON output ·
-LLM-as-a-Judge · bounded repair loop · multi-candidate generation *(optional)*.
+LLM-as-a-Judge · bounded repair loop.
 
 ---
 
@@ -202,9 +202,11 @@ Full citations are in the project report (`docs/article.pdf`). See
 - Qin et al. — *DAJ: Data-Reweighted LLM Judge.* arXiv:2601.22230 (2026, preprint).
 - Sakib et al. — *From Reviews to Requirements.* arXiv:2603.28163 (2026, preprint).
 
-**Course-attached / pending upload** — Silva et al. (LLMs in Test Case
-Generation) · Gheventer et al. (Industrial Readiness) · Souza et al. (Functional
-Test Evolution in the Public Sector) · Hernández-Agüero et al. (LLM-Assisted INVEST).
+**Uploaded to `docs/`** — Silva et al. (LLMs in Test Case Generation, 2026) ·
+Gheventer et al. (Generative AI for Software Quality: Industrial Readiness, 2026) ·
+Souza et al. (Functional Test Evolution in the Public Sector, SAST'25).
+
+**Pending upload** — Hernández-Agüero et al. (LLM-Assisted INVEST Evaluation of User Stories).
 
 ---
 

@@ -30,7 +30,7 @@ def _env_int(name: str, default: int) -> int:
 class Settings:
     google_api_key: str | None = None
     anthropic_api_key: str | None = None
-    gemini_model: str = "gemini-2.5-flash"
+    gemini_model: str = "gemini-3.1-flash"
     claude_model: str = "claude-sonnet-4-6"
     ollama_base_url: str = "http://localhost:11434"
     ollama_models: list[str] = field(default_factory=lambda: ["llama3"])
@@ -43,7 +43,7 @@ class Settings:
         return cls(
             google_api_key=os.getenv("GOOGLE_API_KEY") or None,
             anthropic_api_key=os.getenv("ANTHROPIC_API_KEY") or None,
-            gemini_model=os.getenv("GEMINI_MODEL", "gemini-2.5-flash"),
+            gemini_model=os.getenv("GEMINI_MODEL", "gemini-3.1-flash"),
             claude_model=os.getenv("CLAUDE_MODEL", "claude-sonnet-4-6"),
             ollama_base_url=os.getenv("OLLAMA_BASE_URL", "http://localhost:11434"),
             ollama_models=_split_csv(os.getenv("OLLAMA_MODELS")) or ["llama3"],

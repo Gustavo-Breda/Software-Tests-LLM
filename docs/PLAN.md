@@ -75,7 +75,7 @@ via config (`.env`: `LLM_PROVIDER`, `LLM_MODEL`). Two provider families:
 |---|---|---|
 | GPT-5 (or current OpenAI flagship) | Strong instruction-following, JSON mode | Cost; API quotas; proprietary dependency |
 | Claude Sonnet 4.6 | Strong on long structured prompts, reliable JSON | Cost; access |
-| Gemini 2.5 Pro | Large context, competitive cost | Variable JSON adherence |
+| Gemini 3.1 Flash | Thinking-model support; large context, competitive cost | Variable JSON adherence |
 
 **Open (local, via Ollama):**
 | Option | Pros | Cons / risks |
@@ -189,7 +189,7 @@ exist before scripts can run). Each phase lists deliverables and a done-check.
 - [x] Backend and frontend run as `docker compose` services.
 - [x] Seed/test data that is stable and reproducible (seeded on container start).
 - [x] `pipeline/context/ui_map.json` created with all selectors documented.
-- [ ] **Done when:** `docker compose up` serves all 5 flows end-to-end (pending integration test).
+- [x] **Done when:** `docker compose up` serves all 5 flows end-to-end.
 
 ### [x] Phase 2 — Context assets & Context Builder
 - [x] Author `glossary.md` and `ui_map.json` (screen map + selectors) for the PoC.
@@ -332,7 +332,7 @@ methodology) for direct comparison.
 
 ---
 
-- [x] LLM provider(s) + model(s) chosen (closed API and/or open via Ollama): Ollama (Llama 3) for local open model, Gemini 2.5 Flash/Claude Sonnet 4.6 for closed models — rationale: Swappable via `.env`, allowing local vs. closed model comparison.
+- [x] LLM provider(s) + model(s) chosen (closed API and/or open via Ollama): Ollama (Llama 3) for local open model, Gemini 3.1 Flash/Claude Sonnet 4.6 for closed models — rationale: Swappable via `.env`, allowing local vs. closed model comparison.
 - [x] Active provider/model selection: `LLM_PROVIDER` + `LLM_MODEL` env vars select the active provider at runtime; `pipeline/workflow/runner.py` reads these and calls `factory.get_client()` — no code changes needed to switch models.
 - [x] Orchestration approach chosen: Plain Python script (`pipeline/workflow/runner.py`) — rationale: Keeps dependencies light and provides maximum control.
 - [x] Max repair iterations `N`: **3** — grounded in Silva et al. (2026) failure-mode analysis (IncorrectFact/Omission patterns correctable in ≤3 cycles)
