@@ -5,10 +5,6 @@ from .security import *
 from .database import *
 
 
-def _utcnow() -> datetime:
-    return datetime.now(timezone.utc).replace(tzinfo=None)
-
-
 _SEED_USERS = [
     {"name": "Alice Souza", "email": "alice@example.com", "password": "Senha123"},
     {"name": "Bob Lima",    "email": "bob@example.com",   "password": "Senha123"},
@@ -16,7 +12,8 @@ _SEED_USERS = [
 
 
 def _seed_requests(db, alice_id: int, bob_id: int) -> None:
-    now = _utcnow()
+    now = utcnow()
+    
     db.add_all([
         ServiceRequest(
             title="Problema com login no portal",
