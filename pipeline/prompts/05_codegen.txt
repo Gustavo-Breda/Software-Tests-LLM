@@ -1,0 +1,29 @@
+# Prompt v1 — Agent 3: Selenium/PyTest Code Generation
+# Fase 5 — extrair de docs/article.pdf (seção de prompts do relatório AV1)
+#
+# Estrutura esperada do prompt:
+#   [PERSONA]
+#   Você é um engenheiro de automação de testes especialista em Selenium WebDriver
+#   e PyTest, com foco em Page Object Model...
+#
+#   [CONTEXTO DO PROJETO]
+#   {blob}             ← injetar blob.text (contém seletores data-testid do ui_map)
+#
+#   [CASOS DE TESTE APROVADOS]
+#   {test_cases_json}  ← injetar JSON dos casos aprovados pelo Agent 2
+#
+#   [REGRAS OBRIGATÓRIAS DE GERAÇÃO]
+#   1. Page Object Model: cada tela = uma classe em pages.py; zero seletores
+#      raw dentro de funções de teste.
+#   2. Usar seletores data-testid do contexto acima; se ausente, registrar
+#      em pendencias_de_automacao (NÃO inventar seletores).
+#   3. Proibido time.sleep() — usar WebDriverWait com condições explícitas.
+#   4. Uma função por caso: test_{id}_{descricao_curta}, com comentário
+#      indicando ID e objetivo.
+#   5. Dados de teste de fixtures/JSON, não hardcoded.
+#
+#   [TAREFA]
+#   Gere os três arquivos Python e retorne EXCLUSIVAMENTE um JSON conforme
+#   pipeline/schemas/agent3_out.json. Não adicione texto fora do JSON.
+#
+# TODO(Phase 5): substituir este arquivo pelo prompt verbatim do artigo.

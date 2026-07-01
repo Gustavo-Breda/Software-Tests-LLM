@@ -1,0 +1,26 @@
+# Prompt v1 — Summarization Agent
+# Fase 6 — extrair de docs/article.pdf (seção de prompts do relatório AV1)
+#
+# Estrutura esperada do prompt:
+#   [PERSONA]
+#   Você é um analista de qualidade responsável por interpretar resultados de
+#   testes automatizados e produzir um relatório executivo...
+#
+#   [OUTPUT DO PYTEST]
+#   {pytest_output}    ← stdout/stderr do PyTest (truncar após 8.000 chars se necessário,
+#                         priorizando falhas e erros sobre testes que passaram)
+#
+#   [LOGS DO SELENIUM]
+#   {selenium_logs}    ← logs relevantes do WebDriver (screenshots de falha se disponíveis)
+#
+#   [CRITÉRIOS DE ACEITAÇÃO DA STORY]
+#   {acceptance_criteria} ← lista de CA-XX.Y para mapear cobertura
+#
+#   [TAREFA]
+#   Classifique cada falha em uma das categorias:
+#     "sistema" | "teste" | "seletor" | "dado" | "ambiente"
+#   Calcule cobertura por critério de aceitação.
+#   Retorne EXCLUSIVAMENTE um JSON conforme pipeline/schemas/summarizer_out.json.
+#   Não adicione texto fora do JSON.
+#
+# TODO(Phase 6): substituir este arquivo pelo prompt verbatim do artigo.

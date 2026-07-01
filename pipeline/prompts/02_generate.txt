@@ -1,0 +1,23 @@
+# Prompt v1 — Agent 1: Test Case Generation
+# Fase 3 — extrair de docs/article.pdf (seção de prompts do relatório AV1)
+#
+# Estrutura esperada do prompt:
+#   [PERSONA]
+#   Você é um analista de QA sênior com certificação ISTQB CTFL...
+#
+#   [CONTEXTO DO PROJETO]
+#   {blob}          ← injetar output de ContextBuilder.build(story_id).text
+#
+#   [TAREFA]
+#   Gere casos de teste funcionais para a história abaixo usando Partição de
+#   Equivalência e Análise de Valor Limite. Retorne EXCLUSIVAMENTE um JSON
+#   conforme o contrato em pipeline/schemas/agent1_out.json.
+#   Não adicione texto fora do JSON.
+#
+#   [EXEMPLO DE SAÍDA]
+#   {exemplo}       ← injetar pipeline/context/examples/example_us02_*.json
+#
+#   [HISTÓRIA DO USUÁRIO]
+#   {story_yaml}    ← injetar YAML da story
+#
+# TODO(Phase 3): substituir este arquivo pelo prompt verbatim do artigo.

@@ -1,0 +1,25 @@
+# Prompt v1 — Agent 2: LLM-as-a-Judge
+# Fase 4 — extrair de docs/article.pdf (seção de prompts do relatório AV1)
+#
+# Estrutura esperada do prompt:
+#   [PERSONA]
+#   Você é um revisor técnico de QA responsável por avaliar casos de teste
+#   gerados automaticamente...
+#
+#   [CONTEXTO DO PROJETO]
+#   {blob}          ← injetar output de ContextBuilder.build(story_id).text
+#
+#   [CASOS DE TESTE A AVALIAR]
+#   {test_cases_json} ← injetar JSON de GenerationOutput.test_cases
+#
+#   [TAREFA]
+#   Avalie os casos de teste nas quatro dimensões abaixo e retorne
+#   EXCLUSIVAMENTE um JSON conforme pipeline/schemas/agent2_out.json.
+#   Dimensões (pontuar de 0.0 a 1.0):
+#     - cobertura: todos os critérios de aceitação têm ao menos um caso?
+#     - fidelidade_ao_requisito: os casos refletem as regras da story sem inventar?
+#     - clareza: passos e resultado esperado são não-ambíguos?
+#     - automatizabilidade: os casos podem ser automatizados com Selenium/PyTest?
+#   Não adicione texto fora do JSON.
+#
+# TODO(Phase 4): substituir este arquivo pelo prompt verbatim do artigo.

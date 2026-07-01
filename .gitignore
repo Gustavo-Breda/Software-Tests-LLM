@@ -1,6 +1,9 @@
 # environment
 .env
 
+# local verification / scratch notes (não subir)
+VERIFICATION.txt
+
 # editor
 .DS_Store
 Thumbs.db

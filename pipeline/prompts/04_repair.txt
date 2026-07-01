@@ -1,0 +1,27 @@
+# Prompt v1 — Agent 1 (Repair Branch)
+# Fase 4 — extrair de docs/article.pdf (seção de prompts do relatório AV1)
+#
+# Usado APENAS quando Agent 2 reprova o batch (decisao == "REPROVADO").
+# Passado para agent1_generate.run(..., repair_feedback=feedback).
+#
+# Estrutura esperada do prompt:
+#   [PERSONA]
+#   Você é um analista de QA sênior com certificação ISTQB CTFL...
+#
+#   [CONTEXTO DO PROJETO]
+#   {blob}            ← mesmo blob da rodada original
+#
+#   [DIAGNÓSTICO DO REVISOR]
+#   {judge_feedback}  ← serialização de JudgeOutput.problemas +
+#                       casos_reprovados + cenarios_omitidos_sugeridos
+#
+#   [CASOS ORIGINAIS (para referência)]
+#   {test_cases_json} ← casos da rodada anterior
+#
+#   [TAREFA]
+#   Corrija os casos reprovados e gere os cenários omitidos indicados.
+#   Para cada caso corrigido, adicione o campo "correcao_aplicada" explicando
+#   o que mudou. Retorne EXCLUSIVAMENTE um JSON conforme agent1_out.json.
+#   Não adicione texto fora do JSON.
+#
+# TODO(Phase 4): substituir este arquivo pelo prompt verbatim do artigo.

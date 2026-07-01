@@ -189,7 +189,7 @@ exist before scripts can run). Each phase lists deliverables and a done-check.
 - [x] Backend and frontend run as `docker compose` services.
 - [x] Seed/test data that is stable and reproducible (seeded on container start).
 - [x] `pipeline/context/ui_map.json` created with all selectors documented.
-- [x] **Done when:** `docker compose up` serves all 5 flows end-to-end.
+- [ ] **Done when:** `docker compose up` serves all 5 flows end-to-end.
 
 ### [x] Phase 2 — Context assets & Context Builder
 - [x] Author `glossary.md` and `ui_map.json` (screen map + selectors) for the PoC.
