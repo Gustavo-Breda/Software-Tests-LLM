@@ -201,9 +201,9 @@ exist before scripts can run). Each phase lists deliverables and a done-check.
 - [x] Implement `context_builder.py` to assemble glossary, approved examples, screen map, and selectors into prompt context (RAG-style injection).
 - [x] **Done when:** Context Builder produces a complete context blob for each story.
 
-### [ ] Phase 3 — Agents 0 & 1
-- [ ] Implement Agent 0 (quality gate) and Agent 1 (test-case generation) with the prompts in Section 7; enforce JSON-only outputs validated against schemas.
-- [ ] **Done when:** the 5 stories pass Agent 0 (or produce actionable clarifications) and Agent 1 emits valid structured test cases with a traceability matrix.
+### [x] Phase 3 — Agents 0 & 1
+- [x] Implement Agent 0 (quality gate) and Agent 1 (test-case generation) with the prompts in Section 7; enforce JSON-only outputs validated against schemas.
+- [x] **Done when:** the 5 stories pass Agent 0 (or produce actionable clarifications) and Agent 1 emits valid structured test cases with a traceability matrix.
 
 ### [ ] Phase 4 — Agent 2 (judge) + repair loop
 - [ ] Implement Agent 2 (LLM-as-a-Judge) scoring coverage, fidelity, clarity, automatability; route rejected cases back through Agent 1 (repair prompt) with bounded retries `N`.
@@ -250,10 +250,13 @@ iterate. **Outputs are strict JSON, no prose outside the JSON.**
 
 Key contracts (fields summarized; mirror the report exactly in `schemas/`):
 
-- **Agent 0 →** `{ status, derivavel, observacao_formato, problemas[], recomendacao }`
+- **Agent 0 →** `{ status, derivavel, justificativa_derivabilidade,
+  observacao_formato, problemas[]{ criterio_id, tipo, descricao, impacto_em_testes,
+  pergunta_para_o_product_owner }, recomendacao }`
 - **Agent 1 →** `{ test_cases[]{ id, titulo, objetivo, criterios_cobertos[], tipo,
   prioridade, pre_condicoes[], dados_de_teste{}, passos[], resultado_esperado,
-  automatizavel, observacoes }, matriz_rastreabilidade[], alertas[] }`
+  automatizavel, observacoes }, matriz_rastreabilidade[]{ criterio, casos[] },
+  alertas[] }`
 - **Agent 2 →** `{ status_geral, pontuacao{cobertura, fidelidade_ao_requisito,
   clareza, automatizabilidade}, casos_aprovados[], casos_reprovados[],
   problemas[], cenarios_omitidos_sugeridos[], decisao }`

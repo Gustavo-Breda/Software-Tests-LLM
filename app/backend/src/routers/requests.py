@@ -61,7 +61,7 @@ def cancel_request(
     if req.status not in (RequestStatus.ABERTA, RequestStatus.EM_ANALISE):
         raise HTTPException(status.HTTP_409_CONFLICT, "Somente solicitações 'aberta' ou 'em análise' podem ser canceladas.")
     req.status = RequestStatus.CANCELADA
-    req.cancelled_at = _utcnow()
+    req.cancelled_at = utcnow()
     db.commit()
     db.refresh(req)
     return req

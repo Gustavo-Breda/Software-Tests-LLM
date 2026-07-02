@@ -7,7 +7,7 @@ from sqlalchemy.orm import Mapped, mapped_column, relationship
 from .database import *
 
 
-def _utcnow() -> datetime:
+def utcnow() -> datetime:
     return datetime.now(timezone.utc).replace(tzinfo=None)
 
 
@@ -31,7 +31,7 @@ class User(Base):
     name: Mapped[str] = mapped_column(String(80))
     email: Mapped[str] = mapped_column(String(255), unique=True, index=True)
     password_hash: Mapped[str] = mapped_column(String(255))
-    created_at: Mapped[datetime] = mapped_column(default=_utcnow)
+    created_at: Mapped[datetime] = mapped_column(default=utcnow)
     # tracks consecutive failures for the lockout policy
     failed_login_attempts: Mapped[int] = mapped_column(default=0)
     locked_until: Mapped[datetime | None]
@@ -47,7 +47,7 @@ class ServiceRequest(Base):
     description: Mapped[str] = mapped_column(String(500))
     priority: Mapped[RequestPriority] = mapped_column(SAEnum(RequestPriority))
     status: Mapped[RequestStatus] = mapped_column(SAEnum(RequestStatus), default=RequestStatus.ABERTA)
-    created_at: Mapped[datetime] = mapped_column(default=_utcnow)
+    created_at: Mapped[datetime] = mapped_column(default=utcnow)
     cancelled_at: Mapped[datetime | None]
 
     owner_id: Mapped[int] = mapped_column(ForeignKey("users.id"))

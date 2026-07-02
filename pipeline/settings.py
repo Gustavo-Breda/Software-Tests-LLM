@@ -6,7 +6,7 @@ from dataclasses import dataclass, field
 
 
 def _load_env() -> None:
-    load_dotenv(Path(__file__).resolve().parents[2] / ".env", override=False)
+    load_dotenv(Path(__file__).resolve().parents[1] / ".env", override=False)
 
 
 def _split_csv(value: str | None) -> list[str]:
@@ -33,7 +33,7 @@ class Settings:
     gemini_model: str = "gemini-3.1-flash"
     claude_model: str = "claude-sonnet-4-6"
     ollama_base_url: str = "http://localhost:11434"
-    ollama_models: list[str] = field(default_factory=lambda: ["llama3"])
+    ollama_pull_models: list[str] = field(default_factory=lambda: ["llama3"])
     log_level: str = "INFO"
     random_seed: int = 42
 
@@ -46,7 +46,7 @@ class Settings:
             gemini_model=os.getenv("GEMINI_MODEL", "gemini-3.1-flash"),
             claude_model=os.getenv("CLAUDE_MODEL", "claude-sonnet-4-6"),
             ollama_base_url=os.getenv("OLLAMA_BASE_URL", "http://localhost:11434"),
-            ollama_models=_split_csv(os.getenv("OLLAMA_MODELS")) or ["llama3"],
+            ollama_pull_models=_split_csv(os.getenv("OLLAMA_PULL_MODELS")) or ["llama3"],
             log_level=os.getenv("LOG_LEVEL", "INFO"),
             random_seed=_env_int("RANDOM_SEED", 42),
         )

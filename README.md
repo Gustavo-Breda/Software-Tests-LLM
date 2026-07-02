@@ -134,7 +134,7 @@ Open http://localhost:5173 in a browser. Log in with one of the seed users:
 ### 5. Run the pipeline
 
 ```bash
-# Default provider from .env
+# Run Phase 3: Agent 0 quality gate, then Agent 1 for approved stories
 docker compose run --rm pipeline python -m pipeline.workflow.runner
 
 # Override provider inline without editing .env
@@ -143,6 +143,9 @@ docker compose run --rm \
   -e LLM_MODEL=gemini-3.1-flash \
   pipeline python -m pipeline.workflow.runner
 ```
+
+Agent 0 writes validated JSON reports to `generated/reports/agent0/`.
+Agent 1 writes validated test cases to `generated/test_cases/`.
 
 ### 6. Work with the Context Builder (Phase 2)
 
@@ -236,7 +239,7 @@ oracle (gabarito). Metrics follow Silva et al. to allow direct comparison.
 ├── AGENTS.md                  # guide for coding agents working in this repo
 ├── docs/PLAN.md               # implementation plan & milestones
 ├── pipeline/                  # the QA assistant pipeline (Python)
-│   ├── agents/                # agent0–3 + summarizer stubs (Phase 3–6)
+│   ├── agents/                # agent0–1 implemented; agent2–3 + summarizer stubs
 │   ├── context/               # context builder + assets
 │   │   ├── models.py          #   UserStory, ContextSection, ContextBlob
 │   │   ├── builder.py         #   ContextBuilder + REQUIRED_SECTIONS

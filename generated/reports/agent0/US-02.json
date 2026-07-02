@@ -1,0 +1,30 @@
+{
+  "status": "PRECISA_DE_ESCLARECIMENTO",
+  "derivavel": false,
+  "justificativa_derivabilidade": "Embora a história cubra os requisitos básicos, faltam especificações críticas sobre o comportamento da UI em estados de erro e a ausência de validação para o limite superior da senha, o que impede a criação de casos de teste completos e precisos.",
+  "observacao_formato": "A história segue o padrão de persona, ação e benefício corretamente.",
+  "problemas": [
+    {
+      "criterio_id": "CA-02.3",
+      "tipo": "omissao",
+      "descricao": "O critério menciona que validações são verificadas em conjunto, mas não especifica o formato da resposta de erro (422) conforme definido no contexto do sistema (formato JSON do FastAPI).",
+      "impacto_em_testes": "O analista não sabe se deve validar a estrutura detalhada do erro (loc, msg, type) ou apenas o status code.",
+      "pergunta_para_o_product_owner": "Devemos validar a estrutura detalhada do erro 422 retornada pelo Pydantic ou apenas o status code e a ausência de persistência?"
+    },
+    {
+      "criterio_id": "GERAL",
+      "tipo": "falta_de_dado",
+      "descricao": "Não há especificação sobre o limite superior da senha (apenas o mínimo de 8 caracteres foi definido).",
+      "impacto_em_testes": "Impossibilita a criação de casos de teste de borda para o limite máximo de caracteres da senha.",
+      "pergunta_para_o_product_owner": "Qual é o limite máximo de caracteres permitido para o campo senha?"
+    },
+    {
+      "criterio_id": "CA-02.3",
+      "tipo": "omissao",
+      "descricao": "O critério não especifica o comportamento da UI ao receber um erro 422 (ex: quais campos devem ser destacados ou se a mensagem de erro deve ser exibida no componente 'register-error').",
+      "impacto_em_testes": "O agente de teste não saberá quais elementos da UI inspecionar para validar a falha de validação.",
+      "pergunta_para_o_product_owner": "Como a interface deve exibir os erros de validação 422 para o usuário?"
+    }
+  ],
+  "recomendacao": "Corrigir os critérios de aceitação para incluir o comportamento esperado da UI em erros e definir o limite máximo da senha antes de prosseguir."
+}
