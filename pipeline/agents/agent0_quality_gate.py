@@ -81,7 +81,7 @@ def _build_prompt(blob: ContextBlob) -> str:
             allow_unicode=True,
             sort_keys=False,
         ),
-        "system_context": blob.text,
+        "system_context": blob.filtered_text({"História do Usuário e Critérios de Aceitação"}),
     }
     for key, value in replacements.items():
         placeholder = "{" + key + "}"

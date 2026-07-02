@@ -46,15 +46,22 @@ class ContextBlob:
     story: UserStory
     sections: list[ContextSection]
 
-    @property
-    def text(self) -> str:
-        header = (
+    def _header(self) -> str:
+        return (
             f"# Contexto para {self.story.id} — {self.story.title}\n\n"
             "> Este bloco é injetado nos prompts dos agentes 0–3 e do Sumarizador "
             "como verdade de referência sobre o domínio, a API, a UI e o formato "
             "esperado de saída. Não inventar fatos fora deste contexto.\n"
         )
-        return header + "\n".join(s.render() for s in self.sections)
+
+    @property
+    def text(self) -> str:
+        return self._header() + "\n".join(s.render() for s in self.sections)
+
+    def filtered_text(self, exclude: set[str]) -> str:
+        """Render sections excluding the named ones (used to avoid duplicate injection)."""
+        sections = [s for s in self.sections if s.title not in exclude]
+        return self._header() + "\n".join(s.render() for s in sections)
 
     @property
     def char_count(self) -> int:

@@ -97,7 +97,11 @@ def _build_prompt(blob: ContextBlob) -> str:
             allow_unicode=True,
             sort_keys=False,
         ),
-        "system_context": blob.text,
+        "system_context": blob.filtered_text({
+            "Glossário de Domínio",
+            "Exemplo aprovado (referência de formato)",
+            "História do Usuário e Critérios de Aceitação",
+        }),
         "domain_glossary": _section_body(blob, "Glossário de Domínio"),
         "few_shot_examples": _section_body(blob, "Exemplo aprovado (referência de formato)"),
     }
