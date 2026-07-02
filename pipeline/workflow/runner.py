@@ -47,7 +47,11 @@ def run_phase3(
 
     log.info("Found %d stories to process", len(blobs))
 
-    for blob in blobs:
+    for index, blob in enumerate(blobs, start=1):
+        log.info("")
+        log.info("=" * 60)
+        log.info("  Story %d/%d — %s: %s", index, len(blobs), blob.story_id, blob.story.title)
+        log.info("=" * 60)
         log.info("[%s] Running Agent 0 (quality gate)...", blob.story_id)
         try:
             agent0_output = agent0_quality_gate.run(blob, client)

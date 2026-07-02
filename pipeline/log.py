@@ -16,3 +16,7 @@ def setup(level: str = "INFO") -> None:
     root.setLevel(getattr(logging, level.upper(), logging.INFO))
     root.handlers.clear()
     root.addHandler(handler)
+
+    # silence noisy SDK loggers
+    for noisy in ("httpx", "google_genai", "google.auth"):
+        logging.getLogger(noisy).setLevel(logging.WARNING)

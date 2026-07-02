@@ -44,7 +44,10 @@ class GeminiClient(LLMClient):
             raise ValueError("GOOGLE_API_KEY is not set.")
 
         self._genai = genai
-        self._client = genai.Client(api_key=api_key)
+        self._client = genai.Client(
+            api_key=api_key,
+            http_options=genai_types.HttpOptions(timeout=60),
+        )
         self._types = genai_types
 
         thinking = _is_thinking_model(model)
