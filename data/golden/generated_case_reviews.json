@@ -1,0 +1,172 @@
+{
+  "reviews": [
+    {
+      "story_id": "US-01",
+      "case_id": "TC-01-01",
+      "correct": true,
+      "defect_tags": [],
+      "justificativa": "Cobre CA-01.1: credenciais válidas → 200 + JWT + redirect /requests. Passos e resultado_esperado consistentes com glossário §6 (auth Bearer JWT)."
+    },
+    {
+      "story_id": "US-01",
+      "case_id": "TC-01-02",
+      "correct": true,
+      "defect_tags": [],
+      "justificativa": "Cobre CA-01.2 (e-mail inexistente). Mensagem literal 'E-mail ou senha inválidos.' e status 401 conforme glossário §3 (anti-enumeração)."
+    },
+    {
+      "story_id": "US-01",
+      "case_id": "TC-01-03",
+      "correct": true,
+      "defect_tags": [],
+      "justificativa": "Cobre CA-01.2 (senha errada). Mesma mensagem literal e 401 — mantém anti-enumeração."
+    },
+    {
+      "story_id": "US-01",
+      "case_id": "TC-01-04",
+      "correct": true,
+      "defect_tags": [],
+      "justificativa": "Cobre CA-01.3. Usa bob para evitar travar alice (respeita glossário §8 avisos). Sequência 5 falhas + tentativa com senha correta → 423 com Retry-After em [data-testid=login-lockout]."
+    },
+    {
+      "story_id": "US-01",
+      "case_id": "TC-01-05",
+      "correct": true,
+      "defect_tags": [],
+      "justificativa": "Cobre CA-01.4. E-mail 'email_sem_arroba' → 422 (Pydantic), login não efetuado."
+    },
+    {
+      "story_id": "US-02",
+      "case_id": "TC-02-01",
+      "correct": true,
+      "defect_tags": [],
+      "justificativa": "Cobre CA-02.1. Nome 'Carla Mendes' (12 chars, dentro de 3-80), e-mail inédito, senha 'Senha123' (8 chars, letra+número) → 201 + register-success + redirect /login."
+    },
+    {
+      "story_id": "US-02",
+      "case_id": "TC-02-02",
+      "correct": true,
+      "defect_tags": [],
+      "justificativa": "Cobre CA-02.2. Duplicidade de 'alice@example.com' (seed) → 409 com detail literal 'E-mail já cadastrado.' e preserva password_hash original."
+    },
+    {
+      "story_id": "US-02",
+      "case_id": "TC-02-03",
+      "correct": true,
+      "defect_tags": [],
+      "justificativa": "Cobre CA-02.3 (senha sem número). Senha 'apenasletras' → 422; cadastro não persistido."
+    },
+    {
+      "story_id": "US-02",
+      "case_id": "TC-02-04",
+      "correct": true,
+      "defect_tags": [],
+      "justificativa": "Cobre CA-02.3 (limite inferior de nome). Nome 'Eu' (2 chars, abaixo de 3) → 422."
+    },
+    {
+      "story_id": "US-03",
+      "case_id": "TC-03-01",
+      "correct": true,
+      "defect_tags": [],
+      "justificativa": "Cobre CA-03.1. Título 'Título válido' (13 chars, ≥5), descrição 'Descrição válida' (16 chars, ≥10), prioridade 'baixa' válida → 201, status 'aberta' e created_at setados pelo servidor."
+    },
+    {
+      "story_id": "US-03",
+      "case_id": "TC-03-02",
+      "correct": false,
+      "defect_tags": ["IncorrectFact"],
+      "justificativa": "Objetivo afirma testar 'título menor que 5 caracteres', mas o dado 'Título inválido' tem 15 caracteres — está dentro da faixa 5-100 permitida. Backend retornaria 201, não 422 como esperado. Regra violada: glossário §4 'title 5-100 caracteres'."
+    },
+    {
+      "story_id": "US-03",
+      "case_id": "TC-03-03",
+      "correct": false,
+      "defect_tags": ["IncorrectFact"],
+      "justificativa": "Análogo a TC-03-02: 'Descrição inválida' tem 18 caracteres, dentro da faixa 10-500. Backend retornaria 201, não 422. Regra violada: glossário §4 'description 10-500 caracteres'."
+    },
+    {
+      "story_id": "US-03",
+      "case_id": "TC-03-04",
+      "correct": true,
+      "defect_tags": [],
+      "justificativa": "Cobre CA-03.2 (prioridade fora do enum). Priority='inválida' → 422 no endpoint. Ressalva: passo pede 'Selecione a prioridade' em <select> nativo pode ser irrealizável na UI; via API funciona corretamente."
+    },
+    {
+      "story_id": "US-03",
+      "case_id": "TC-03-05",
+      "correct": false,
+      "defect_tags": ["Inconsistency"],
+      "justificativa": "Passo 1 diz 'Acessar /requests/new sem autenticar', mas o frontend tem AuthGuard em /requests/new (documentado em app/frontend/README.md) que redireciona anônimos para /login. O fluxo descrito nunca chega a submeter POST /api/requests, portanto o backend nunca retorna 401. Para testar CA-03.3 corretamente é preciso chamar a API diretamente sem token."
+    },
+    {
+      "story_id": "US-04",
+      "case_id": "TC-04-01",
+      "correct": true,
+      "defect_tags": [],
+      "justificativa": "Cobre CA-04.1. Autenticação como alice, scope=own padrão retorna 200 com apenas suas solicitações. Ressalva: resultado_esperado usa placeholder 'lista_de_solicitações_do_usuario', mas o predicado testável (ownership) é claro."
+    },
+    {
+      "story_id": "US-04",
+      "case_id": "TC-04-02",
+      "correct": true,
+      "defect_tags": [],
+      "justificativa": "Cobre CA-04.2 (filtro status isolado). Status=aberta como alice → 200 com subconjunto próprio."
+    },
+    {
+      "story_id": "US-04",
+      "case_id": "TC-04-03",
+      "correct": true,
+      "defect_tags": [],
+      "justificativa": "Cobre CA-04.2 (filtro priority isolado). Priority=alta como alice → 200 com subconjunto próprio."
+    },
+    {
+      "story_id": "US-04",
+      "case_id": "TC-04-04",
+      "correct": true,
+      "defect_tags": [],
+      "justificativa": "Cobre CA-04.2 (filtros combinados). Status=aberta + priority=alta como alice → 200 com interseção própria."
+    },
+    {
+      "story_id": "US-04",
+      "case_id": "TC-04-05",
+      "correct": false,
+      "defect_tags": ["IncorrectFact"],
+      "justificativa": "Título afirma 'Filtro vazio não retorna solicitações' e objetivo diz 'quando nenhum filtro é aplicado', mas alice tem 4 solicitações no seed (glossário §8). GET /api/requests sem filtros como alice retorna items com 4 elementos, não items=[]. A premissa contradiz o dado seed reproduzível. Para testar CA-04.3 corretamente é preciso usar filtros que não casem com nenhuma linha (ex.: status=aberta + priority='inexistente')."
+    },
+    {
+      "story_id": "US-05",
+      "case_id": "TC-05-01",
+      "correct": true,
+      "defect_tags": [],
+      "justificativa": "Cobre CA-05.1. Fluxo completo com dialog exibindo título antes do endpoint (glossário §7). status → 'cancelada' e cancelled_at preenchido. Usa seletores reais do ui_map."
+    },
+    {
+      "story_id": "US-05",
+      "case_id": "TC-05-02",
+      "correct": true,
+      "defect_tags": [],
+      "justificativa": "Cobre CA-05.1 para estado 'em_analise'. Fluxo via UI + endpoint 200."
+    },
+    {
+      "story_id": "US-05",
+      "case_id": "TC-05-03",
+      "correct": true,
+      "defect_tags": [],
+      "justificativa": "Cobre CA-05.2 (ownership). Direção invertida em relação a EXP-05-05 (alice tenta cancelar de bob em vez de bob de alice), mas a regra é simétrica. 403 com mensagem literal 'Você não pode cancelar uma solicitação de outro usuário.' e solicitação inalterada."
+    },
+    {
+      "story_id": "US-05",
+      "case_id": "TC-05-04",
+      "correct": true,
+      "defect_tags": [],
+      "justificativa": "Cobre CA-05.2 (recurso inexistente). ID 999999 → 404 com mensagem literal 'Solicitação não encontrada.' (glossário §5)."
+    },
+    {
+      "story_id": "US-05",
+      "case_id": "TC-05-05",
+      "correct": true,
+      "defect_tags": [],
+      "justificativa": "Cobre CA-05.3 (estado terminal 'finalizada'). 409 com mensagem literal contendo 'em análise' (com acento, camada UI conforme glossário §5). Solicitação permanece 'finalizada'."
+    }
+  ]
+}

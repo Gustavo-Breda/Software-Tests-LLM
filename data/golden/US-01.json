@@ -1,0 +1,69 @@
+{
+  "story_id": "US-01",
+  "expected_cases": [
+    {
+      "id": "EXP-01-01",
+      "titulo": "Login bem-sucedido com credenciais válidas",
+      "criterios_cobertos": ["CA-01.1"],
+      "tipo": "positivo",
+      "must_cover": "Login com e-mail cadastrado e senha correta retorna 200 com token JWT no corpo e redireciona o usuário para /requests.",
+      "matched_generated_case_ids": []
+    },
+    {
+      "id": "EXP-01-02",
+      "titulo": "Login com e-mail inexistente retorna erro genérico",
+      "criterios_cobertos": ["CA-01.2"],
+      "tipo": "negativo",
+      "must_cover": "Login com e-mail não cadastrado retorna 401 com a mensagem literal 'E-mail ou senha inválidos.' (anti-enumeração).",
+      "matched_generated_case_ids": []
+    },
+    {
+      "id": "EXP-01-03",
+      "titulo": "Login com senha incorreta retorna a mesma mensagem genérica",
+      "criterios_cobertos": ["CA-01.2"],
+      "tipo": "negativo",
+      "must_cover": "Login em e-mail cadastrado com senha errada retorna 401 com a mesma mensagem literal 'E-mail ou senha inválidos.' usada para e-mail inexistente.",
+      "matched_generated_case_ids": []
+    },
+    {
+      "id": "EXP-01-04",
+      "titulo": "Bloqueio de conta após 5 falhas consecutivas",
+      "criterios_cobertos": ["CA-01.3"],
+      "tipo": "borda",
+      "must_cover": "Após 5 tentativas de login falhas consecutivas no mesmo e-mail, a 6ª tentativa retorna 423 com header Retry-After e mensagem 'Conta bloqueada. Tente novamente em N segundos.'",
+      "matched_generated_case_ids": []
+    },
+    {
+      "id": "EXP-01-05",
+      "titulo": "Bloqueio persiste mesmo com senha correta",
+      "criterios_cobertos": ["CA-01.3"],
+      "tipo": "borda",
+      "must_cover": "Durante o bloqueio de 60s, uma tentativa com a senha CORRETA retorna 423 com header Retry-After (a conta segue bloqueada).",
+      "matched_generated_case_ids": []
+    },
+    {
+      "id": "EXP-01-06",
+      "titulo": "Bloqueio expira após 60 segundos",
+      "criterios_cobertos": ["CA-01.3"],
+      "tipo": "borda",
+      "must_cover": "Passados 60 segundos do início do bloqueio, login com credenciais válidas retorna 200 com token JWT.",
+      "matched_generated_case_ids": []
+    },
+    {
+      "id": "EXP-01-07",
+      "titulo": "Login bem-sucedido reseta o contador de falhas",
+      "criterios_cobertos": ["CA-01.3"],
+      "tipo": "borda",
+      "must_cover": "Após 4 falhas consecutivas seguidas de um login bem-sucedido, o contador zera: uma nova falha subsequente não ativa o bloqueio.",
+      "matched_generated_case_ids": []
+    },
+    {
+      "id": "EXP-01-08",
+      "titulo": "E-mail em formato inválido é rejeitado por validação",
+      "criterios_cobertos": ["CA-01.4"],
+      "tipo": "negativo",
+      "must_cover": "Login com e-mail em formato inválido (ex.: 'email_sem_arroba') retorna 422 Unprocessable Entity e o login não é efetuado.",
+      "matched_generated_case_ids": []
+    }
+  ]
+}

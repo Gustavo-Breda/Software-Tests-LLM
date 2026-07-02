@@ -1,0 +1,133 @@
+{
+  "story_id": "US-03",
+  "expected_cases": [
+    {
+      "id": "EXP-03-01",
+      "titulo": "Criação bem-sucedida de solicitação com dados válidos",
+      "criterios_cobertos": ["CA-03.1"],
+      "tipo": "positivo",
+      "must_cover": "POST /api/requests autenticado com título de 20 caracteres, descrição de 50 caracteres e prioridade 'media' retorna 201 com a solicitação criada.",
+      "matched_generated_case_ids": []
+    },
+    {
+      "id": "EXP-03-02",
+      "titulo": "Servidor atribui automaticamente status 'aberta' e created_at",
+      "criterios_cobertos": ["CA-03.1"],
+      "tipo": "borda",
+      "must_cover": "Ao criar uma solicitação, o servidor persiste status='aberta' (DB) e created_at=agora(), ignorando qualquer valor enviado pelo cliente nesses campos.",
+      "matched_generated_case_ids": []
+    },
+    {
+      "id": "EXP-03-03",
+      "titulo": "Solicitação recém-criada aparece no topo da lista do usuário",
+      "criterios_cobertos": ["CA-03.1"],
+      "tipo": "borda",
+      "must_cover": "Após criação bem-sucedida, GET /api/requests com scope=own retorna a nova solicitação como primeiro item (ordenação por created_at descendente).",
+      "matched_generated_case_ids": []
+    },
+    {
+      "id": "EXP-03-04",
+      "titulo": "Título com 5 caracteres é aceito (limite inferior)",
+      "criterios_cobertos": ["CA-03.1"],
+      "tipo": "borda",
+      "must_cover": "Criação com título de exatamente 5 caracteres (limite inferior válido) retorna 201.",
+      "matched_generated_case_ids": []
+    },
+    {
+      "id": "EXP-03-05",
+      "titulo": "Título com 100 caracteres é aceito (limite superior)",
+      "criterios_cobertos": ["CA-03.1"],
+      "tipo": "borda",
+      "must_cover": "Criação com título de exatamente 100 caracteres (limite superior válido) retorna 201.",
+      "matched_generated_case_ids": []
+    },
+    {
+      "id": "EXP-03-06",
+      "titulo": "Descrição com 10 caracteres é aceita (limite inferior)",
+      "criterios_cobertos": ["CA-03.1"],
+      "tipo": "borda",
+      "must_cover": "Criação com descrição de exatamente 10 caracteres (limite inferior válido) retorna 201.",
+      "matched_generated_case_ids": []
+    },
+    {
+      "id": "EXP-03-07",
+      "titulo": "Descrição com 500 caracteres é aceita (limite superior)",
+      "criterios_cobertos": ["CA-03.1"],
+      "tipo": "borda",
+      "must_cover": "Criação com descrição de exatamente 500 caracteres (limite superior válido) retorna 201.",
+      "matched_generated_case_ids": []
+    },
+    {
+      "id": "EXP-03-08",
+      "titulo": "Título com 4 caracteres é rejeitado",
+      "criterios_cobertos": ["CA-03.2"],
+      "tipo": "negativo",
+      "must_cover": "Criação com título de exatamente 4 caracteres (limite inferior menos 1) retorna 422 e a solicitação não é criada.",
+      "matched_generated_case_ids": []
+    },
+    {
+      "id": "EXP-03-09",
+      "titulo": "Título com 101 caracteres é rejeitado",
+      "criterios_cobertos": ["CA-03.2"],
+      "tipo": "negativo",
+      "must_cover": "Criação com título de exatamente 101 caracteres (limite superior mais 1) retorna 422 e a solicitação não é criada.",
+      "matched_generated_case_ids": []
+    },
+    {
+      "id": "EXP-03-10",
+      "titulo": "Descrição com 9 caracteres é rejeitada",
+      "criterios_cobertos": ["CA-03.2"],
+      "tipo": "negativo",
+      "must_cover": "Criação com descrição de exatamente 9 caracteres (limite inferior menos 1) retorna 422 e a solicitação não é criada.",
+      "matched_generated_case_ids": []
+    },
+    {
+      "id": "EXP-03-11",
+      "titulo": "Descrição com 501 caracteres é rejeitada",
+      "criterios_cobertos": ["CA-03.2"],
+      "tipo": "negativo",
+      "must_cover": "Criação com descrição de exatamente 501 caracteres (limite superior mais 1) retorna 422 e a solicitação não é criada.",
+      "matched_generated_case_ids": []
+    },
+    {
+      "id": "EXP-03-12",
+      "titulo": "Título vazio após strip é rejeitado",
+      "criterios_cobertos": ["CA-03.2"],
+      "tipo": "negativo",
+      "must_cover": "Criação com título contendo apenas espaços em branco retorna 422 e a solicitação não é criada.",
+      "matched_generated_case_ids": []
+    },
+    {
+      "id": "EXP-03-13",
+      "titulo": "Prioridade fora do enum é rejeitada",
+      "criterios_cobertos": ["CA-03.2"],
+      "tipo": "negativo",
+      "must_cover": "Criação com prioridade 'urgente' (fora do enum {baixa, media, alta}) retorna 422 e a solicitação não é criada.",
+      "matched_generated_case_ids": []
+    },
+    {
+      "id": "EXP-03-14",
+      "titulo": "Criação sem header Authorization é rejeitada",
+      "criterios_cobertos": ["CA-03.3"],
+      "tipo": "borda",
+      "must_cover": "POST /api/requests sem header Authorization retorna 401 e a solicitação não é criada.",
+      "matched_generated_case_ids": []
+    },
+    {
+      "id": "EXP-03-15",
+      "titulo": "Criação com token JWT inválido é rejeitada",
+      "criterios_cobertos": ["CA-03.3"],
+      "tipo": "borda",
+      "must_cover": "POST /api/requests com header Authorization contendo token malformado ou assinatura inválida retorna 401.",
+      "matched_generated_case_ids": []
+    },
+    {
+      "id": "EXP-03-16",
+      "titulo": "Criação com token JWT expirado é rejeitada",
+      "criterios_cobertos": ["CA-03.3"],
+      "tipo": "borda",
+      "must_cover": "POST /api/requests com token JWT expirado retorna 401 (mesmo caminho de token ausente/inválido).",
+      "matched_generated_case_ids": []
+    }
+  ]
+}

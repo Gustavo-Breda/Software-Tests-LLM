@@ -1,0 +1,69 @@
+{
+  "story_id": "US-04",
+  "expected_cases": [
+    {
+      "id": "EXP-04-01",
+      "titulo": "Listagem padrão retorna apenas solicitações do próprio usuário",
+      "criterios_cobertos": ["CA-04.1"],
+      "tipo": "positivo",
+      "must_cover": "GET /api/requests sem filtros (scope=own padrão) retorna 200 com apenas as solicitações do usuário autenticado.",
+      "matched_generated_case_ids": []
+    },
+    {
+      "id": "EXP-04-02",
+      "titulo": "Listagem padrão ordena por created_at descendente",
+      "criterios_cobertos": ["CA-04.1"],
+      "tipo": "positivo",
+      "must_cover": "GET /api/requests sem filtros retorna a lista ordenada por created_at descendente (mais recentes primeiro).",
+      "matched_generated_case_ids": []
+    },
+    {
+      "id": "EXP-04-03",
+      "titulo": "Listagem padrão não expõe solicitações de outros usuários",
+      "criterios_cobertos": ["CA-04.1"],
+      "tipo": "borda",
+      "must_cover": "GET /api/requests autenticado como bob não inclui nenhuma solicitação pertencente a alice.",
+      "matched_generated_case_ids": []
+    },
+    {
+      "id": "EXP-04-04",
+      "titulo": "Filtro status isolado retorna apenas o subconjunto correspondente",
+      "criterios_cobertos": ["CA-04.2"],
+      "tipo": "positivo",
+      "must_cover": "GET /api/requests?status=aberta retorna 200 com apenas solicitações do próprio usuário em status 'aberta'.",
+      "matched_generated_case_ids": []
+    },
+    {
+      "id": "EXP-04-05",
+      "titulo": "Filtro priority isolado retorna apenas o subconjunto correspondente",
+      "criterios_cobertos": ["CA-04.2"],
+      "tipo": "positivo",
+      "must_cover": "GET /api/requests?priority=alta retorna 200 com apenas solicitações do próprio usuário em prioridade 'alta'.",
+      "matched_generated_case_ids": []
+    },
+    {
+      "id": "EXP-04-06",
+      "titulo": "Filtros status e priority combinados são interseção",
+      "criterios_cobertos": ["CA-04.2"],
+      "tipo": "positivo",
+      "must_cover": "GET /api/requests?status=aberta&priority=alta retorna 200 com apenas solicitações do próprio usuário que satisfazem ambas as condições simultaneamente.",
+      "matched_generated_case_ids": []
+    },
+    {
+      "id": "EXP-04-07",
+      "titulo": "Lista vazia retorna 200 com items=[] (não 404)",
+      "criterios_cobertos": ["CA-04.3"],
+      "tipo": "borda",
+      "must_cover": "GET /api/requests com filtros que não casam com nenhuma solicitação retorna 200 com items=[] e total=0 (nunca 404).",
+      "matched_generated_case_ids": []
+    },
+    {
+      "id": "EXP-04-08",
+      "titulo": "UI mostra empty state sem esconder os controles de filtro",
+      "criterios_cobertos": ["CA-04.3"],
+      "tipo": "borda",
+      "must_cover": "Quando a lista vem vazia, a UI exibe a mensagem literal 'Nenhuma solicitação encontrada.' em [data-testid=requests-empty] e os seletores [data-testid=filter-status] e [data-testid=filter-priority] continuam visíveis.",
+      "matched_generated_case_ids": []
+    }
+  ]
+}
