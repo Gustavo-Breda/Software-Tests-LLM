@@ -174,3 +174,87 @@
 2026-07-02 01:07:16 | INFO     | runner     | [US-05] Running Agent 1 (test case generation)...
 2026-07-02 01:07:35 | ERROR    | runner     | [US-05] Agent 1 → FAILED: AgentOutputError: Schema validation failed at matriz_rastreabilidade.0.casos.0: 'TC-US-05-01' does not match '^TC-[0-9]{2}-[0-9]{2}$'
 2026-07-02 01:07:35 | INFO     | runner     | Done — total=5 | agent0_ok=4 | agent1_ok=1 | blocked=0 | errors=5
+2026-07-02 01:19:11 | INFO     | runner     | Provider: ollama:llama3
+2026-07-02 01:19:11 | INFO     | runner     | Found 5 stories to process
+2026-07-02 01:19:11 | INFO     | runner     | 
+2026-07-02 01:19:11 | INFO     | runner     | ============================================================
+2026-07-02 01:19:11 | INFO     | runner     |   Story 1/5 — US-01: Realizar login com e-mail e senha
+2026-07-02 01:19:11 | INFO     | runner     | ============================================================
+2026-07-02 01:19:11 | INFO     | runner     | [US-01] Running Agent 0 (quality gate)...
+2026-07-02 01:19:21 | INFO     | runner     | [US-01] Agent 0 → APROVADA
+2026-07-02 01:19:21 | INFO     | runner     | [US-01] Running Agent 1 (test case generation)...
+2026-07-02 01:19:43 | ERROR    | runner     | [US-01] Agent 1 → FAILED: AgentOutputError: Schema validation failed at matriz_rastreabilidade.0.casos.0: 'TC-US-01-01' does not match '^TC-[0-9]{2}-[0-9]{2}$'
+2026-07-02 01:19:43 | INFO     | runner     | 
+2026-07-02 01:19:43 | INFO     | runner     | ============================================================
+2026-07-02 01:19:43 | INFO     | runner     |   Story 2/5 — US-02: Cadastrar nova conta de usuário
+2026-07-02 01:19:43 | INFO     | runner     | ============================================================
+2026-07-02 01:19:43 | INFO     | runner     | [US-02] Running Agent 0 (quality gate)...
+2026-07-02 01:19:47 | ERROR    | runner     | [US-02] Agent 0 → FAILED: AgentOutputError: Schema validation failed at <root>: 'recomendacao' is a required property
+2026-07-02 01:19:47 | INFO     | runner     | 
+2026-07-02 01:19:47 | INFO     | runner     | ============================================================
+2026-07-02 01:19:47 | INFO     | runner     |   Story 3/5 — US-03: Criar nova solicitação de serviço
+2026-07-02 01:19:47 | INFO     | runner     | ============================================================
+2026-07-02 01:19:47 | INFO     | runner     | [US-03] Running Agent 0 (quality gate)...
+2026-07-02 01:19:51 | INFO     | runner     | [US-03] Agent 0 → APROVADA
+2026-07-02 01:19:51 | INFO     | runner     | [US-03] Running Agent 1 (test case generation)...
+2026-07-02 01:20:07 | ERROR    | runner     | [US-03] Agent 1 → FAILED: AgentOutputError: Schema validation failed at matriz_rastreabilidade.0.casos.0: 'TC-US-03-01' does not match '^TC-[0-9]{2}-[0-9]{2}$'
+2026-07-02 01:20:07 | INFO     | runner     | 
+2026-07-02 01:20:07 | INFO     | runner     | ============================================================
+2026-07-02 01:20:07 | INFO     | runner     |   Story 4/5 — US-04: Listar e filtrar minhas solicitações
+2026-07-02 01:20:07 | INFO     | runner     | ============================================================
+2026-07-02 01:20:07 | INFO     | runner     | [US-04] Running Agent 0 (quality gate)...
+2026-07-02 01:20:14 | INFO     | runner     | [US-04] Agent 0 → APROVADA
+2026-07-02 01:20:14 | INFO     | runner     | [US-04] Running Agent 1 (test case generation)...
+2026-07-02 01:20:33 | ERROR    | runner     | [US-04] Agent 1 → FAILED: AgentOutputError: Schema validation failed at <root>: 'alertas' is a required property
+2026-07-02 01:20:33 | INFO     | runner     | 
+2026-07-02 01:20:33 | INFO     | runner     | ============================================================
+2026-07-02 01:20:33 | INFO     | runner     |   Story 5/5 — US-05: Cancelar uma solicitação não finalizada
+2026-07-02 01:20:33 | INFO     | runner     | ============================================================
+2026-07-02 01:20:33 | INFO     | runner     | [US-05] Running Agent 0 (quality gate)...
+2026-07-02 01:20:42 | INFO     | runner     | [US-05] Agent 0 → APROVADA
+2026-07-02 01:20:42 | INFO     | runner     | [US-05] Running Agent 1 (test case generation)...
+2026-07-02 01:20:54 | ERROR    | runner     | [US-05] Agent 1 → FAILED: AgentOutputError: Schema validation failed at <root>: 'alertas' is a required property
+2026-07-02 01:20:54 | INFO     | runner     | Done — total=5 | agent0_ok=4 | agent1_ok=0 | agent2_ok=0 | blocked=0 | errors=5 | repair_attempts=0 | rejected_after_repair=0
+2026-07-02 01:54:03 | INFO     | runner     | Provider: ollama:llama3
+2026-07-02 01:54:03 | INFO     | runner     | Found 5 stories to process
+2026-07-02 01:54:03 | INFO     | runner     | 
+2026-07-02 01:54:03 | INFO     | runner     | ============================================================
+2026-07-02 01:54:03 | INFO     | runner     |   Story 1/5 — US-01: Realizar login com e-mail e senha
+2026-07-02 01:54:03 | INFO     | runner     | ============================================================
+2026-07-02 01:54:03 | INFO     | runner     | [US-01] Running Agent 0 (quality gate)...
+2026-07-02 01:54:15 | INFO     | runner     | [US-01] Agent 0 → APROVADA
+2026-07-02 01:54:15 | INFO     | runner     | [US-01] Running Agent 1 (test case generation)...
+2026-07-02 01:54:33 | ERROR    | runner     | [US-01] Agent 1 → FAILED: AgentOutputError: Schema validation failed at matriz_rastreabilidade.0.casos.0: 'TC-US-01-01' does not match '^TC-[0-9]{2}-[0-9]{2}$'
+2026-07-02 01:54:33 | INFO     | runner     | 
+2026-07-02 01:54:33 | INFO     | runner     | ============================================================
+2026-07-02 01:54:33 | INFO     | runner     |   Story 2/5 — US-02: Cadastrar nova conta de usuário
+2026-07-02 01:54:33 | INFO     | runner     | ============================================================
+2026-07-02 01:54:33 | INFO     | runner     | [US-02] Running Agent 0 (quality gate)...
+2026-07-02 01:54:38 | INFO     | runner     | [US-02] Agent 0 → APROVADA
+2026-07-02 01:54:38 | INFO     | runner     | [US-02] Running Agent 1 (test case generation)...
+2026-07-02 01:54:58 | INFO     | runner     | [US-02] Agent 1 → done — 4 test cases generated
+2026-07-02 01:54:58 | INFO     | runner     | [US-02] Running Agent 2 (judge + repair loop)...
+2026-07-02 01:55:02 | ERROR    | runner     | [US-02] Agent 2 → FAILED: AgentOutputError: LLM response did not contain a valid JSON object.
+2026-07-02 01:55:02 | INFO     | runner     | 
+2026-07-02 01:55:02 | INFO     | runner     | ============================================================
+2026-07-02 01:55:02 | INFO     | runner     |   Story 3/5 — US-03: Criar nova solicitação de serviço
+2026-07-02 01:55:02 | INFO     | runner     | ============================================================
+2026-07-02 01:55:02 | INFO     | runner     | [US-03] Running Agent 0 (quality gate)...
+2026-07-02 01:55:09 | INFO     | runner     | [US-03] Agent 0 → APROVADA
+2026-07-02 01:55:09 | INFO     | runner     | [US-03] Running Agent 1 (test case generation)...
+2026-07-02 01:55:25 | ERROR    | runner     | [US-03] Agent 1 → FAILED: AgentOutputError: Schema validation failed at matriz_rastreabilidade.0.casos.0: 'TC-US-03-01' does not match '^TC-[0-9]{2}-[0-9]{2}$'
+2026-07-02 01:55:25 | INFO     | runner     | 
+2026-07-02 01:55:25 | INFO     | runner     | ============================================================
+2026-07-02 01:55:25 | INFO     | runner     |   Story 4/5 — US-04: Listar e filtrar minhas solicitações
+2026-07-02 01:55:25 | INFO     | runner     | ============================================================
+2026-07-02 01:55:25 | INFO     | runner     | [US-04] Running Agent 0 (quality gate)...
+2026-07-02 01:55:30 | INFO     | runner     | [US-04] Agent 0 → APROVADA
+2026-07-02 01:55:30 | INFO     | runner     | [US-04] Running Agent 1 (test case generation)...
+2026-07-02 01:55:51 | ERROR    | runner     | [US-04] Agent 1 → FAILED: AgentOutputError: Schema validation failed at matriz_rastreabilidade.0.casos.0: 'TC-US04-01' does not match '^TC-[0-9]{2}-[0-9]{2}$'
+2026-07-02 01:55:51 | INFO     | runner     | 
+2026-07-02 01:55:51 | INFO     | runner     | ============================================================
+2026-07-02 01:55:51 | INFO     | runner     |   Story 5/5 — US-05: Cancelar uma solicitação não finalizada
+2026-07-02 01:55:51 | INFO     | runner     | ============================================================
+2026-07-02 01:55:51 | INFO     | runner     | [US-05] Running Agent 0 (quality gate)...
+2026-07-02 01:55:57 | ERROR    | runner     | [US-05] Agent 0 → FAILED: AgentOutputError: Strict gate violation: APROVADA requires derivavel=true and problemas=[].
+2026-07-02 01:55:57 | INFO     | runner     | Done — total=5 | agent0_ok=4 | agent1_ok=1 | agent2_ok=0 | blocked=0 | errors=5 | repair_attempts=0 | rejected_after_repair=0

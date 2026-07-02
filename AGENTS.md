@@ -68,14 +68,15 @@ Follow this order every session:
 | Docker stack (`ollama`, `pipeline`, `backend`, `frontend`) | ✅ Phase 0 done |
 | LLM client layer (`pipeline/llm/`) | ✅ Phase 0 done |
 | Settings & env loader (`pipeline/settings.py`) | ✅ Phase 0 done |
-| Workflow runner (`pipeline/workflow/runner.py`) | ✅ Phase 3 done (runs Agent 0 and Agent 1) |
+| Workflow runner (`pipeline/workflow/runner.py`) | ✅ Phase 5 done (`PIPELINE_PHASE=phase4|phase5`) |
 | PoC backend — FastAPI (`app/backend/`) | ✅ Phase 1 done (FastAPI + SQLite + pytest) |
 | PoC frontend — React (`app/frontend/`) | ✅ Phase 1 done (React + Vite + data-testid) |
-| Agents 0–1 quality gate + test generation | ✅ Phase 3 done (schemas + JSON validation + runner integration) |
-| Pipeline agents 2–3, Summarizer | ❌ Phase 4–6 |
+| Agents 0–2 quality gate + generation + judge/repair | ✅ Phase 4 done (schemas + JSON validation + runner integration) |
+| Agent 3 codegen | ✅ Phase 5 done (Selenium/PyTest codegen + validation) |
+| Summarizer | ❌ Phase 6 |
 | Context builder, glossary, ui_map | ✅ Phase 2 done |
-| Prompts (`pipeline/prompts/`), schemas (`pipeline/schemas/`) | 🚧 Agent 0–1 done; Agent 2+ pending |
-| Evaluation harness (`evaluation/`) | ❌ Phase 7 |
+| Prompts (`pipeline/prompts/`), schemas (`pipeline/schemas/`) | 🚧 Agents 0–3 done; Summarizer pending |
+| Evaluation harness (`evaluation/`) | 🚧 Phase 7 harness done; human oracle files pending |
 
 ---
 
@@ -83,7 +84,7 @@ Follow this order every session:
 
 ```
 pipeline/              # the QA assistant pipeline (Python)
-  agents/              # agent0–1 implemented; agent2–3 + summarizer pending
+  agents/              # agent0–3 implemented; summarizer pending
   context/             # context builder split into focused modules (Phase 2 done)
     models.py          #   UserStory, ContextSection, ContextBlob
     builder.py         #   ContextBuilder + REQUIRED_SECTIONS
@@ -107,9 +108,9 @@ pipeline/              # the QA assistant pipeline (Python)
 app/
   backend/             # FastAPI PoC app (Phase 1 — stub)
   frontend/            # React PoC app (Phase 1 — scaffold)
-data/                  # user_stories/ (inputs), golden/ (oracle) — not yet
-generated/             # pipeline outputs (test_cases/, scripts/, reports/) — not yet
-evaluation/            # metrics.py + results/ — Phase 7
+data/                  # user_stories/ (inputs), golden/ oracle contract
+generated/             # pipeline outputs (test_cases/, scripts/, reports/)
+evaluation/            # metrics.py + results/ — Phase 7 harness
 docker/                # Dockerfiles: pipeline, backend, frontend, ollama
 docker-compose.yml     # services: ollama, pipeline, backend, frontend, selenium
 .env.example           # all env vars with empty values — the only committed template
@@ -145,8 +146,13 @@ The full stack runs in Docker. No host Python/Node needed.
 # Build & start the full stack
 docker compose up -d --build
 
-# Run the pipeline (reads LLM_PROVIDER/LLM_MODEL from .env)
+# Run through Phase 4 (default): Agent 0, Agent 1, Agent 2 + repair loop
 docker compose run --rm pipeline python -m pipeline.workflow.runner
+
+# Run through Phase 5: also generate Selenium/PyTest scripts
+docker compose run --rm \
+  -e PIPELINE_PHASE=phase5 \
+  pipeline python -m pipeline.workflow.runner
 
 # Override provider inline without editing .env
 docker compose run --rm \

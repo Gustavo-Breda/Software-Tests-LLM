@@ -1,8 +1,8 @@
 {
   "status": "APROVADA",
   "derivavel": true,
-  "justificativa_derivabilidade": "A história está bem escrita e todos os critérios de aceitação estão presentes.",
-  "observacao_formato": "O formato segue as regras estabelecidas.",
+  "justificativa_derivabilidade": "A história foi escrita de forma clara e específica, permitindo a derivação de casos de teste funcionais.",
+  "observacao_formato": "O formato da história segue o padrão 'Como [papel], quero [ação], para [benefício]', tornando fácil a compreensão do requisito.",
   "problemas": [],
   "recomendacao": "Prosseguir para geração de casos de teste."
 }

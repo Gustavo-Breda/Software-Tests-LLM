@@ -2,7 +2,7 @@ import json
 
 from pipeline.context import ContextBuilder
 from pipeline.llm.adapter import LLMClient, LLMResponse
-from pipeline.workflow.runner import run_phase4
+from pipeline.workflow.runner import run_phase4, run_phase5
 
 
 class SequenceClient(LLMClient):
@@ -115,6 +115,32 @@ def _agent2_approved_payload(story_number: str) -> dict:
     }
 
 
+def _agent3_payload(story_number: str) -> dict:
+    cases = _agent1_payload(story_number)["test_cases"]
+    test_functions = "\n\n".join(
+        [
+            (
+                f"def test_{case['id'].lower().replace('-', '_')}_generated():\n"
+                f"    # {case['id']}: {case['objetivo']}\n"
+                "    assert True\n"
+            )
+            for case in cases
+        ]
+    )
+    return {
+        "arquivos": {
+            "conftest.py": "import pytest\n",
+            "pages.py": (
+                "from selenium.webdriver.common.by import By\n\n"
+                "class LoginPage:\n"
+                "    EMAIL = (By.CSS_SELECTOR, '[data-testid=login-email]')\n"
+            ),
+            f"test_us_{story_number}.py": test_functions,
+        },
+        "pendencias_de_automacao": [],
+    }
+
+
 def _agent2_rejected_payload(story_number: str) -> dict:
     return {
         "status_geral": "REPROVADO",
@@ -221,3 +247,33 @@ def test_runner_saves_repair_attempts_and_fails_after_n(tmp_path):
     assert (tmp_path / "agent2" / "US-01_attempt-3.json").is_file()
     assert (tmp_path / "repaired" / "US-01_attempt-3.json").is_file()
     assert (tmp_path / "repaired" / "US-01_final.json").is_file()
+
+
+def test_runner_phase5_generates_scripts_for_approved_stories(tmp_path):
+    responses = []
+    for story_number in ["01", "02", "03", "04", "05"]:
+        responses.extend(
+            [
+                json.dumps(_approved_payload(f"US-{story_number}")),
+                json.dumps(_agent1_payload(story_number)),
+                json.dumps(_agent2_approved_payload(story_number)),
+            ]
+        )
+    for story_number in ["01", "02", "03", "04", "05"]:
+        responses.append(json.dumps(_agent3_payload(story_number)))
+    client = SequenceClient(responses)
+
+    aggregate, exit_code = run_phase5(
+        client,
+        agent0_reports_dir=tmp_path / "agent0",
+        test_cases_dir=tmp_path / "test_cases",
+        agent2_reports_dir=tmp_path / "agent2",
+        repaired_test_cases_dir=tmp_path / "repaired",
+        scripts_dir=tmp_path / "scripts",
+    )
+
+    assert exit_code == 0
+    assert aggregate["summary"]["agent3_ok"] == 5
+    assert aggregate["summary"]["agent3_skipped"] == 0
+    assert (tmp_path / "scripts" / "US-01" / "test_us_01.py").is_file()
+    assert (tmp_path / "scripts" / "US-05" / "pendencias_de_automacao.json").is_file()

@@ -209,19 +209,21 @@ exist before scripts can run). Each phase lists deliverables and a done-check.
 - [x] Implement Agent 2 (LLM-as-a-Judge) scoring coverage, fidelity, clarity, automatability; route rejected cases back through Agent 1 (repair prompt) with bounded retries `N`.
 - [x] **Done when:** rejected cases are repaired and re-judged; loop terminates within `N`.
 
-### [ ] Phase 5 — Agent 3 (codegen)
-- [ ] Implement Agent 3: generate `conftest.py`, `pages.py`, `test_*.py` using Page Object Model, `data-testid` selectors, `WebDriverWait` (no `time.sleep`). Record unresolved selectors in `pendencias_de_automacao`.
-- [ ] **Done when:** generated scripts import and collect under PyTest without syntax errors.
+### [x] Phase 5 — Agent 3 (codegen)
+- [x] Implement Agent 3: generate `conftest.py`, `pages.py`, `test_*.py` using Page Object Model, `data-testid` selectors, `WebDriverWait` (no `time.sleep`). Record unresolved selectors in `pendencias_de_automacao`.
+- [x] Add `PIPELINE_PHASE=phase5` runner mode to execute codegen after Agent 2 approval.
+- [x] Validate generated files for JSON schema, Python syntax, forbidden `time.sleep`, documented selectors, and one `test_*` function per automatizable case.
+- [x] **Done when:** generated scripts import and collect under PyTest without syntax errors.
 
 ### [ ] Phase 6 — Summarizer & execution
 - [ ] Run generated scripts against the PoC; feed PyTest output + Selenium logs + error evidence into the Summarization Agent.
 - [ ] **Done when:** a coverage/execution report classifies each failure cause and maps coverage per acceptance criterion.
 
 ### [ ] Phase 7 — Evaluation
-- [ ] Build the human oracle (gabarito) for the 5 stories.
-- [ ] Implement `evaluation/metrics.py` and compute all Section 8 metrics.
-- [ ] Record perceived-effort timings (pipeline review vs. manual authoring).
-- [ ] **Done when:** a metrics table is produced and reproducible.
+- [ ] Build the human oracle (gabarito) for the 5 stories using the contract in `data/golden/README.md`.
+- [x] Implement `evaluation/metrics.py` for precision, recall, F1, omission rate, incorrect-fact rate, acceptance-criteria coverage, script collect rate, judge precision/recall, and perceived-effort ratio.
+- [ ] Record perceived-effort timings (pipeline review vs. manual authoring) in `data/golden/effort_timings.json`.
+- [ ] **Done when:** a metrics table is produced and reproducible from complete human-reviewed golden files.
 
 ### [ ] Phase 8 — Final report (AV2)
 - [ ] Consolidate results, compare with Silva et al., document limitations.
@@ -295,8 +297,8 @@ methodology) for direct comparison.
 - Acceptance-criteria coverage — % of criteria with ≥1 approved associated case.
 
 **Automation quality**
-- Executable-scripts rate — % running without syntax/selector errors.
-- Functional success rate — % passing when the feature is correct in the system.
+- Executable-scripts rate — % collecting under PyTest without syntax/selector errors.
+- Functional success rate — % passing when the feature is correct in the system (**not calculated while Phase 6 is skipped**).
 
 **Pipeline-component efficacy**
 - Judge precision — % of judge-reported problems confirmed by human review.

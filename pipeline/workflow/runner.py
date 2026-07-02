@@ -2,10 +2,12 @@ import logging
 import os
 import sys
 import json
+import re
 from pathlib import Path
 from typing import Any
 
-from pipeline.agents import agent0_quality_gate, agent1_generate, agent2_judge
+from pipeline.agents import agent0_quality_gate, agent1_generate, agent2_judge, agent3_codegen
+from pipeline.agents.agent1_generate import GenerationOutput, TestCase
 from pipeline.context import ContextBuilder
 from pipeline.log import setup
 from pipeline.settings import get_settings
@@ -61,6 +63,91 @@ def run_agent0_all(
     }
     return aggregate, 1 if has_error else 0
 log = logging.getLogger("runner")
+
+
+def run_phase5(
+    client: Any,
+    *,
+    agent0_reports_dir: Path | None = None,
+    test_cases_dir: Path | None = None,
+    agent2_reports_dir: Path | None = None,
+    repaired_test_cases_dir: Path | None = None,
+    scripts_dir: Path | None = None,
+) -> tuple[dict[str, Any], int]:
+    agent2_destination = agent2_reports_dir or Path("generated") / "reports" / "agent2"
+    test_cases_destination = test_cases_dir or Path("generated") / "test_cases"
+    repaired_destination = repaired_test_cases_dir or Path("generated") / "test_cases_repaired"
+    scripts_destination = scripts_dir or Path("generated") / "scripts"
+
+    phase4_aggregate, phase4_exit = run_phase4(
+        client,
+        agent0_reports_dir=agent0_reports_dir,
+        test_cases_dir=test_cases_destination,
+        agent2_reports_dir=agent2_destination,
+        repaired_test_cases_dir=repaired_destination,
+    )
+
+    builder = ContextBuilder.from_repo()
+    scripts_destination.mkdir(parents=True, exist_ok=True)
+    codegen_results: list[dict[str, Any]] = []
+    errors: list[dict[str, Any]] = []
+
+    for blob in builder.build_all():
+        final_judge = _load_final_judge_report(agent2_destination, blob.story_id)
+        if not final_judge or final_judge.get("decisao") != "APROVADO":
+            codegen_results.append(
+                {
+                    "story_id": blob.story_id,
+                    "ok": False,
+                    "skipped": True,
+                    "reason": "agent2_not_approved",
+                }
+            )
+            continue
+
+        try:
+            generation = _load_final_generation(
+                blob.story_id,
+                test_cases_destination,
+                repaired_destination,
+            )
+            output = agent3_codegen.run(blob, generation, client)
+            story_scripts_dir = scripts_destination / blob.story_id
+            agent3_codegen.save_to_disk(output, story_scripts_dir)
+            codegen_results.append(
+                {
+                    "story_id": blob.story_id,
+                    "ok": True,
+                    "files": sorted(output.arquivos),
+                    "pendencias_de_automacao": output.pendencias_de_automacao,
+                    "path": str(story_scripts_dir),
+                }
+            )
+            print(f"[runner] agent3 saved story={blob.story_id} path={story_scripts_dir}")
+        except Exception as exc:
+            error = _error_payload(blob.story_id, "agent3", exc)
+            codegen_results.append(error)
+            errors.append(error)
+            print(f"[runner] agent3 error story={blob.story_id} type={type(exc).__name__}: {exc}")
+
+    aggregate = {
+        "stage": "phase5_agent3_codegen",
+        "phase4": phase4_aggregate,
+        "agent3": codegen_results,
+        "summary": {
+            "agent3_ok": sum(1 for item in codegen_results if item.get("ok")),
+            "agent3_skipped": sum(1 for item in codegen_results if item.get("skipped")),
+            "agent3_errors": len(errors),
+        },
+    }
+    exit_code = 1 if phase4_exit or errors else 0
+    print(
+        "[runner] phase5 done "
+        f"agent3_ok={aggregate['summary']['agent3_ok']} "
+        f"skipped={aggregate['summary']['agent3_skipped']} "
+        f"errors={aggregate['summary']['agent3_errors']}"
+    )
+    return aggregate, exit_code
 
 
 def run_phase4(
@@ -331,6 +418,36 @@ def run_phase3(
     )
 
 
+def _load_final_judge_report(agent2_dir: Path, story_id: str) -> dict[str, Any] | None:
+    reports = sorted(
+        agent2_dir.glob(f"{story_id}_attempt-*.json"),
+        key=lambda path: _attempt_number(path),
+    )
+    if not reports:
+        return None
+    return json.loads(reports[-1].read_text(encoding="utf-8"))
+
+
+def _attempt_number(path: Path) -> int:
+    match = re.search(r"_attempt-(\d+)\.json$", path.name)
+    return int(match.group(1)) if match else -1
+
+
+def _load_final_generation(
+    story_id: str,
+    test_cases_dir: Path,
+    repaired_test_cases_dir: Path,
+) -> GenerationOutput:
+    repaired_path = repaired_test_cases_dir / f"{story_id}_final.json"
+    source = repaired_path if repaired_path.is_file() else test_cases_dir / f"{story_id}.json"
+    data = json.loads(source.read_text(encoding="utf-8"))
+    return GenerationOutput(
+        test_cases=[TestCase(**case) for case in data["test_cases"]],
+        matriz_rastreabilidade=data["matriz_rastreabilidade"],
+        alertas=data["alertas"],
+    )
+
+
 def _error_payload(story_id: str, stage: str, exc: Exception) -> dict[str, Any]:
     return {
         "story_id": story_id,
@@ -362,7 +479,14 @@ def main() -> None:
         sys.exit(1)
 
     print(f"[runner] client ready provider={provider} model={model}")
-    aggregate, exit_code = run_phase4(client)
+    phase = os.getenv("PIPELINE_PHASE", "phase4").strip().lower()
+    if phase == "phase5":
+        aggregate, exit_code = run_phase5(client)
+    elif phase == "phase4":
+        aggregate, exit_code = run_phase4(client)
+    else:
+        log.critical("Unsupported PIPELINE_PHASE: %s", phase)
+        sys.exit(1)
     aggregate["provider"] = provider
     aggregate["model"] = model
     print(json.dumps(aggregate, ensure_ascii=False, indent=2))

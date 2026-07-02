@@ -1,8 +1,8 @@
 {
   "status": "APROVADA",
   "derivavel": true,
-  "justificativa_derivabilidade": "Todos os critérios de aceitação estão claros e mensuráveis.",
-  "observacao_formato": "O formato da história é adequado e segue as regras estabelecidas.",
+  "justificativa_derivabilidade": "Todas as histórias de usuário e critérios de aceitação estão claros e bem definidos.",
+  "observacao_formato": "",
   "problemas": [],
   "recomendacao": "Prosseguir para geração de casos de teste."
 }
