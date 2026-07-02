@@ -11,10 +11,11 @@ from pipeline.llm.adapter import LLMClient, LLMResponse
 class FakeClient(LLMClient):
     provider = "fake"
 
-    def __init__(self, text: str) -> None:
+    def __init__(self, text: str | list[str]) -> None:
         super().__init__("fake-model")
-        self.text = text
+        self.responses = [text] if isinstance(text, str) else text
         self.prompts: list[str] = []
+        self.calls: list[dict[str, object]] = []
 
     def complete(
         self,
@@ -25,7 +26,15 @@ class FakeClient(LLMClient):
         max_tokens: int = 1024,
     ) -> LLMResponse:
         self.prompts.append(prompt)
-        return LLMResponse(text=self.text, model=self.model, provider=self.provider)
+        self.calls.append(
+            {
+                "system": system,
+                "temperature": temperature,
+                "max_tokens": max_tokens,
+            }
+        )
+        index = min(len(self.prompts) - 1, len(self.responses) - 1)
+        return LLMResponse(text=self.responses[index], model=self.model, provider=self.provider)
 
 
 def _blob():
@@ -130,6 +139,7 @@ def test_agent1_accepts_valid_json():
     assert "{acceptance_criteria}" not in client.prompts[0]
     assert "{system_context}" not in client.prompts[0]
     assert "{few_shot_examples}" not in client.prompts[0]
+    assert client.calls[0]["max_tokens"] == 8192
 
 
 def test_agent1_rejects_malformed_json():
@@ -157,10 +167,38 @@ def test_agent1_rejects_unknown_covered_criterion():
         agent1_generate.run(_blob(), client)
 
 
-def test_agent1_rejects_inconsistent_traceability_matrix():
+def test_agent1_normalizes_inconsistent_traceability_matrix():
     payload = _valid_payload()
     payload["matriz_rastreabilidade"][0]["casos"] = ["TC-01-02"]
     client = FakeClient(json.dumps(payload))
 
-    with pytest.raises(AgentOutputError, match="matrix"):
-        agent1_generate.run(_blob(), client)
+    output = agent1_generate.run(_blob(), client)
+
+    assert output.matriz_rastreabilidade[0]["casos"] == ["TC-01-01"]
+
+
+def test_agent1_retries_invalid_output_once():
+    invalid = _valid_payload()
+    invalid["test_cases"][0].pop("resultado_esperado")
+    client = FakeClient([json.dumps(invalid), json.dumps(_valid_payload())])
+
+    output = agent1_generate.run(_blob(), client)
+
+    assert len(output.test_cases) == 4
+    assert len(client.prompts) == 2
+    assert "[CORREÇÃO OBRIGATÓRIA]" in client.prompts[1]
+    assert client.calls[1]["temperature"] == 0.1
+
+
+def test_agent1_normalizes_recoverable_contract_fields():
+    payload = _valid_payload()
+    payload.pop("alertas")
+    payload["test_cases"][0].pop("automatizavel")
+    payload["matriz_rastreabilidade"][0]["casos"] = []
+    client = FakeClient(json.dumps(payload))
+
+    output = agent1_generate.run(_blob(), client)
+
+    assert output.alertas == []
+    assert output.test_cases[0].automatizavel is True
+    assert output.matriz_rastreabilidade[0]["casos"] == ["TC-01-01"]

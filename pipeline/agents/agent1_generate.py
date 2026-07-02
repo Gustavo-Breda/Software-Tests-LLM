@@ -24,6 +24,7 @@ from .utils import AgentOutputError, extract_json_object, load_prompt, validate_
 _SYSTEM_PROMPT = (
     "Você responde apenas com JSON válido e segue estritamente o contrato solicitado."
 )
+_MAX_OUTPUT_REPAIR_ATTEMPTS = 2
 
 
 @dataclass
@@ -71,15 +72,34 @@ def run(
         repair_feedback=repair_feedback,
         current_generation=current_generation,
     )
-    response = client.complete(
-        prompt,
-        system=_SYSTEM_PROMPT,
-        temperature=0.2,
-        max_tokens=4096,
-    )
-    data = extract_json_object(response.text)
-    validate_schema(data, "agent1_out.json")
-    _validate_semantics(blob, data, repair_mode=is_repair)
+    last_error: AgentOutputError | None = None
+    response: LLMResponse | None = None
+
+    for attempt in range(_MAX_OUTPUT_REPAIR_ATTEMPTS + 1):
+        response = client.complete(
+            _repair_prompt(prompt, response.text, str(last_error)) if last_error and response else prompt,
+            system=_SYSTEM_PROMPT,
+            temperature=0.1 if attempt else 0.2,
+            max_tokens=8192,
+        )
+        try:
+            data = extract_json_object(response.text)
+            _normalize_contract_defaults(blob, data)
+            validate_schema(data, "agent1_out.json")
+            _validate_semantics(blob, data, repair_mode=is_repair)
+            break
+        except AgentOutputError as exc:
+            last_error = exc
+            if attempt >= _MAX_OUTPUT_REPAIR_ATTEMPTS:
+                raise
+            print(
+                f"[agent1] retry story={blob.story_id} mode={mode} "
+                f"attempt={attempt + 1} reason={exc}"
+            )
+    else:
+        raise AgentOutputError("Agent 1 failed to produce valid output.")
+
+    assert response is not None
     output = _to_output(data, response)
     print(
         f"[agent1] done story={blob.story_id} mode={mode} "
@@ -87,6 +107,18 @@ def run(
         f"latency={response.latency_seconds:.2f}s"
     )
     return output
+
+
+def _repair_prompt(original_prompt: str, invalid_response: str, error: str) -> str:
+    return (
+        original_prompt
+        + "\n\n[CORREÇÃO OBRIGATÓRIA]\n"
+        + "Sua resposta anterior foi rejeitada pelo validador.\n"
+        + f"Erro: {error}\n\n"
+        + "Retorne novamente o JSON completo, corrigido, sem texto fora do JSON. "
+        + "Não omita campos obrigatórios. Mantenha a matriz de rastreabilidade "
+        + "consistente com criterios_cobertos. Gere menos casos se necessário."
+    )
 
 
 def _build_prompt(
@@ -145,6 +177,40 @@ def _section_body(blob: ContextBlob, title: str) -> str:
         if section.title == title:
             return section.body
     return ""
+
+
+def _normalize_contract_defaults(blob: ContextBlob, data: dict[str, Any]) -> None:
+    data.setdefault("alertas", [])
+    valid_criteria = [
+        str(criterion.get("id"))
+        for criterion in blob.story.acceptance_criteria
+        if criterion.get("id")
+    ]
+    cases = data.get("test_cases")
+    if not isinstance(cases, list):
+        return
+
+    for case in cases:
+        if not isinstance(case, dict):
+            continue
+        case.setdefault("automatizavel", True)
+        case.setdefault("observacoes", "")
+
+    matrix = []
+    for criterion in valid_criteria:
+        matrix.append(
+            {
+                "criterio": criterion,
+                "casos": [
+                    case["id"]
+                    for case in cases
+                    if isinstance(case, dict)
+                    and criterion in case.get("criterios_cobertos", [])
+                    and "id" in case
+                ],
+            }
+        )
+    data["matriz_rastreabilidade"] = matrix
 
 
 def _validate_semantics(

@@ -1,0 +1,38 @@
+{
+  "status_geral": "REPROVADO",
+  "pontuacao": {
+    "cobertura": 9,
+    "fidelidade_ao_requisito": 9,
+    "clareza": 8,
+    "automatizabilidade": 9
+  },
+  "casos_aprovados": [
+    "TC-01-01",
+    "TC-01-02",
+    "TC-01-04",
+    "TC-01-05",
+    "TC-01-06",
+    "TC-01-07"
+  ],
+  "casos_reprovados": [
+    "TC-01-03"
+  ],
+  "problemas": [
+    {
+      "caso_de_teste": "TC-01-03",
+      "tipo": "omissao",
+      "descricao": "O caso de teste não cobre a regra de negócio de tentativas com senha correta durante o bloqueio, que é descrita no critério CA-01.3.",
+      "evidencia_na_historia": "CA-01.3: 'Após 5 tentativas falhas consecutivas no mesmo e-mail, a conta é bloqueada por 60 segundos. Durante o bloqueio, qualquer tentativa (incluindo senha correta) retorna 423 Locked com header Retry-After. Login bem-sucedido reseta o contador.'",
+      "acao_recomendada": "Adicionar um caso de teste que cobre a regra de negócio de tentativas com senha correta durante o bloqueio."
+    }
+  ],
+  "cenarios_omitidos_sugeridos": [
+    {
+      "descricao": "Verificar que durante o bloqueio, tentativas com senha correta são rejeitadas com 423 Locked.",
+      "criterio_relacionado": "CA-01.3",
+      "justificativa": "Esse cenário é necessário para garantir que a regra de negócio de bloqueio seja coberta de forma completa.",
+      "tipo_sugerido": "borda"
+    }
+  ],
+  "decisao": "REPROVADO"
+}

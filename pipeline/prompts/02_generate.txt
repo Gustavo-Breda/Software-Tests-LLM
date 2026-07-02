@@ -35,6 +35,10 @@ Regras obrigatórias:
 10. Dados de teste devem ser concretos. Não use placeholders genéricos como "email@exemplo.com", "senha123" ou "valor válido".
 11. Se algum cenário relevante não puder ser gerado sem assumir regra ausente, não invente: registre em "alertas".
 12. Retorne apenas JSON válido, sem texto fora do JSON.
+13. Gere no máximo 6 casos por história. Se houver mais cenários úteis, priorize cobertura dos critérios e registre o restante em "alertas".
+14. Todo objeto em "test_cases" deve conter todos os campos do formato canônico, incluindo "automatizavel" e "observacoes".
+15. O objeto raiz deve conter obrigatoriamente "test_cases", "matriz_rastreabilidade" e "alertas", mesmo quando "alertas" for [].
+16. Não inclua análise textual das classes de equivalência; inclua apenas os casos no JSON final.
 
 Formato canônico:
 {

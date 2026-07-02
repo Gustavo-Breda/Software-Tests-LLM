@@ -258,3 +258,369 @@
 2026-07-02 01:55:51 | INFO     | runner     | [US-05] Running Agent 0 (quality gate)...
 2026-07-02 01:55:57 | ERROR    | runner     | [US-05] Agent 0 → FAILED: AgentOutputError: Strict gate violation: APROVADA requires derivavel=true and problemas=[].
 2026-07-02 01:55:57 | INFO     | runner     | Done — total=5 | agent0_ok=4 | agent1_ok=1 | agent2_ok=0 | blocked=0 | errors=5 | repair_attempts=0 | rejected_after_repair=0
+2026-07-02 01:58:11 | INFO     | runner     | Provider: ollama:qwen3:8b
+2026-07-02 01:58:11 | INFO     | runner     | Found 5 stories to process
+2026-07-02 01:58:11 | INFO     | runner     | 
+2026-07-02 01:58:11 | INFO     | runner     | ============================================================
+2026-07-02 01:58:11 | INFO     | runner     |   Story 1/5 — US-01: Realizar login com e-mail e senha
+2026-07-02 01:58:11 | INFO     | runner     | ============================================================
+2026-07-02 01:58:11 | INFO     | runner     | [US-01] Running Agent 0 (quality gate)...
+2026-07-02 01:58:39 | INFO     | runner     | [US-01] Agent 0 → APROVADA
+2026-07-02 01:58:39 | INFO     | runner     | [US-01] Running Agent 1 (test case generation)...
+2026-07-02 01:59:53 | ERROR    | runner     | [US-01] Agent 1 → FAILED: AgentOutputError: Schema validation failed at <root>: 'alertas' is a required property
+2026-07-02 01:59:53 | INFO     | runner     | 
+2026-07-02 01:59:53 | INFO     | runner     | ============================================================
+2026-07-02 01:59:53 | INFO     | runner     |   Story 2/5 — US-02: Cadastrar nova conta de usuário
+2026-07-02 01:59:53 | INFO     | runner     | ============================================================
+2026-07-02 01:59:53 | INFO     | runner     | [US-02] Running Agent 0 (quality gate)...
+2026-07-02 02:00:10 | INFO     | runner     | [US-02] Agent 0 → APROVADA
+2026-07-02 02:00:10 | INFO     | runner     | [US-02] Running Agent 1 (test case generation)...
+2026-07-02 02:01:05 | INFO     | runner     | [US-02] Agent 1 → done — 7 test cases generated
+2026-07-02 02:01:05 | INFO     | runner     | [US-02] Running Agent 2 (judge + repair loop)...
+2026-07-02 02:01:35 | INFO     | runner     | [US-02] Agent 2 attempt-0 saved — decision=APROVADO approved=7 rejected=0 problems=0 omitted=0 path=generated/reports/agent2/US-02_attempt-0.json
+2026-07-02 02:01:35 | INFO     | runner     | [US-02] Agent 2 → APROVADO after 0 repair attempt(s)
+2026-07-02 02:01:35 | INFO     | runner     | 
+2026-07-02 02:01:35 | INFO     | runner     | ============================================================
+2026-07-02 02:01:35 | INFO     | runner     |   Story 3/5 — US-03: Criar nova solicitação de serviço
+2026-07-02 02:01:35 | INFO     | runner     | ============================================================
+2026-07-02 02:01:35 | INFO     | runner     | [US-03] Running Agent 0 (quality gate)...
+2026-07-02 02:02:00 | INFO     | runner     | [US-03] Agent 0 → APROVADA
+2026-07-02 02:02:00 | INFO     | runner     | [US-03] Running Agent 1 (test case generation)...
+2026-07-02 02:03:04 | ERROR    | runner     | [US-03] Agent 1 → FAILED: AgentOutputError: Schema validation failed at test_cases.2: 'automatizavel' is a required property
+2026-07-02 02:03:04 | INFO     | runner     | 
+2026-07-02 02:03:04 | INFO     | runner     | ============================================================
+2026-07-02 02:03:04 | INFO     | runner     |   Story 4/5 — US-04: Listar e filtrar minhas solicitações
+2026-07-02 02:03:04 | INFO     | runner     | ============================================================
+2026-07-02 02:03:04 | INFO     | runner     | [US-04] Running Agent 0 (quality gate)...
+2026-07-02 02:03:24 | INFO     | runner     | [US-04] Agent 0 → APROVADA
+2026-07-02 02:03:24 | INFO     | runner     | [US-04] Running Agent 1 (test case generation)...
+2026-07-02 02:04:19 | ERROR    | runner     | [US-04] Agent 1 → FAILED: AgentOutputError: Schema validation failed at test_cases.3: 'automatizavel' is a required property
+2026-07-02 02:04:19 | INFO     | runner     | 
+2026-07-02 02:04:19 | INFO     | runner     | ============================================================
+2026-07-02 02:04:19 | INFO     | runner     |   Story 5/5 — US-05: Cancelar uma solicitação não finalizada
+2026-07-02 02:04:19 | INFO     | runner     | ============================================================
+2026-07-02 02:04:19 | INFO     | runner     | [US-05] Running Agent 0 (quality gate)...
+2026-07-02 02:04:42 | INFO     | runner     | [US-05] Agent 0 → APROVADA
+2026-07-02 02:04:42 | INFO     | runner     | [US-05] Running Agent 1 (test case generation)...
+2026-07-02 02:05:27 | INFO     | runner     | [US-05] Agent 1 → done — 5 test cases generated
+2026-07-02 02:05:27 | INFO     | runner     | [US-05] Running Agent 2 (judge + repair loop)...
+2026-07-02 02:05:56 | INFO     | runner     | [US-05] Agent 2 attempt-0 saved — decision=APROVADO approved=5 rejected=0 problems=0 omitted=0 path=generated/reports/agent2/US-05_attempt-0.json
+2026-07-02 02:05:56 | INFO     | runner     | [US-05] Agent 2 → APROVADO after 0 repair attempt(s)
+2026-07-02 02:05:56 | INFO     | runner     | Done — total=5 | agent0_ok=5 | agent1_ok=2 | agent2_ok=2 | blocked=0 | errors=3 | repair_attempts=0 | rejected_after_repair=0
+2026-07-02 02:11:09 | INFO     | runner     | Provider: ollama:qwen3:8b
+2026-07-02 02:11:09 | INFO     | runner     | Found 5 stories to process
+2026-07-02 02:11:09 | INFO     | runner     | 
+2026-07-02 02:11:09 | INFO     | runner     | ============================================================
+2026-07-02 02:11:09 | INFO     | runner     |   Story 1/5 — US-01: Realizar login com e-mail e senha
+2026-07-02 02:11:09 | INFO     | runner     | ============================================================
+2026-07-02 02:11:09 | INFO     | runner     | [US-01] Running Agent 0 (quality gate)...
+2026-07-02 02:11:24 | INFO     | runner     | [US-01] Agent 0 → APROVADA
+2026-07-02 02:11:24 | INFO     | runner     | [US-01] Running Agent 1 (test case generation)...
+2026-07-02 02:12:12 | ERROR    | runner     | [US-01] Agent 1 → FAILED: AgentOutputError: Agent 1 semantic validation failed: TC-01-08 covers CA-01.3 but matrix does not list it.
+2026-07-02 02:12:12 | INFO     | runner     | 
+2026-07-02 02:12:12 | INFO     | runner     | ============================================================
+2026-07-02 02:12:12 | INFO     | runner     |   Story 2/5 — US-02: Cadastrar nova conta de usuário
+2026-07-02 02:12:12 | INFO     | runner     | ============================================================
+2026-07-02 02:12:12 | INFO     | runner     | [US-02] Running Agent 0 (quality gate)...
+2026-07-02 02:12:18 | INFO     | runner     | [US-02] Agent 0 → APROVADA
+2026-07-02 02:12:18 | INFO     | runner     | [US-02] Running Agent 1 (test case generation)...
+2026-07-02 02:13:06 | INFO     | runner     | [US-02] Agent 1 → done — 8 test cases generated
+2026-07-02 02:13:06 | INFO     | runner     | [US-02] Running Agent 2 (judge + repair loop)...
+2026-07-02 02:13:20 | INFO     | runner     | [US-02] Agent 2 attempt-0 saved — decision=APROVADO approved=8 rejected=0 problems=0 omitted=0 path=generated/reports/agent2/US-02_attempt-0.json
+2026-07-02 02:13:20 | INFO     | runner     | [US-02] Agent 2 → APROVADO after 0 repair attempt(s)
+2026-07-02 02:13:20 | INFO     | runner     | 
+2026-07-02 02:13:20 | INFO     | runner     | ============================================================
+2026-07-02 02:13:20 | INFO     | runner     |   Story 3/5 — US-03: Criar nova solicitação de serviço
+2026-07-02 02:13:20 | INFO     | runner     | ============================================================
+2026-07-02 02:13:20 | INFO     | runner     | [US-03] Running Agent 0 (quality gate)...
+2026-07-02 02:13:27 | INFO     | runner     | [US-03] Agent 0 → APROVADA
+2026-07-02 02:13:27 | INFO     | runner     | [US-03] Running Agent 1 (test case generation)...
+2026-07-02 02:14:23 | ERROR    | runner     | [US-03] Agent 1 → FAILED: AgentOutputError: Schema validation failed at test_cases.3: 'automatizavel' is a required property
+2026-07-02 02:14:23 | INFO     | runner     | 
+2026-07-02 02:14:23 | INFO     | runner     | ============================================================
+2026-07-02 02:14:23 | INFO     | runner     |   Story 4/5 — US-04: Listar e filtrar minhas solicitações
+2026-07-02 02:14:23 | INFO     | runner     | ============================================================
+2026-07-02 02:14:23 | INFO     | runner     | [US-04] Running Agent 0 (quality gate)...
+2026-07-02 02:14:30 | INFO     | runner     | [US-04] Agent 0 → APROVADA
+2026-07-02 02:14:30 | INFO     | runner     | [US-04] Running Agent 1 (test case generation)...
+2026-07-02 02:15:21 | INFO     | runner     | [US-04] Agent 1 → done — 8 test cases generated
+2026-07-02 02:15:21 | INFO     | runner     | [US-04] Running Agent 2 (judge + repair loop)...
+2026-07-02 02:15:36 | INFO     | runner     | [US-04] Agent 2 attempt-0 saved — decision=APROVADO approved=8 rejected=0 problems=0 omitted=0 path=generated/reports/agent2/US-04_attempt-0.json
+2026-07-02 02:15:36 | INFO     | runner     | [US-04] Agent 2 → APROVADO after 0 repair attempt(s)
+2026-07-02 02:15:36 | INFO     | runner     | 
+2026-07-02 02:15:36 | INFO     | runner     | ============================================================
+2026-07-02 02:15:36 | INFO     | runner     |   Story 5/5 — US-05: Cancelar uma solicitação não finalizada
+2026-07-02 02:15:36 | INFO     | runner     | ============================================================
+2026-07-02 02:15:36 | INFO     | runner     | [US-05] Running Agent 0 (quality gate)...
+2026-07-02 02:15:43 | INFO     | runner     | [US-05] Agent 0 → APROVADA
+2026-07-02 02:15:43 | INFO     | runner     | [US-05] Running Agent 1 (test case generation)...
+2026-07-02 02:16:34 | ERROR    | runner     | [US-05] Agent 1 → FAILED: AgentOutputError: Schema validation failed at test_cases.7: 'automatizavel' is a required property
+2026-07-02 02:16:34 | INFO     | runner     | Done — total=5 | agent0_ok=5 | agent1_ok=2 | agent2_ok=2 | blocked=0 | errors=3 | repair_attempts=0 | rejected_after_repair=0
+2026-07-02 02:17:23 | INFO     | runner     | Provider: ollama:qwen3:8b
+2026-07-02 02:17:24 | INFO     | runner     | Found 5 stories to process
+2026-07-02 02:17:24 | INFO     | runner     | 
+2026-07-02 02:17:24 | INFO     | runner     | ============================================================
+2026-07-02 02:17:24 | INFO     | runner     |   Story 1/5 — US-01: Realizar login com e-mail e senha
+2026-07-02 02:17:24 | INFO     | runner     | ============================================================
+2026-07-02 02:17:24 | INFO     | runner     | [US-01] Running Agent 0 (quality gate)...
+2026-07-02 02:17:30 | INFO     | runner     | [US-01] Agent 0 → APROVADA
+2026-07-02 02:17:30 | INFO     | runner     | [US-01] Running Agent 1 (test case generation)...
+2026-07-02 02:18:20 | INFO     | runner     | [US-01] Agent 1 → done — 8 test cases generated
+2026-07-02 02:18:20 | INFO     | runner     | [US-01] Running Agent 2 (judge + repair loop)...
+2026-07-02 02:18:44 | ERROR    | runner     | [US-01] Agent 2 → FAILED: AgentOutputError: Schema validation failed at <root>: 'cenarios_omitidos_sugeridos' is a required property
+2026-07-02 02:18:44 | INFO     | runner     | 
+2026-07-02 02:18:44 | INFO     | runner     | ============================================================
+2026-07-02 02:18:44 | INFO     | runner     |   Story 2/5 — US-02: Cadastrar nova conta de usuário
+2026-07-02 02:18:44 | INFO     | runner     | ============================================================
+2026-07-02 02:18:44 | INFO     | runner     | [US-02] Running Agent 0 (quality gate)...
+2026-07-02 02:18:51 | INFO     | runner     | [US-02] Agent 0 → APROVADA
+2026-07-02 02:18:51 | INFO     | runner     | [US-02] Running Agent 1 (test case generation)...
+2026-07-02 02:19:32 | INFO     | runner     | [US-02] Agent 1 → done — 7 test cases generated
+2026-07-02 02:19:32 | INFO     | runner     | [US-02] Running Agent 2 (judge + repair loop)...
+2026-07-02 02:19:47 | INFO     | runner     | [US-02] Agent 2 attempt-0 saved — decision=APROVADO approved=7 rejected=0 problems=0 omitted=0 path=generated/reports/agent2/US-02_attempt-0.json
+2026-07-02 02:19:47 | INFO     | runner     | [US-02] Agent 2 → APROVADO after 0 repair attempt(s)
+2026-07-02 02:19:47 | INFO     | runner     | 
+2026-07-02 02:19:47 | INFO     | runner     | ============================================================
+2026-07-02 02:19:47 | INFO     | runner     |   Story 3/5 — US-03: Criar nova solicitação de serviço
+2026-07-02 02:19:47 | INFO     | runner     | ============================================================
+2026-07-02 02:19:47 | INFO     | runner     | [US-03] Running Agent 0 (quality gate)...
+2026-07-02 02:19:53 | INFO     | runner     | [US-03] Agent 0 → APROVADA
+2026-07-02 02:19:53 | INFO     | runner     | [US-03] Running Agent 1 (test case generation)...
+2026-07-02 02:21:41 | INFO     | runner     | [US-03] Agent 1 → done — 8 test cases generated
+2026-07-02 02:21:41 | INFO     | runner     | [US-03] Running Agent 2 (judge + repair loop)...
+2026-07-02 02:22:01 | ERROR    | runner     | [US-03] Agent 2 → FAILED: AgentOutputError: Agent 2 semantic validation failed: APROVADO must not contain rejected cases, problems, or omitted scenarios.
+2026-07-02 02:22:01 | INFO     | runner     | 
+2026-07-02 02:22:01 | INFO     | runner     | ============================================================
+2026-07-02 02:22:01 | INFO     | runner     |   Story 4/5 — US-04: Listar e filtrar minhas solicitações
+2026-07-02 02:22:01 | INFO     | runner     | ============================================================
+2026-07-02 02:22:01 | INFO     | runner     | [US-04] Running Agent 0 (quality gate)...
+2026-07-02 02:22:08 | INFO     | runner     | [US-04] Agent 0 → APROVADA
+2026-07-02 02:22:08 | INFO     | runner     | [US-04] Running Agent 1 (test case generation)...
+2026-07-02 02:22:59 | INFO     | runner     | [US-04] Agent 1 → done — 8 test cases generated
+2026-07-02 02:22:59 | INFO     | runner     | [US-04] Running Agent 2 (judge + repair loop)...
+2026-07-02 02:23:15 | INFO     | runner     | [US-04] Agent 2 attempt-0 saved — decision=APROVADO approved=8 rejected=0 problems=0 omitted=0 path=generated/reports/agent2/US-04_attempt-0.json
+2026-07-02 02:23:15 | INFO     | runner     | [US-04] Agent 2 → APROVADO after 0 repair attempt(s)
+2026-07-02 02:23:15 | INFO     | runner     | 
+2026-07-02 02:23:15 | INFO     | runner     | ============================================================
+2026-07-02 02:23:15 | INFO     | runner     |   Story 5/5 — US-05: Cancelar uma solicitação não finalizada
+2026-07-02 02:23:15 | INFO     | runner     | ============================================================
+2026-07-02 02:23:15 | INFO     | runner     | [US-05] Running Agent 0 (quality gate)...
+2026-07-02 02:23:21 | INFO     | runner     | [US-05] Agent 0 → APROVADA
+2026-07-02 02:23:21 | INFO     | runner     | [US-05] Running Agent 1 (test case generation)...
+2026-07-02 02:24:08 | INFO     | runner     | [US-05] Agent 1 → done — 8 test cases generated
+2026-07-02 02:24:08 | INFO     | runner     | [US-05] Running Agent 2 (judge + repair loop)...
+2026-07-02 02:24:24 | INFO     | runner     | [US-05] Agent 2 attempt-0 saved — decision=APROVADO approved=8 rejected=0 problems=0 omitted=0 path=generated/reports/agent2/US-05_attempt-0.json
+2026-07-02 02:24:24 | INFO     | runner     | [US-05] Agent 2 → APROVADO after 0 repair attempt(s)
+2026-07-02 02:24:24 | INFO     | runner     | Done — total=5 | agent0_ok=5 | agent1_ok=5 | agent2_ok=3 | blocked=0 | errors=2 | repair_attempts=0 | rejected_after_repair=0
+2026-07-02 02:24:26 | INFO     | runner     | Provider: ollama:qwen3:8b
+2026-07-02 02:24:27 | INFO     | runner     | Found 5 stories to process
+2026-07-02 02:24:27 | INFO     | runner     | 
+2026-07-02 02:24:27 | INFO     | runner     | ============================================================
+2026-07-02 02:24:27 | INFO     | runner     |   Story 1/5 — US-01: Realizar login com e-mail e senha
+2026-07-02 02:24:27 | INFO     | runner     | ============================================================
+2026-07-02 02:24:27 | INFO     | runner     | [US-01] Running Agent 0 (quality gate)...
+2026-07-02 02:24:33 | INFO     | runner     | [US-01] Agent 0 → APROVADA
+2026-07-02 02:24:33 | INFO     | runner     | [US-01] Running Agent 1 (test case generation)...
+2026-07-02 02:25:05 | INFO     | runner     | [US-01] Agent 1 → done — 5 test cases generated
+2026-07-02 02:25:05 | INFO     | runner     | [US-01] Running Agent 2 (judge + repair loop)...
+2026-07-02 02:25:24 | ERROR    | runner     | [US-01] Agent 2 → FAILED: AgentOutputError: Agent 2 semantic validation failed: APROVADO must not contain rejected cases, problems, or omitted scenarios.
+2026-07-02 02:25:24 | INFO     | runner     | 
+2026-07-02 02:25:24 | INFO     | runner     | ============================================================
+2026-07-02 02:25:24 | INFO     | runner     |   Story 2/5 — US-02: Cadastrar nova conta de usuário
+2026-07-02 02:25:24 | INFO     | runner     | ============================================================
+2026-07-02 02:25:24 | INFO     | runner     | [US-02] Running Agent 0 (quality gate)...
+2026-07-02 02:25:30 | INFO     | runner     | [US-02] Agent 0 → APROVADA
+2026-07-02 02:25:30 | INFO     | runner     | [US-02] Running Agent 1 (test case generation)...
+2026-07-02 02:26:15 | INFO     | runner     | [US-02] Agent 1 → done — 8 test cases generated
+2026-07-02 02:26:15 | INFO     | runner     | [US-02] Running Agent 2 (judge + repair loop)...
+2026-07-02 02:26:31 | INFO     | runner     | [US-02] Agent 2 attempt-0 saved — decision=APROVADO approved=8 rejected=0 problems=0 omitted=0 path=generated/reports/agent2/US-02_attempt-0.json
+2026-07-02 02:26:31 | INFO     | runner     | [US-02] Agent 2 → APROVADO after 0 repair attempt(s)
+2026-07-02 02:26:31 | INFO     | runner     | 
+2026-07-02 02:26:31 | INFO     | runner     | ============================================================
+2026-07-02 02:26:31 | INFO     | runner     |   Story 3/5 — US-03: Criar nova solicitação de serviço
+2026-07-02 02:26:31 | INFO     | runner     | ============================================================
+2026-07-02 02:26:31 | INFO     | runner     | [US-03] Running Agent 0 (quality gate)...
+2026-07-02 02:26:37 | INFO     | runner     | [US-03] Agent 0 → APROVADA
+2026-07-02 02:26:37 | INFO     | runner     | [US-03] Running Agent 1 (test case generation)...
+2026-07-02 02:34:03 | ERROR    | runner     | [US-03] Agent 1 → FAILED: AgentOutputError: Schema validation failed at <root>: 'alertas' is a required property
+2026-07-02 02:34:03 | INFO     | runner     | 
+2026-07-02 02:34:03 | INFO     | runner     | ============================================================
+2026-07-02 02:34:03 | INFO     | runner     |   Story 4/5 — US-04: Listar e filtrar minhas solicitações
+2026-07-02 02:34:03 | INFO     | runner     | ============================================================
+2026-07-02 02:34:03 | INFO     | runner     | [US-04] Running Agent 0 (quality gate)...
+2026-07-02 02:34:11 | INFO     | runner     | [US-04] Agent 0 → APROVADA
+2026-07-02 02:34:11 | INFO     | runner     | [US-04] Running Agent 1 (test case generation)...
+2026-07-02 02:34:57 | INFO     | runner     | [US-04] Agent 1 → done — 8 test cases generated
+2026-07-02 02:34:57 | INFO     | runner     | [US-04] Running Agent 2 (judge + repair loop)...
+2026-07-02 02:35:13 | INFO     | runner     | [US-04] Agent 2 attempt-0 saved — decision=APROVADO approved=8 rejected=0 problems=0 omitted=0 path=generated/reports/agent2/US-04_attempt-0.json
+2026-07-02 02:35:13 | INFO     | runner     | [US-04] Agent 2 → APROVADO after 0 repair attempt(s)
+2026-07-02 02:35:13 | INFO     | runner     | 
+2026-07-02 02:35:13 | INFO     | runner     | ============================================================
+2026-07-02 02:35:13 | INFO     | runner     |   Story 5/5 — US-05: Cancelar uma solicitação não finalizada
+2026-07-02 02:35:13 | INFO     | runner     | ============================================================
+2026-07-02 02:35:13 | INFO     | runner     | [US-05] Running Agent 0 (quality gate)...
+2026-07-02 02:35:20 | INFO     | runner     | [US-05] Agent 0 → APROVADA
+2026-07-02 02:35:20 | INFO     | runner     | [US-05] Running Agent 1 (test case generation)...
+2026-07-02 02:37:02 | INFO     | runner     | [US-05] Agent 1 → done — 8 test cases generated
+2026-07-02 02:37:02 | INFO     | runner     | [US-05] Running Agent 2 (judge + repair loop)...
+2026-07-02 12:59:49 | INFO     | runner     | Provider: ollama:qwen3:8b
+2026-07-02 12:59:49 | INFO     | runner     | Found 5 stories to process
+2026-07-02 12:59:49 | INFO     | runner     | 
+2026-07-02 12:59:49 | INFO     | runner     | ============================================================
+2026-07-02 12:59:49 | INFO     | runner     |   Story 1/5 — US-01: Realizar login com e-mail e senha
+2026-07-02 12:59:49 | INFO     | runner     | ============================================================
+2026-07-02 12:59:49 | INFO     | runner     | [US-01] Running Agent 0 (quality gate)...
+2026-07-02 12:59:49 | ERROR    | runner     | [US-01] Agent 0 → FAILED: ConnectionError: Failed to connect to Ollama. Please check that Ollama is downloaded, running and accessible. https://ollama.com/download
+2026-07-02 12:59:49 | INFO     | runner     | 
+2026-07-02 12:59:49 | INFO     | runner     | ============================================================
+2026-07-02 12:59:49 | INFO     | runner     |   Story 2/5 — US-02: Cadastrar nova conta de usuário
+2026-07-02 12:59:49 | INFO     | runner     | ============================================================
+2026-07-02 12:59:49 | INFO     | runner     | [US-02] Running Agent 0 (quality gate)...
+2026-07-02 12:59:49 | ERROR    | runner     | [US-02] Agent 0 → FAILED: ConnectionError: Failed to connect to Ollama. Please check that Ollama is downloaded, running and accessible. https://ollama.com/download
+2026-07-02 12:59:49 | INFO     | runner     | 
+2026-07-02 12:59:49 | INFO     | runner     | ============================================================
+2026-07-02 12:59:49 | INFO     | runner     |   Story 3/5 — US-03: Criar nova solicitação de serviço
+2026-07-02 12:59:49 | INFO     | runner     | ============================================================
+2026-07-02 12:59:49 | INFO     | runner     | [US-03] Running Agent 0 (quality gate)...
+2026-07-02 12:59:49 | ERROR    | runner     | [US-03] Agent 0 → FAILED: ConnectionError: Failed to connect to Ollama. Please check that Ollama is downloaded, running and accessible. https://ollama.com/download
+2026-07-02 12:59:49 | INFO     | runner     | 
+2026-07-02 12:59:49 | INFO     | runner     | ============================================================
+2026-07-02 12:59:49 | INFO     | runner     |   Story 4/5 — US-04: Listar e filtrar minhas solicitações
+2026-07-02 12:59:49 | INFO     | runner     | ============================================================
+2026-07-02 12:59:49 | INFO     | runner     | [US-04] Running Agent 0 (quality gate)...
+2026-07-02 12:59:49 | ERROR    | runner     | [US-04] Agent 0 → FAILED: ConnectionError: Failed to connect to Ollama. Please check that Ollama is downloaded, running and accessible. https://ollama.com/download
+2026-07-02 12:59:49 | INFO     | runner     | 
+2026-07-02 12:59:49 | INFO     | runner     | ============================================================
+2026-07-02 12:59:49 | INFO     | runner     |   Story 5/5 — US-05: Cancelar uma solicitação não finalizada
+2026-07-02 12:59:49 | INFO     | runner     | ============================================================
+2026-07-02 12:59:49 | INFO     | runner     | [US-05] Running Agent 0 (quality gate)...
+2026-07-02 12:59:49 | ERROR    | runner     | [US-05] Agent 0 → FAILED: ConnectionError: Failed to connect to Ollama. Please check that Ollama is downloaded, running and accessible. https://ollama.com/download
+2026-07-02 12:59:49 | INFO     | runner     | Done — total=5 | agent0_ok=0 | agent1_ok=0 | agent2_ok=0 | blocked=0 | errors=5 | repair_attempts=0 | rejected_after_repair=0
+2026-07-02 13:00:01 | INFO     | runner     | Provider: ollama:qwen3:8b
+2026-07-02 13:00:01 | INFO     | runner     | Found 5 stories to process
+2026-07-02 13:00:01 | INFO     | runner     | 
+2026-07-02 13:00:01 | INFO     | runner     | ============================================================
+2026-07-02 13:00:01 | INFO     | runner     |   Story 1/5 — US-01: Realizar login com e-mail e senha
+2026-07-02 13:00:01 | INFO     | runner     | ============================================================
+2026-07-02 13:00:01 | INFO     | runner     | [US-01] Running Agent 0 (quality gate)...
+2026-07-02 13:00:15 | INFO     | runner     | [US-01] Agent 0 → APROVADA
+2026-07-02 13:00:15 | INFO     | runner     | [US-01] Running Agent 1 (test case generation)...
+2026-07-02 13:00:52 | INFO     | runner     | [US-01] Agent 1 → done — 6 test cases generated
+2026-07-02 13:00:52 | INFO     | runner     | [US-01] Running Agent 2 (judge + repair loop)...
+2026-07-02 13:05:28 | ERROR    | runner     | [US-01] Agent 2 → FAILED: AgentOutputError: Schema validation failed at <root>: 'cenarios_omitidos_sugeridos' is a required property
+2026-07-02 13:05:28 | INFO     | runner     | 
+2026-07-02 13:05:28 | INFO     | runner     | ============================================================
+2026-07-02 13:05:28 | INFO     | runner     |   Story 2/5 — US-02: Cadastrar nova conta de usuário
+2026-07-02 13:05:28 | INFO     | runner     | ============================================================
+2026-07-02 13:05:28 | INFO     | runner     | [US-02] Running Agent 0 (quality gate)...
+2026-07-02 13:05:34 | INFO     | runner     | [US-02] Agent 0 → APROVADA
+2026-07-02 13:05:34 | INFO     | runner     | [US-02] Running Agent 1 (test case generation)...
+2026-07-02 13:06:10 | INFO     | runner     | [US-02] Agent 1 → done — 6 test cases generated
+2026-07-02 13:06:10 | INFO     | runner     | [US-02] Running Agent 2 (judge + repair loop)...
+2026-07-02 13:06:23 | INFO     | runner     | [US-02] Agent 2 attempt-0 saved — decision=APROVADO approved=6 rejected=0 problems=0 omitted=0 path=generated/reports/agent2/US-02_attempt-0.json
+2026-07-02 13:06:23 | INFO     | runner     | [US-02] Agent 2 → APROVADO after 0 repair attempt(s)
+2026-07-02 13:06:23 | INFO     | runner     | 
+2026-07-02 13:06:23 | INFO     | runner     | ============================================================
+2026-07-02 13:06:23 | INFO     | runner     |   Story 3/5 — US-03: Criar nova solicitação de serviço
+2026-07-02 13:06:23 | INFO     | runner     | ============================================================
+2026-07-02 13:06:23 | INFO     | runner     | [US-03] Running Agent 0 (quality gate)...
+2026-07-02 13:06:30 | INFO     | runner     | [US-03] Agent 0 → APROVADA
+2026-07-02 13:06:30 | INFO     | runner     | [US-03] Running Agent 1 (test case generation)...
+2026-07-02 13:07:15 | INFO     | runner     | [US-03] Agent 1 → done — 6 test cases generated
+2026-07-02 13:07:15 | INFO     | runner     | [US-03] Running Agent 2 (judge + repair loop)...
+2026-07-02 13:08:59 | INFO     | runner     | [US-03] Agent 2 attempt-0 saved — decision=REPROVADO approved=6 rejected=0 problems=2 omitted=1 path=generated/reports/agent2/US-03_attempt-0.json
+2026-07-02 13:08:59 | INFO     | runner     | [US-03] Agent 2 attempt-1 saved — decision=APROVADO approved=8 rejected=0 problems=0 omitted=0 path=generated/reports/agent2/US-03_attempt-1.json
+2026-07-02 13:08:59 | INFO     | runner     | [US-03] Repair attempt-1 saved — cases=8 alerts=1 path=generated/test_cases_repaired/US-03_attempt-1.json
+2026-07-02 13:08:59 | INFO     | runner     | [US-03] Repair final saved — cases=8 alerts=1 path=generated/test_cases_repaired/US-03_final.json
+2026-07-02 13:08:59 | INFO     | runner     | [US-03] Agent 2 → APROVADO after 1 repair attempt(s)
+2026-07-02 13:08:59 | INFO     | runner     | 
+2026-07-02 13:08:59 | INFO     | runner     | ============================================================
+2026-07-02 13:08:59 | INFO     | runner     |   Story 4/5 — US-04: Listar e filtrar minhas solicitações
+2026-07-02 13:08:59 | INFO     | runner     | ============================================================
+2026-07-02 13:08:59 | INFO     | runner     | [US-04] Running Agent 0 (quality gate)...
+2026-07-02 13:09:05 | INFO     | runner     | [US-04] Agent 0 → APROVADA
+2026-07-02 13:09:05 | INFO     | runner     | [US-04] Running Agent 1 (test case generation)...
+2026-07-02 13:09:44 | INFO     | runner     | [US-04] Agent 1 → done — 6 test cases generated
+2026-07-02 13:09:44 | INFO     | runner     | [US-04] Running Agent 2 (judge + repair loop)...
+2026-07-02 13:09:57 | INFO     | runner     | [US-04] Agent 2 attempt-0 saved — decision=APROVADO approved=6 rejected=0 problems=0 omitted=0 path=generated/reports/agent2/US-04_attempt-0.json
+2026-07-02 13:09:57 | INFO     | runner     | [US-04] Agent 2 → APROVADO after 0 repair attempt(s)
+2026-07-02 13:09:57 | INFO     | runner     | 
+2026-07-02 13:09:57 | INFO     | runner     | ============================================================
+2026-07-02 13:09:57 | INFO     | runner     |   Story 5/5 — US-05: Cancelar uma solicitação não finalizada
+2026-07-02 13:09:57 | INFO     | runner     | ============================================================
+2026-07-02 13:09:57 | INFO     | runner     | [US-05] Running Agent 0 (quality gate)...
+2026-07-02 13:10:04 | INFO     | runner     | [US-05] Agent 0 → APROVADA
+2026-07-02 13:10:04 | INFO     | runner     | [US-05] Running Agent 1 (test case generation)...
+2026-07-02 13:11:17 | INFO     | runner     | [US-05] Agent 1 → done — 6 test cases generated
+2026-07-02 13:11:17 | INFO     | runner     | [US-05] Running Agent 2 (judge + repair loop)...
+2026-07-02 13:11:31 | INFO     | runner     | [US-05] Agent 2 attempt-0 saved — decision=APROVADO approved=6 rejected=0 problems=0 omitted=0 path=generated/reports/agent2/US-05_attempt-0.json
+2026-07-02 13:11:31 | INFO     | runner     | [US-05] Agent 2 → APROVADO after 0 repair attempt(s)
+2026-07-02 13:11:31 | INFO     | runner     | Done — total=5 | agent0_ok=5 | agent1_ok=5 | agent2_ok=4 | blocked=0 | errors=1 | repair_attempts=1 | rejected_after_repair=0
+2026-07-02 14:06:34 | INFO     | runner     | Provider: ollama:qwen3:8b
+2026-07-02 14:06:34 | INFO     | runner     | Found 5 stories to process
+2026-07-02 14:06:34 | INFO     | runner     | 
+2026-07-02 14:06:34 | INFO     | runner     | ============================================================
+2026-07-02 14:06:34 | INFO     | runner     |   Story 1/5 — US-01: Realizar login com e-mail e senha
+2026-07-02 14:06:34 | INFO     | runner     | ============================================================
+2026-07-02 14:06:34 | INFO     | runner     | [US-01] Running Agent 0 (quality gate)...
+2026-07-02 14:06:47 | INFO     | runner     | [US-01] Agent 0 → APROVADA
+2026-07-02 14:06:47 | INFO     | runner     | [US-01] Running Agent 1 (test case generation)...
+2026-07-02 14:07:24 | INFO     | runner     | [US-01] Agent 1 → done — 6 test cases generated
+2026-07-02 14:07:24 | INFO     | runner     | [US-01] Running Agent 2 (judge + repair loop)...
+2026-07-02 14:11:26 | INFO     | runner     | [US-01] Agent 2 attempt-0 saved — decision=REPROVADO approved=5 rejected=1 problems=1 omitted=1 path=generated/reports/agent2/US-01_attempt-0.json
+2026-07-02 14:11:26 | INFO     | runner     | [US-01] Agent 2 attempt-1 saved — decision=REPROVADO approved=6 rejected=1 problems=1 omitted=1 path=generated/reports/agent2/US-01_attempt-1.json
+2026-07-02 14:11:26 | INFO     | runner     | [US-01] Agent 2 attempt-2 saved — decision=REPROVADO approved=7 rejected=1 problems=1 omitted=1 path=generated/reports/agent2/US-01_attempt-2.json
+2026-07-02 14:11:26 | INFO     | runner     | [US-01] Agent 2 attempt-3 saved — decision=REPROVADO approved=8 rejected=1 problems=1 omitted=1 path=generated/reports/agent2/US-01_attempt-3.json
+2026-07-02 14:11:26 | INFO     | runner     | [US-01] Repair attempt-1 saved — cases=7 alerts=1 path=generated/test_cases_repaired/US-01_attempt-1.json
+2026-07-02 14:11:26 | INFO     | runner     | [US-01] Repair attempt-2 saved — cases=8 alerts=1 path=generated/test_cases_repaired/US-01_attempt-2.json
+2026-07-02 14:11:26 | INFO     | runner     | [US-01] Repair attempt-3 saved — cases=9 alerts=1 path=generated/test_cases_repaired/US-01_attempt-3.json
+2026-07-02 14:11:26 | INFO     | runner     | [US-01] Repair final saved — cases=9 alerts=1 path=generated/test_cases_repaired/US-01_final.json
+2026-07-02 14:11:26 | ERROR    | runner     | [US-01] Agent 2 → REPROVADO after 3 repair attempt(s)
+2026-07-02 14:11:26 | INFO     | runner     | 
+2026-07-02 14:11:26 | INFO     | runner     | ============================================================
+2026-07-02 14:11:26 | INFO     | runner     |   Story 2/5 — US-02: Cadastrar nova conta de usuário
+2026-07-02 14:11:26 | INFO     | runner     | ============================================================
+2026-07-02 14:11:26 | INFO     | runner     | [US-02] Running Agent 0 (quality gate)...
+2026-07-02 14:11:32 | INFO     | runner     | [US-02] Agent 0 → APROVADA
+2026-07-02 14:11:32 | INFO     | runner     | [US-02] Running Agent 1 (test case generation)...
+2026-07-02 14:12:08 | INFO     | runner     | [US-02] Agent 1 → done — 6 test cases generated
+2026-07-02 14:12:08 | INFO     | runner     | [US-02] Running Agent 2 (judge + repair loop)...
+2026-07-02 14:12:21 | INFO     | runner     | [US-02] Agent 2 attempt-0 saved — decision=APROVADO approved=6 rejected=0 problems=0 omitted=0 path=generated/reports/agent2/US-02_attempt-0.json
+2026-07-02 14:12:21 | INFO     | runner     | [US-02] Agent 2 → APROVADO after 0 repair attempt(s)
+2026-07-02 14:12:21 | INFO     | runner     | 
+2026-07-02 14:12:21 | INFO     | runner     | ============================================================
+2026-07-02 14:12:21 | INFO     | runner     |   Story 3/5 — US-03: Criar nova solicitação de serviço
+2026-07-02 14:12:21 | INFO     | runner     | ============================================================
+2026-07-02 14:12:21 | INFO     | runner     | [US-03] Running Agent 0 (quality gate)...
+2026-07-02 14:12:28 | INFO     | runner     | [US-03] Agent 0 → APROVADA
+2026-07-02 14:12:28 | INFO     | runner     | [US-03] Running Agent 1 (test case generation)...
+2026-07-02 14:13:11 | INFO     | runner     | [US-03] Agent 1 → done — 6 test cases generated
+2026-07-02 14:13:11 | INFO     | runner     | [US-03] Running Agent 2 (judge + repair loop)...
+2026-07-02 14:15:05 | INFO     | runner     | [US-03] Agent 2 attempt-0 saved — decision=REPROVADO approved=6 rejected=0 problems=5 omitted=1 path=generated/reports/agent2/US-03_attempt-0.json
+2026-07-02 14:15:05 | INFO     | runner     | [US-03] Agent 2 attempt-1 saved — decision=APROVADO approved=8 rejected=0 problems=0 omitted=0 path=generated/reports/agent2/US-03_attempt-1.json
+2026-07-02 14:15:05 | INFO     | runner     | [US-03] Repair attempt-1 saved — cases=8 alerts=0 path=generated/test_cases_repaired/US-03_attempt-1.json
+2026-07-02 14:15:05 | INFO     | runner     | [US-03] Repair final saved — cases=8 alerts=0 path=generated/test_cases_repaired/US-03_final.json
+2026-07-02 14:15:05 | INFO     | runner     | [US-03] Agent 2 → APROVADO after 1 repair attempt(s)
+2026-07-02 14:15:05 | INFO     | runner     | 
+2026-07-02 14:15:05 | INFO     | runner     | ============================================================
+2026-07-02 14:15:05 | INFO     | runner     |   Story 4/5 — US-04: Listar e filtrar minhas solicitações
+2026-07-02 14:15:05 | INFO     | runner     | ============================================================
+2026-07-02 14:15:05 | INFO     | runner     | [US-04] Running Agent 0 (quality gate)...
+2026-07-02 14:15:12 | INFO     | runner     | [US-04] Agent 0 → APROVADA
+2026-07-02 14:15:12 | INFO     | runner     | [US-04] Running Agent 1 (test case generation)...
+2026-07-02 14:16:23 | INFO     | runner     | [US-04] Agent 1 → done — 6 test cases generated
+2026-07-02 14:16:23 | INFO     | runner     | [US-04] Running Agent 2 (judge + repair loop)...
+2026-07-02 14:16:36 | INFO     | runner     | [US-04] Agent 2 attempt-0 saved — decision=APROVADO approved=6 rejected=0 problems=0 omitted=0 path=generated/reports/agent2/US-04_attempt-0.json
+2026-07-02 14:16:36 | INFO     | runner     | [US-04] Agent 2 → APROVADO after 0 repair attempt(s)
+2026-07-02 14:16:36 | INFO     | runner     | 
+2026-07-02 14:16:36 | INFO     | runner     | ============================================================
+2026-07-02 14:16:36 | INFO     | runner     |   Story 5/5 — US-05: Cancelar uma solicitação não finalizada
+2026-07-02 14:16:36 | INFO     | runner     | ============================================================
+2026-07-02 14:16:36 | INFO     | runner     | [US-05] Running Agent 0 (quality gate)...
+2026-07-02 14:16:44 | INFO     | runner     | [US-05] Agent 0 → APROVADA
+2026-07-02 14:16:44 | INFO     | runner     | [US-05] Running Agent 1 (test case generation)...
+2026-07-02 14:17:22 | INFO     | runner     | [US-05] Agent 1 → done — 6 test cases generated
+2026-07-02 14:17:22 | INFO     | runner     | [US-05] Running Agent 2 (judge + repair loop)...
+2026-07-02 14:17:36 | INFO     | runner     | [US-05] Agent 2 attempt-0 saved — decision=APROVADO approved=6 rejected=0 problems=0 omitted=0 path=generated/reports/agent2/US-05_attempt-0.json
+2026-07-02 14:17:36 | INFO     | runner     | [US-05] Agent 2 → APROVADO after 0 repair attempt(s)
+2026-07-02 14:17:36 | INFO     | runner     | Done — total=5 | agent0_ok=5 | agent1_ok=5 | agent2_ok=5 | blocked=0 | errors=0 | repair_attempts=4 | rejected_after_repair=1

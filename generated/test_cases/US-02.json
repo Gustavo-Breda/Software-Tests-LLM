@@ -13,14 +13,14 @@
         "O e-mail informado ainda não existe no banco."
       ],
       "dados_de_teste": {
-        "name": "Carla Mendes",
-        "email": "carla.mendes@example.com",
+        "name": "João Silva",
+        "email": "joao.silva@example.com",
         "password": "Senha123"
       },
       "passos": [
         "Acessar a rota /register no frontend.",
-        "Preencher o campo 'register-name' com 'Carla Mendes'.",
-        "Preencher 'register-email' com 'carla.mendes@example.com'.",
+        "Preencher o campo 'register-name' com 'João Silva'.",
+        "Preencher 'register-email' com 'joao.silva@example.com'.",
         "Preencher 'register-password' com 'Senha123'.",
         "Clicar em 'register-submit'."
       ],
@@ -106,6 +106,57 @@
       "automatizavel": true,
       "observacoes": "Cobre apenas o limite inferior. Um caso simétrico com 81 caracteres cobriria o limite superior — recomenda-se gerar.",
       "correcao_aplicada": ""
+    },
+    {
+      "id": "TC-02-05",
+      "titulo": "Rejeição de senha com menos de 8 caracteres",
+      "objetivo": "Verificar que a senha deve ter pelo menos 8 caracteres.",
+      "criterios_cobertos": [
+        "CA-02.3"
+      ],
+      "tipo": "borda",
+      "prioridade": "media",
+      "pre_condicoes": [
+        "E-mail ainda não cadastrado."
+      ],
+      "dados_de_teste": {
+        "name": "Ana Souza",
+        "email": "ana.souza@example.com",
+        "password": "Senha12"
+      },
+      "passos": [
+        "Acessar /register e preencher os três campos com os dados de teste.",
+        "Clicar em 'register-submit'."
+      ],
+      "resultado_esperado": "Resposta 422. Cadastro não é persistido (consulta posterior no banco confirma ausência). UI mantém o usuário em /register e o botão 'register-submit' continua disponível para nova tentativa.",
+      "automatizavel": true,
+      "observacoes": "Caso simétrico: variar para 'Senha12345678' cobriria a outra metade da regra (senha com 8 caracteres).",
+      "correcao_aplicada": ""
+    },
+    {
+      "id": "TC-02-06",
+      "titulo": "Rejeição de nome com mais de 80 caracteres",
+      "objetivo": "Verificar o limite superior do tamanho do nome.",
+      "criterios_cobertos": [
+        "CA-02.3"
+      ],
+      "tipo": "borda",
+      "prioridade": "baixa",
+      "pre_condicoes": [],
+      "dados_de_teste": {
+        "name": "NomeMuitoLongoQueExcedeOlimiteDe80Caracteres",
+        "email": "nome@exemplo.com",
+        "password": "Senha123"
+      },
+      "passos": [
+        "Acessar /register.",
+        "Preencher os três campos.",
+        "Clicar em 'register-submit'."
+      ],
+      "resultado_esperado": "Resposta 422. Cadastro não persistido.",
+      "automatizavel": true,
+      "observacoes": "Cobre apenas o limite superior. Um caso simétrico com 3 caracteres cobriria o limite inferior — recomenda-se gerar.",
+      "correcao_aplicada": ""
     }
   ],
   "matriz_rastreabilidade": [
@@ -125,12 +176,13 @@
       "criterio": "CA-02.3",
       "casos": [
         "TC-02-03",
-        "TC-02-04"
+        "TC-02-04",
+        "TC-02-05",
+        "TC-02-06"
       ]
     }
   ],
   "alertas": [
-    "Cobertura de CA-02.3 está parcial: existem TCs para senha sem número e nome curto, mas não para senha sem letra nem para nome com 81 caracteres. Considerar adicionar.",
-    "Não há TC verificando o limite superior do tamanho da senha (128). Caso de boundary value parking lot."
+    "Cobertura de CA-02.3 está completa com os limites de nome e senha, mas não há cobertura para senha com 128 caracteres. Caso de boundary value parking lot."
   ]
 }

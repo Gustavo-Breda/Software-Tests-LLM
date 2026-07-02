@@ -122,9 +122,10 @@ def _call_judge(blob: ContextBlob, generation: GenerationOutput, client: LLMClie
         prompt,
         system=_SYSTEM_PROMPT,
         temperature=0.2,
-        max_tokens=4096,
+        max_tokens=8192,
     )
     data = extract_json_object(response.text)
+    _normalize_decision_consistency(data)
     validate_schema(data, "agent2_out.json")
     _validate_semantics(blob, generation, data)
     output = _to_output(data, response)
@@ -188,6 +189,17 @@ def run(blob: ContextBlob, generation: GenerationOutput, client: LLMClient) -> J
 
 def _build_repair_feedback(judge: JudgeOutput) -> str:
     return json.dumps(judge.to_dict(), ensure_ascii=False, indent=2)
+
+
+def _normalize_decision_consistency(data: dict[str, Any]) -> None:
+    has_rejection_evidence = bool(
+        data.get("casos_reprovados")
+        or data.get("problemas")
+        or data.get("cenarios_omitidos_sugeridos")
+    )
+    if data.get("decisao") == "APROVADO" and has_rejection_evidence:
+        data["decisao"] = "REPROVADO"
+        data["status_geral"] = "REPROVADO"
 
 
 def _build_prompt(blob: ContextBlob, generation: GenerationOutput) -> str:

@@ -1,8 +1,8 @@
 {
   "status": "APROVADA",
   "derivavel": true,
-  "justificativa_derivabilidade": "Todos os critérios de aceitação estão claros e mensuráveis.",
-  "observacao_formato": "O formato da história segue o padrão 'Como [papel], quero [ação], para [benefício]'.",
+  "justificativa_derivabilidade": "Os critérios de aceitação são específicos, mensuráveis e cobrem os fluxos positivos, negativos e de borda esperados. A história de usuário fornece informações suficientes para derivar casos de teste sem necessidade de inventar regras.",
+  "observacao_formato": "A história de usuário segue o padrão 'Como [papel], quero [ação], para [benefício]', o que facilita a compreensão e a geração de casos de teste.",
   "problemas": [],
   "recomendacao": "Prosseguir para geração de casos de teste."
 }

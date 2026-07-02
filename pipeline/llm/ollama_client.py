@@ -49,6 +49,8 @@ class OllamaClient(LLMClient):
             response = self._client.chat(
                 model=self.model,
                 messages=messages,
+                format="json",
+                think=False,
                 options={
                     "temperature": temperature,
                     "num_predict": max_tokens,

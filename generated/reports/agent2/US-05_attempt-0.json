@@ -1,0 +1,21 @@
+{
+  "status_geral": "APROVADO",
+  "pontuacao": {
+    "cobertura": 10,
+    "fidelidade_ao_requisito": 10,
+    "clareza": 9,
+    "automatizabilidade": 9
+  },
+  "casos_aprovados": [
+    "TC-05-01",
+    "TC-05-02",
+    "TC-05-03",
+    "TC-05-04",
+    "TC-05-05",
+    "TC-05-06"
+  ],
+  "casos_reprovados": [],
+  "problemas": [],
+  "cenarios_omitidos_sugeridos": [],
+  "decisao": "APROVADO"
+}

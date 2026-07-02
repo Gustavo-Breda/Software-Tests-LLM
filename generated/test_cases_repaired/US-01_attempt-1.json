@@ -25,7 +25,7 @@
       "resultado_esperado": "Resposta 200 do backend com token JWT no corpo. O usuário é redirecionado para a tela de listagem de solicitações (/requests).",
       "automatizavel": true,
       "observacoes": "Caminho feliz padrão; valida apenas o fluxo positivo de CA-01.1.",
-      "correcao_aplicada": ""
+      "correcao_aplicada": "nenhuma — caso aprovado"
     },
     {
       "id": "TC-01-02",
@@ -52,7 +52,7 @@
       "resultado_esperado": "Resposta 401 com detail='E-mail ou senha inválidos.' e o elemento 'login-error' exibe a mensagem ao usuário.",
       "automatizavel": true,
       "observacoes": "Cobre apenas a mensagem genérica; não revela se o e-mail existe.",
-      "correcao_aplicada": ""
+      "correcao_aplicada": "nenhuma — caso aprovado"
     },
     {
       "id": "TC-01-03",
@@ -80,7 +80,7 @@
       "resultado_esperado": "Resposta 423 com header Retry-After: 60 e detail='Conta bloqueada. Tente novamente em 60 segundos.'.",
       "automatizavel": true,
       "observacoes": "Cobre apenas o bloqueio após 5 tentativas; login bem-sucedido reseta o contador.",
-      "correcao_aplicada": ""
+      "correcao_aplicada": "correção aplicada: adicionado cenário omitido conforme sugestão do juiz"
     },
     {
       "id": "TC-01-04",
@@ -107,7 +107,7 @@
       "resultado_esperado": "Resposta 422 com detail='E-mail inválido.' e o elemento 'login-error' exibe a mensagem ao usuário.",
       "automatizavel": true,
       "observacoes": "Cobre apenas o formato inválido do e-mail.",
-      "correcao_aplicada": ""
+      "correcao_aplicada": "nenhuma — caso aprovado"
     },
     {
       "id": "TC-01-05",
@@ -134,7 +134,7 @@
       "resultado_esperado": "Resposta 401 com detail='E-mail ou senha inválidos.' e o elemento 'login-error' exibe a mensagem ao usuário.",
       "automatizavel": true,
       "observacoes": "Cobre apenas a senha incorreta; não revela se o e-mail existe.",
-      "correcao_aplicada": ""
+      "correcao_aplicada": "nenhuma — caso aprovado"
     },
     {
       "id": "TC-01-06",
@@ -161,7 +161,34 @@
       "resultado_esperado": "Resposta 200 com token JWT no corpo. O usuário é redirecionado para a tela de listagem de solicitações (/requests).",
       "automatizavel": true,
       "observacoes": "Cobre apenas o reset do contador após login bem-sucedido.",
-      "correcao_aplicada": ""
+      "correcao_aplicada": "nenhuma — caso aprovado"
+    },
+    {
+      "id": "TC-01-07",
+      "titulo": "Login com senha correta durante o bloqueio",
+      "objetivo": "Verificar que durante o bloqueio, tentativas com senha correta são rejeitadas com 423 Locked.",
+      "criterios_cobertos": [
+        "CA-01.3"
+      ],
+      "tipo": "borda",
+      "prioridade": "alta",
+      "pre_condicoes": [
+        "O usuário 'bob@example.com' foi bloqueado após 5 tentativas falhas consecutivas."
+      ],
+      "dados_de_teste": {
+        "email": "bob@example.com",
+        "senha": "Senha123"
+      },
+      "passos": [
+        "Acessar a rota /login.",
+        "Preencher o campo 'login-email' com 'bob@example.com'.",
+        "Preencher o campo 'login-password' com 'Senha123'.",
+        "Clicar em 'login-submit'."
+      ],
+      "resultado_esperado": "Resposta 423 com header Retry-After: 60 e detail='Conta bloqueada. Tente novamente em 60 segundos.'.",
+      "automatizavel": true,
+      "observacoes": "Cobre a rejeição de tentativas com senha correta durante o bloqueio.",
+      "correcao_aplicada": "cenário omitido adicionado conforme sugestão do juiz"
     }
   ],
   "matriz_rastreabilidade": [
@@ -182,7 +209,8 @@
       "criterio": "CA-01.3",
       "casos": [
         "TC-01-03",
-        "TC-01-06"
+        "TC-01-06",
+        "TC-01-07"
       ]
     },
     {
@@ -193,6 +221,6 @@
     }
   ],
   "alertas": [
-    "Cobertura de CA-01.3 está parcial: existem TCs para bloqueio e reset, mas não para tentativas falhas com senha correta durante o bloqueio."
+    "Correção do TC-01-03 não aplicada: exigiria assumir regra de negócio sobre tentativas com senha correta durante o bloqueio, ausente na história."
   ]
 }

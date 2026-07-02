@@ -2,116 +2,173 @@
   "test_cases": [
     {
       "id": "TC-04-01",
-      "titulo": "Listar solicitações do próprio usuário sem filtros",
+      "titulo": "Listar solicitações sem filtros aplicados",
       "objetivo": "Verificar que o endpoint retorna apenas as solicitações do próprio usuário, ordenadas por created_at descendente.",
       "criterios_cobertos": [
         "CA-04.1"
       ],
       "tipo": "positivo",
       "prioridade": "alta",
-      "pre_condicoes": [],
+      "pre_condicoes": [
+        "O usuário está autenticado e possui solicitações no sistema."
+      ],
       "dados_de_teste": {
-        "email": "alice@example.com"
+        "email": "alice@example.com",
+        "senha": "Senha123"
       },
       "passos": [
-        "Acessar a rota /api/requests com autenticação como alice@example.com.",
-        "Verificar que a lista de solicitações retorne apenas as do próprio usuário."
+        "Acessar a rota /requests no frontend.",
+        "Autenticar com o e-mail 'alice@example.com' e senha 'Senha123'.",
+        "Verificar a lista de solicitações na tela."
       ],
-      "resultado_esperado": "Resposta 200 com items=lista_de_solicitações_do_usuario e total=número_de_solicitações_do_usuario.",
+      "resultado_esperado": "Resposta 200 com items contendo as solicitações do usuário 'alice@example.com', ordenadas por created_at descendente. A UI exibe as solicitações corretamente.",
       "automatizavel": true,
-      "observacoes": "",
+      "observacoes": "Caminho feliz para a listagem padrão. Não há filtros aplicados.",
       "correcao_aplicada": ""
     },
     {
       "id": "TC-04-02",
-      "titulo": "Filtrar solicitações por status aberta",
-      "objetivo": "Verificar que o endpoint retorna apenas as solicitações do próprio usuário com status aberto.",
+      "titulo": "Filtrar solicitações por status e prioridade",
+      "objetivo": "Verificar que os filtros de status e prioridade são combináveis e retornam apenas o subconjunto de solicitações que satisfazem ambas as condições.",
       "criterios_cobertos": [
         "CA-04.2"
       ],
       "tipo": "positivo",
       "prioridade": "alta",
-      "pre_condicoes": [],
+      "pre_condicoes": [
+        "O usuário está autenticado e possui solicitações com status 'aberta' e prioridade 'alta' no sistema."
+      ],
       "dados_de_teste": {
         "email": "alice@example.com",
-        "status": "aberta"
-      },
-      "passos": [
-        "Acessar a rota /api/requests com autenticação como alice@example.com.",
-        "Filtrar as solicitações por status aberto."
-      ],
-      "resultado_esperado": "Resposta 200 com items=lista_de_solicitações_abertas e total=número_de_solicitações_abertas.",
-      "automatizavel": true,
-      "observacoes": "",
-      "correcao_aplicada": ""
-    },
-    {
-      "id": "TC-04-03",
-      "titulo": "Filtrar solicitações por prioridade alta",
-      "objetivo": "Verificar que o endpoint retorna apenas as solicitações do próprio usuário com prioridade alta.",
-      "criterios_cobertos": [
-        "CA-04.2"
-      ],
-      "tipo": "positivo",
-      "prioridade": "alta",
-      "pre_condicoes": [],
-      "dados_de_teste": {
-        "email": "alice@example.com",
-        "priority": "alta"
-      },
-      "passos": [
-        "Acessar a rota /api/requests com autenticação como alice@example.com.",
-        "Filtrar as solicitações por prioridade alta."
-      ],
-      "resultado_esperado": "Resposta 200 com items=lista_de_solicitações_altas e total=número_de_solicitações_altas.",
-      "automatizavel": true,
-      "observacoes": "",
-      "correcao_aplicada": ""
-    },
-    {
-      "id": "TC-04-04",
-      "titulo": "Filtrar solicitações por status aberto e prioridade alta",
-      "objetivo": "Verificar que o endpoint retorna apenas as solicitações do próprio usuário com status aberto e prioridade alta.",
-      "criterios_cobertos": [
-        "CA-04.2"
-      ],
-      "tipo": "positivo",
-      "prioridade": "alta",
-      "pre_condicoes": [],
-      "dados_de_teste": {
-        "email": "alice@example.com",
+        "senha": "Senha123",
         "status": "aberta",
         "priority": "alta"
       },
       "passos": [
-        "Acessar a rota /api/requests com autenticação como alice@example.com.",
-        "Filtrar as solicitações por status aberto e prioridade alta."
+        "Acessar a rota /requests no frontend.",
+        "Autenticar com o e-mail 'alice@example.com' e senha 'Senha123'.",
+        "Aplicar o filtro de status 'aberta' e prioridade 'alta'.",
+        "Verificar a lista de solicitações na tela."
       ],
-      "resultado_esperado": "Resposta 200 com items=lista_de_solicitações_abertas_e_altas e total=número_de_solicitações_abertas_e_altas.",
+      "resultado_esperado": "Resposta 200 com items contendo apenas as solicitações do usuário 'alice@example.com' com status 'aberta' e prioridade 'alta'. A UI exibe as solicitações corretamente.",
       "automatizavel": true,
-      "observacoes": "",
+      "observacoes": "Verifica a combinação de filtros. Cada filtro pode ser usado isoladamente também.",
       "correcao_aplicada": ""
     },
     {
-      "id": "TC-04-05",
-      "titulo": "Filtro vazio não retorna solicitações",
-      "objetivo": "Verificar que o endpoint retorne uma lista vazia quando nenhum filtro é aplicado.",
+      "id": "TC-04-03",
+      "titulo": "Filtrar solicitações que não existem",
+      "objetivo": "Verificar que quando o filtro não retorna nenhum item, a resposta é 200 com items=[] e total=0, e a UI exibe a mensagem 'Nenhuma solicitação encontrada.'",
       "criterios_cobertos": [
         "CA-04.3"
       ],
       "tipo": "borda",
       "prioridade": "alta",
-      "pre_condicoes": [],
+      "pre_condicoes": [
+        "O usuário está autenticado e não possui solicitações com status 'finalizada' e prioridade 'baixa' no sistema."
+      ],
       "dados_de_teste": {
-        "email": "alice@example.com"
+        "email": "alice@example.com",
+        "senha": "Senha123",
+        "status": "finalizada",
+        "priority": "baixa"
       },
       "passos": [
-        "Acessar a rota /api/requests com autenticação como alice@example.com.",
-        "Verificar que a lista de solicitações retorne vazia."
+        "Acessar a rota /requests no frontend.",
+        "Autenticar com o e-mail 'alice@example.com' e senha 'Senha123'.",
+        "Aplicar o filtro de status 'finalizada' e prioridade 'baixa'.",
+        "Verificar a lista de solicitações na tela."
       ],
-      "resultado_esperado": "Resposta 200 com items=[] e total=0.",
+      "resultado_esperado": "Resposta 200 com items=[] e total=0. A UI exibe a mensagem 'Nenhuma solicitação encontrada.' e os controles de filtro continuam visíveis.",
       "automatizavel": true,
-      "observacoes": "",
+      "observacoes": "Caso de borda onde o filtro não retorna nenhum item. A UI exibe a mensagem correta e mantém os filtros visíveis.",
+      "correcao_aplicada": ""
+    },
+    {
+      "id": "TC-04-04",
+      "titulo": "Filtrar solicitações com status inválido",
+      "objetivo": "Verificar que o uso de um status inválido não retorna erro, mas também não retorna resultados.",
+      "criterios_cobertos": [
+        "CA-04.3"
+      ],
+      "tipo": "negativo",
+      "prioridade": "media",
+      "pre_condicoes": [
+        "O usuário está autenticado e possui solicitações no sistema."
+      ],
+      "dados_de_teste": {
+        "email": "alice@example.com",
+        "senha": "Senha123",
+        "status": "invalido",
+        "priority": "alta"
+      },
+      "passos": [
+        "Acessar a rota /requests no frontend.",
+        "Autenticar com o e-mail 'alice@example.com' e senha 'Senha123'.",
+        "Aplicar o filtro de status 'invalido' e prioridade 'alta'.",
+        "Verificar a lista de solicitações na tela."
+      ],
+      "resultado_esperado": "Resposta 200 com items=[] e total=0. A UI exibe a mensagem 'Nenhuma solicitação encontrada.' e os controles de filtro continuam visíveis.",
+      "automatizavel": true,
+      "observacoes": "Caso negativo onde o status é inválido. A API não retorna erro, mas também não retorna resultados.",
+      "correcao_aplicada": ""
+    },
+    {
+      "id": "TC-04-05",
+      "titulo": "Filtrar solicitações com prioridade inválida",
+      "objetivo": "Verificar que o uso de uma prioridade inválida não retorna erro, mas também não retorna resultados.",
+      "criterios_cobertos": [
+        "CA-04.3"
+      ],
+      "tipo": "negativo",
+      "prioridade": "media",
+      "pre_condicoes": [
+        "O usuário está autenticado e possui solicitações no sistema."
+      ],
+      "dados_de_teste": {
+        "email": "alice@example.com",
+        "senha": "Senha123",
+        "status": "aberta",
+        "priority": "invalida"
+      },
+      "passos": [
+        "Acessar a rota /requests no frontend.",
+        "Autenticar com o e-mail 'alice@example.com' e senha 'Senha123'.",
+        "Aplicar o filtro de status 'aberta' e prioridade 'invalida'.",
+        "Verificar a lista de solicitações na tela."
+      ],
+      "resultado_esperado": "Resposta 200 com items=[] e total=0. A UI exibe a mensagem 'Nenhuma solicitação encontrada.' e os controles de filtro continuam visíveis.",
+      "automatizavel": true,
+      "observacoes": "Caso negativo onde a prioridade é inválida. A API não retorna erro, mas também não retorna resultados.",
+      "correcao_aplicada": ""
+    },
+    {
+      "id": "TC-04-06",
+      "titulo": "Filtrar solicitações com status e prioridade inválidas",
+      "objetivo": "Verificar que o uso de status e prioridade inválidas não retorna erro, mas também não retorna resultados.",
+      "criterios_cobertos": [
+        "CA-04.3"
+      ],
+      "tipo": "negativo",
+      "prioridade": "baixa",
+      "pre_condicoes": [
+        "O usuário está autenticado e possui solicitações no sistema."
+      ],
+      "dados_de_teste": {
+        "email": "alice@example.com",
+        "senha": "Senha123",
+        "status": "invalido",
+        "priority": "invalida"
+      },
+      "passos": [
+        "Acessar a rota /requests no frontend.",
+        "Autenticar com o e-mail 'alice@example.com' e senha 'Senha123'.",
+        "Aplicar o filtro de status 'invalido' e prioridade 'invalida'.",
+        "Verificar a lista de solicitações na tela."
+      ],
+      "resultado_esperado": "Resposta 200 com items=[] e total=0. A UI exibe a mensagem 'Nenhuma solicitação encontrada.' e os controles de filtro continuam visíveis.",
+      "automatizavel": true,
+      "observacoes": "Caso negativo onde status e prioridade são inválidas. A API não retorna erro, mas também não retorna resultados.",
       "correcao_aplicada": ""
     }
   ],
@@ -125,15 +182,16 @@
     {
       "criterio": "CA-04.2",
       "casos": [
-        "TC-04-02",
-        "TC-04-03",
-        "TC-04-04"
+        "TC-04-02"
       ]
     },
     {
       "criterio": "CA-04.3",
       "casos": [
-        "TC-04-05"
+        "TC-04-03",
+        "TC-04-04",
+        "TC-04-05",
+        "TC-04-06"
       ]
     }
   ],

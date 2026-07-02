@@ -168,6 +168,32 @@ def test_agent2_accepts_valid_approved_json():
     assert "{generated_test_cases_json}" not in client.prompts[0]
 
 
+def test_agent2_normalizes_approved_with_problems_to_rejected_and_repairs():
+    contradictory = _approved_judge_payload()
+    contradictory["problemas"] = [
+        {
+            "caso_de_teste": "TC-01-03",
+            "tipo": "baixa_automatizabilidade",
+            "descricao": "Passos vagos.",
+            "evidencia_na_historia": "CA-01.3 exige bloqueio de 60 segundos.",
+            "acao_recomendada": "Detalhar sequência de cinco falhas e nova tentativa.",
+        }
+    ]
+    client = SequenceClient(
+        [
+            json.dumps(contradictory),
+            json.dumps(_generation_payload(include_correction=True)),
+            json.dumps(_approved_judge_payload()),
+        ]
+    )
+
+    result = agent2_judge.run(_blob(), _generation_output(), client)
+
+    assert result.attempt_reports[0].decisao == "REPROVADO"
+    assert result.repair_attempts == 1
+    assert result.final_output.decisao == "APROVADO"
+
+
 def test_agent2_rejects_schema_invalid_json():
     payload = _approved_judge_payload()
     payload.pop("decisao")
@@ -195,7 +221,7 @@ def test_agent2_rejects_unknown_case_ids():
         agent2_judge.run(_blob(), _generation_output(), client)
 
 
-def test_agent2_rejects_approved_payload_with_problems():
+def test_agent2_repairs_approved_payload_with_problems():
     payload = _approved_judge_payload()
     payload["problemas"] = [
         {
@@ -206,10 +232,18 @@ def test_agent2_rejects_approved_payload_with_problems():
             "acao_recomendada": "Corrigir.",
         }
     ]
-    client = SequenceClient([json.dumps(payload)])
+    client = SequenceClient(
+        [
+            json.dumps(payload),
+            json.dumps(_generation_payload(include_correction=True)),
+            json.dumps(_approved_judge_payload()),
+        ]
+    )
 
-    with pytest.raises(AgentOutputError, match="APROVADO must not contain"):
-        agent2_judge.run(_blob(), _generation_output(), client)
+    result = agent2_judge.run(_blob(), _generation_output(), client)
+
+    assert result.repair_attempts == 1
+    assert result.attempt_reports[0].decisao == "REPROVADO"
 
 
 def test_repair_uses_repair_prompt_and_requires_correcao_aplicada():

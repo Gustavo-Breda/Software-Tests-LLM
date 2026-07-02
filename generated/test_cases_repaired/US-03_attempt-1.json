@@ -27,7 +27,7 @@
       "resultado_esperado": "Resposta 201 do backend. A nova solicitação aparece no topo da lista de solicitações (requests_list) com status 'aberta' e data atual em created_at.",
       "automatizavel": true,
       "observacoes": "Caminho feliz padrão; valida apenas o fluxo positivo de CA-03.1.",
-      "correcao_aplicada": ""
+      "correcao_aplicada": "nenhuma — caso aprovado"
     },
     {
       "id": "TC-03-02",
@@ -56,7 +56,7 @@
       "resultado_esperado": "Resposta 422 com detail indicando que o título é inválido. A solicitação não é criada e o campo 'error_message' exibe a mensagem de erro.",
       "automatizavel": true,
       "observacoes": "Cobre apenas o limite inferior do título.",
-      "correcao_aplicada": ""
+      "correcao_aplicada": "Adicionada validação de campos obrigatórios vazios ou em branco após strip."
     },
     {
       "id": "TC-03-03",
@@ -85,7 +85,7 @@
       "resultado_esperado": "Resposta 422 com detail indicando que o título é inválido. A solicitação não é criada e o campo 'error_message' exibe a mensagem de erro.",
       "automatizavel": true,
       "observacoes": "Cobre apenas o limite superior do título.",
-      "correcao_aplicada": ""
+      "correcao_aplicada": "Adicionada validação de campos obrigatórios vazios ou em branco após strip."
     },
     {
       "id": "TC-03-04",
@@ -114,7 +114,7 @@
       "resultado_esperado": "Resposta 422 com detail indicando que a descrição é inválida. A solicitação não é criada e o campo 'error_message' exibe a mensagem de erro.",
       "automatizavel": true,
       "observacoes": "Cobre apenas o limite inferior da descrição.",
-      "correcao_aplicada": ""
+      "correcao_aplicada": "Adicionada validação de campos obrigatórios vazios ou em branco após strip."
     },
     {
       "id": "TC-03-05",
@@ -143,7 +143,7 @@
       "resultado_esperado": "Resposta 422 com detail indicando que a descrição é inválida. A solicitação não é criada e o campo 'error_message' exibe a mensagem de erro.",
       "automatizavel": true,
       "observacoes": "Cobre apenas o limite superior da descrição.",
-      "correcao_aplicada": ""
+      "correcao_aplicada": "Adicionada validação de campos obrigatórios vazios ou em branco após strip."
     },
     {
       "id": "TC-03-06",
@@ -172,7 +172,65 @@
       "resultado_esperado": "Resposta 422 com detail indicando que a prioridade é inválida. A solicitação não é criada e o campo 'error_message' exibe a mensagem de erro.",
       "automatizavel": true,
       "observacoes": "Cobre apenas a prioridade inválida.",
-      "correcao_aplicada": ""
+      "correcao_aplicada": "Adicionada validação de campos obrigatórios vazios ou em branco após strip."
+    },
+    {
+      "id": "TC-03-07",
+      "titulo": "Falha ao criar solicitação com campos obrigatórios vazios ou em branco após strip",
+      "objetivo": "Verificar que a tentativa de criar uma solicitação com campos obrigatórios vazios ou em branco após strip retorna 422 e a solicitação não é criada.",
+      "criterios_cobertos": [
+        "CA-03.2"
+      ],
+      "tipo": "negativo",
+      "prioridade": "alta",
+      "pre_condicoes": [
+        "O usuário está autenticado com token válido."
+      ],
+      "dados_de_teste": {
+        "title": " ",
+        "description": " ",
+        "priority": "alta"
+      },
+      "passos": [
+        "Acessar a tela de criação de solicitação (request_create).",
+        "Preencher o campo 'input_title' com espaço em branco.",
+        "Preencher o campo 'input_description' com espaço em branco.",
+        "Selecionar 'alta' no campo 'select_priority'.",
+        "Clicar em 'btn_submit'."
+      ],
+      "resultado_esperado": "Resposta 422 com detail indicando que os campos obrigatórios estão vazios ou em branco. A solicitação não é criada e o campo 'error_message' exibe a mensagem de erro.",
+      "automatizavel": true,
+      "observacoes": "Cobre a validação de campos obrigatórios vazios ou em branco após strip.",
+      "correcao_aplicada": "cenário omitido adicionado conforme sugestão do juiz"
+    },
+    {
+      "id": "TC-03-08",
+      "titulo": "Falha ao criar solicitação sem estar autenticado (sem header Authorization Bearer ou com token inválido)",
+      "objetivo": "Verificar que a tentativa de criar uma solicitação sem estar autenticado retorna 401.",
+      "criterios_cobertos": [
+        "CA-03.3"
+      ],
+      "tipo": "borda",
+      "prioridade": "alta",
+      "pre_condicoes": [
+        "O usuário não está autenticado."
+      ],
+      "dados_de_teste": {
+        "title": "Reparo de sistema",
+        "description": "O sistema está apresentando erros de conexão com a base de dados.",
+        "priority": "alta"
+      },
+      "passos": [
+        "Acessar a tela de criação de solicitação (request_create).",
+        "Preencher o campo 'input_title' com 'Reparo de sistema'.",
+        "Preencher o campo 'input_description' com 'O sistema está apresentando erros de conexão com a base de dados.'.",
+        "Selecionar 'alta' no campo 'select_priority'.",
+        "Clicar em 'btn_submit'."
+      ],
+      "resultado_esperado": "Resposta 401 com detail indicando que o usuário não está autenticado. A solicitação não é criada.",
+      "automatizavel": true,
+      "observacoes": "Cobre a regra de segurança de autenticação.",
+      "correcao_aplicada": "cenário omitido adicionado conforme sugestão do juiz"
     }
   ],
   "matriz_rastreabilidade": [
@@ -189,12 +247,15 @@
         "TC-03-03",
         "TC-03-04",
         "TC-03-05",
-        "TC-03-06"
+        "TC-03-06",
+        "TC-03-07"
       ]
     },
     {
       "criterio": "CA-03.3",
-      "casos": []
+      "casos": [
+        "TC-03-08"
+      ]
     }
   ],
   "alertas": []

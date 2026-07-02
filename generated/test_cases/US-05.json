@@ -2,128 +2,165 @@
   "test_cases": [
     {
       "id": "TC-05-01",
-      "titulo": "Cancelamento bem-sucedido de solicitação aberta",
-      "objetivo": "Validar que o dono da solicitação consegue cancelar uma solicitação com status 'aberta'.",
+      "titulo": "Cancelamento bem-sucedido de solicitação em status 'aberta'",
+      "objetivo": "Verificar que uma solicitação em status 'aberta' pode ser cancelada com sucesso.",
       "criterios_cobertos": [
         "CA-05.1"
       ],
       "tipo": "positivo",
       "prioridade": "alta",
       "pre_condicoes": [
-        "Usuário 'alice@example.com' autenticado.",
-        "Existe uma solicitação com status 'aberta' de propriedade de 'alice@example.com'."
+        "O usuário 'alice@example.com' está autenticado.",
+        "A solicitação com ID 1 está em status 'aberta'."
       ],
       "dados_de_teste": {
-        "request_title": "Solicitação de Teste Aberta"
+        "id": "1"
       },
       "passos": [
-        "Navegar para /requests.",
-        "Localizar a linha da solicitação com título 'Solicitação de Teste Aberta'.",
-        "Clicar no botão com [data-testid=request-row-cancel].",
-        "Verificar se o [data-testid=cancel-dialog] é exibido contendo o título 'Solicitação de Teste Aberta'.",
-        "Clicar em [data-testid=cancel-confirm]."
+        "Acessar a tela 'requests_list'.",
+        "Localizar a solicitação com ID 1 na tabela.",
+        "Clicar no botão 'row_btn_cancel' para abrir o diálogo de cancelamento.",
+        "Verificar que o título da solicitação é exibido no diálogo.",
+        "Clicar no botão 'btn_confirm' para confirmar o cancelamento."
       ],
-      "resultado_esperado": "Resposta 200 do endpoint /api/requests/{id}/cancel. O status da solicitação no banco é alterado para 'cancelada' e 'cancelled_at' é preenchido.",
+      "resultado_esperado": "Resposta 200 do backend. A solicitação é atualizada com status 'cancelada' e 'cancelled_at' definido para o momento atual. O diálogo de confirmação é fechado e a UI exibe uma mensagem de sucesso.",
       "automatizavel": true,
-      "observacoes": "Caminho feliz para status 'aberta'.",
+      "observacoes": "Caminho feliz para cancelamento de solicitação em status 'aberta'.",
       "correcao_aplicada": ""
     },
     {
       "id": "TC-05-02",
-      "titulo": "Cancelamento bem-sucedido de solicitação em análise",
-      "objetivo": "Validar que o dono da solicitação consegue cancelar uma solicitação com status 'em_analise'.",
+      "titulo": "Cancelamento bem-sucedido de solicitação em status 'em_analise'",
+      "objetivo": "Verificar que uma solicitação em status 'em_analise' pode ser cancelada com sucesso.",
       "criterios_cobertos": [
         "CA-05.1"
       ],
       "tipo": "positivo",
       "prioridade": "alta",
       "pre_condicoes": [
-        "Usuário 'alice@example.com' autenticado.",
-        "Existe uma solicitação com status 'em_analise' de propriedade de 'alice@example.com'."
+        "O usuário 'alice@example.com' está autenticado.",
+        "A solicitação com ID 2 está em status 'em_analise'."
       ],
       "dados_de_teste": {
-        "request_title": "Solicitação em Análise"
+        "id": "2"
       },
       "passos": [
-        "Navegar para /requests.",
-        "Localizar a linha da solicitação com título 'Solicitação em Análise'.",
-        "Clicar no botão com [data-testid=request-row-cancel].",
-        "Clicar em [data-testid=cancel-confirm] no dialog."
+        "Acessar a tela 'requests_list'.",
+        "Localizar a solicitação com ID 2 na tabela.",
+        "Clicar no botão 'row_btn_cancel' para abrir o diálogo de cancelamento.",
+        "Verificar que o título da solicitação é exibido no diálogo.",
+        "Clicar no botão 'btn_confirm' para confirmar o cancelamento."
       ],
-      "resultado_esperado": "Resposta 200 do endpoint /api/requests/{id}/cancel. Status alterado para 'cancelada'.",
+      "resultado_esperado": "Resposta 200 do backend. A solicitação é atualizada com status 'cancelada' e 'cancelled_at' definido para o momento atual. O diálogo de confirmação é fechado e a UI exibe uma mensagem de sucesso.",
       "automatizavel": true,
-      "observacoes": "Caminho feliz para status 'em_analise'.",
+      "observacoes": "Caminho feliz para cancelamento de solicitação em status 'em_analise'.",
       "correcao_aplicada": ""
     },
     {
       "id": "TC-05-03",
-      "titulo": "Bloqueio de cancelamento de solicitação de outro usuário",
-      "objetivo": "Garantir que um usuário não consiga cancelar solicitações que não lhe pertencem.",
+      "titulo": "Tentativa de cancelar solicitação de outro usuário",
+      "objetivo": "Verificar que uma solicitação de outro usuário não pode ser cancelada.",
       "criterios_cobertos": [
         "CA-05.2"
       ],
       "tipo": "negativo",
       "prioridade": "alta",
       "pre_condicoes": [
-        "Usuário 'alice@example.com' autenticado.",
-        "Existe uma solicitação de propriedade de 'bob@example.com'."
+        "O usuário 'bob@example.com' está autenticado.",
+        "A solicitação com ID 1 é de 'alice@example.com'."
       ],
       "dados_de_teste": {
-        "request_id_bob": "id_da_solicitacao_do_bob"
+        "id": "1"
       },
       "passos": [
-        "Tentar realizar um POST para /api/requests/{id_da_solicitacao_do_bob}/cancel com o token de 'alice@example.com'."
+        "Acessar a tela 'requests_list'.",
+        "Localizar a solicitação com ID 1 na tabela.",
+        "Clicar no botão 'row_btn_cancel' para abrir o diálogo de cancelamento.",
+        "Clicar no botão 'btn_confirm' para confirmar o cancelamento."
       ],
-      "resultado_esperado": "Resposta 403 com a mensagem 'Você não pode cancelar uma solicitação de outro usuário.'. A solicitação de Bob permanece inalterada.",
+      "resultado_esperado": "Resposta 403 com detail='Você não pode cancelar uma solicitação de outro usuário.' A solicitação não é alterada. O diálogo de confirmação é fechado e a UI exibe uma mensagem de erro.",
       "automatizavel": true,
-      "observacoes": "Teste de segurança de propriedade.",
+      "observacoes": "Caso de negativo para tentativa de cancelar solicitação de outro usuário.",
       "correcao_aplicada": ""
     },
     {
       "id": "TC-05-04",
-      "titulo": "Erro ao cancelar solicitação inexistente",
-      "objetivo": "Validar o retorno da API ao tentar cancelar um ID inválido.",
+      "titulo": "Tentativa de cancelar solicitação inexistente",
+      "objetivo": "Verificar que uma solicitação inexistente não pode ser cancelada.",
       "criterios_cobertos": [
         "CA-05.2"
       ],
       "tipo": "negativo",
-      "prioridade": "media",
+      "prioridade": "alta",
       "pre_condicoes": [
-        "Usuário 'alice@example.com' autenticado."
+        "O usuário 'alice@example.com' está autenticado."
       ],
       "dados_de_teste": {
-        "invalid_id": "999999"
+        "id": "999"
       },
       "passos": [
-        "Tentar realizar um POST para /api/requests/999999/cancel com o token de 'alice@example.com'."
+        "Acessar a tela 'requests_list'.",
+        "Localizar a solicitação com ID 999 na tabela.",
+        "Clicar no botão 'row_btn_cancel' para abrir o diálogo de cancelamento.",
+        "Clicar no botão 'btn_confirm' para confirmar o cancelamento."
       ],
-      "resultado_esperado": "Resposta 404 com a mensagem 'Solicitação não encontrada.'.",
+      "resultado_esperado": "Resposta 404 com detail='Solicitação não encontrada.' A solicitação não é alterada. O diálogo de confirmação é fechado e a UI exibe uma mensagem de erro.",
       "automatizavel": true,
-      "observacoes": "Validação de integridade de recurso.",
+      "observacoes": "Caso de negativo para tentativa de cancelar solicitação inexistente.",
       "correcao_aplicada": ""
     },
     {
       "id": "TC-05-05",
-      "titulo": "Erro ao cancelar solicitação já finalizada",
-      "objetivo": "Validar que solicitações em estado terminal não podem ser canceladas.",
+      "titulo": "Tentativa de cancelar solicitação em status 'cancelada'",
+      "objetivo": "Verificar que uma solicitação em status 'cancelada' não pode ser cancelada.",
       "criterios_cobertos": [
         "CA-05.3"
       ],
       "tipo": "borda",
-      "prioridade": "media",
+      "prioridade": "alta",
       "pre_condicoes": [
-        "Usuário 'alice@example.com' autenticado.",
-        "Existe uma solicitação com status 'finalizada' de propriedade de 'alice@example.com'."
+        "O usuário 'alice@example.com' está autenticado.",
+        "A solicitação com ID 3 está em status 'cancelada'."
       ],
       "dados_de_teste": {
-        "request_id": "id_da_solicitacao_finalizada"
+        "id": "3"
       },
       "passos": [
-        "Tentar realizar um POST para /api/requests/{id_da_solicitacao_finalizada}/cancel com o token de 'alice@example.com'."
+        "Acessar a tela 'requests_list'.",
+        "Localizar a solicitação com ID 3 na tabela.",
+        "Clicar no botão 'row_btn_cancel' para abrir o diálogo de cancelamento.",
+        "Clicar no botão 'btn_confirm' para confirmar o cancelamento."
       ],
-      "resultado_esperado": "Resposta 409 com a mensagem 'Somente solicitações 'aberta' ou 'em análise' podem ser canceladas.'. A solicitação permanece com status 'finalizada'.",
+      "resultado_esperado": "Resposta 409 com detail='Somente solicitações 'aberta' ou 'em análise' podem ser canceladas.' A solicitação não é alterada. O diálogo de confirmação é fechado e a UI exibe uma mensagem de erro.",
       "automatizavel": true,
-      "observacoes": "Teste de transição de estado proibida.",
+      "observacoes": "Caso de borda para tentativa de cancelar solicitação em status 'cancelada'.",
+      "correcao_aplicada": ""
+    },
+    {
+      "id": "TC-05-06",
+      "titulo": "Tentativa de cancelar solicitação em status 'finalizada'",
+      "objetivo": "Verificar que uma solicitação em status 'finalizada' não pode ser cancelada.",
+      "criterios_cobertos": [
+        "CA-05.3"
+      ],
+      "tipo": "borda",
+      "prioridade": "alta",
+      "pre_condicoes": [
+        "O usuário 'alice@example.com' está autenticado.",
+        "A solicitação com ID 4 está em status 'finalizada'."
+      ],
+      "dados_de_teste": {
+        "id": "4"
+      },
+      "passos": [
+        "Acessar a tela 'requests_list'.",
+        "Localizar a solicitação com ID 4 na tabela.",
+        "Clicar no botão 'row_btn_cancel' para abrir o diálogo de cancelamento.",
+        "Clicar no botão 'btn_confirm' para confirmar o cancelamento."
+      ],
+      "resultado_esperado": "Resposta 409 com detail='Somente solicitações 'aberta' ou 'em análise' podem ser canceladas.' A solicitação não é alterada. O diálogo de confirmação é fechado e a UI exibe uma mensagem de erro.",
+      "automatizavel": true,
+      "observacoes": "Caso de borda para tentativa de cancelar solicitação em status 'finalizada'.",
       "correcao_aplicada": ""
     }
   ],
@@ -145,7 +182,8 @@
     {
       "criterio": "CA-05.3",
       "casos": [
-        "TC-05-05"
+        "TC-05-05",
+        "TC-05-06"
       ]
     }
   ],
