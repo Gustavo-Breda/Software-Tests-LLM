@@ -9,7 +9,7 @@ from .adapter import LLMClient, LLMResponse
 _THINKING_MODELS = ("gemini-2.5-flash", "gemini-2.5-pro", "gemini-3.1-flash")
 
 # thinking budget for reproducibility
-_THINKING_BUDGET = 8_192
+_THINKING_BUDGET = 100_000
 
 # minimum total token budget for thinking models (thinking + output combined)
 _GEMINI_MIN_OUTPUT_TOKENS = 16_384
@@ -61,6 +61,10 @@ class GeminiClient(LLMClient):
             temperature=temperature,
             max_output_tokens=effective_max,
         )
+        print(
+            f"[gemini] request model={self.model} thinking={is_thinking_model} "
+            f"temp={temperature} max_tokens={effective_max}"
+        )
 
         # retry up to 3 times on transient server/quota errors so one API call does not abort the entire experiment run.
         last_exc: Exception | None = None
@@ -68,14 +72,17 @@ class GeminiClient(LLMClient):
         start = time.perf_counter()
         for attempt in range(3):
             try:
+                print(f"[gemini] attempt={attempt + 1}/3 model={self.model}")
                 response = self._client.models.generate_content(
                     model=self.model,
                     contents=prompt,
                     config=config,
                 )
+                print(f"[gemini] success attempt={attempt + 1}/3 model={self.model}")
                 break
             except Exception as exc:
                 exc_name = type(exc).__name__
+                print(f"[gemini] error attempt={attempt + 1}/3 type={exc_name}: {exc}")
                 if attempt < 2 and any(
                     kw in exc_name
                     for kw in ("ServerError", "ServiceUnavailable", "TooManyRequests", "ResourceExhausted")
@@ -113,6 +120,11 @@ class GeminiClient(LLMClient):
             )
         else:
             thoughts_tokens = None
+        print(
+            f"[gemini] done model={self.model} latency={elapsed:.2f}s "
+            f"prompt_tokens={prompt_tokens} completion_tokens={completion_tokens} "
+            f"thinking_tokens={thoughts_tokens} finish_reason={finish_reason}"
+        )
 
         return LLMResponse(
             text=response_text,

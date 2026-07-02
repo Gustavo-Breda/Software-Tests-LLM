@@ -49,17 +49,23 @@ class QualityGateOutput:
 
 
 def run(blob: ContextBlob, client: LLMClient) -> QualityGateOutput:
+    print(f"[agent0] start story={blob.story_id}")
     prompt = _build_prompt(blob)
     response = client.complete(
         prompt,
         system=_SYSTEM_PROMPT,
         temperature=0.2,
-        max_tokens=2048,
+        max_tokens=20_048,
     )
     data = extract_json_object(response.text)
     validate_schema(data, "agent0_out.json")
     _validate_strict_gate(data)
-    return _to_output(data, response)
+    output = _to_output(data, response)
+    print(
+        f"[agent0] done story={blob.story_id} status={output.status} "
+        f"problems={len(output.problemas)} latency={response.latency_seconds:.2f}s"
+    )
+    return output
 
 
 def _build_prompt(blob: ContextBlob) -> str:

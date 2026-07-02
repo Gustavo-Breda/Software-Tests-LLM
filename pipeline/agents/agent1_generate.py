@@ -61,11 +61,16 @@ def run(
     client: LLMClient,
     *,
     repair_feedback: str | None = None,
+    current_generation: "GenerationOutput | None" = None,
 ) -> GenerationOutput:
-    if repair_feedback is not None:
-        raise NotImplementedError("Repair flow belongs to Phase 4.")
-
-    prompt = _build_prompt(blob)
+    is_repair = repair_feedback is not None
+    mode = "repair" if is_repair else "generate"
+    print(f"[agent1] start story={blob.story_id} mode={mode}")
+    prompt = _build_prompt(
+        blob,
+        repair_feedback=repair_feedback,
+        current_generation=current_generation,
+    )
     response = client.complete(
         prompt,
         system=_SYSTEM_PROMPT,
@@ -74,12 +79,27 @@ def run(
     )
     data = extract_json_object(response.text)
     validate_schema(data, "agent1_out.json")
-    _validate_semantics(blob, data)
-    return _to_output(data, response)
+    _validate_semantics(blob, data, repair_mode=is_repair)
+    output = _to_output(data, response)
+    print(
+        f"[agent1] done story={blob.story_id} mode={mode} "
+        f"cases={len(output.test_cases)} alerts={len(output.alertas)} "
+        f"latency={response.latency_seconds:.2f}s"
+    )
+    return output
 
 
-def _build_prompt(blob: ContextBlob) -> str:
-    prompt = load_prompt("02_generate.txt")
+def _build_prompt(
+    blob: ContextBlob,
+    *,
+    repair_feedback: str | None = None,
+    current_generation: "GenerationOutput | None" = None,
+) -> str:
+    is_repair = repair_feedback is not None
+    if is_repair and current_generation is None:
+        raise AgentOutputError("Repair flow requires current_generation.")
+
+    prompt = load_prompt("04_repair.txt" if is_repair else "02_generate.txt")
     story = blob.story
     story_payload = {
         "id": story.id,
@@ -98,9 +118,16 @@ def _build_prompt(blob: ContextBlob) -> str:
             sort_keys=False,
         ),
         "system_context": blob.text,
-        "domain_glossary": _section_body(blob, "Glossário de Domínio"),
-        "few_shot_examples": _section_body(blob, "Exemplo aprovado (referência de formato)"),
     }
+    if is_repair:
+        replacements["generated_test_cases_json"] = output_to_json(current_generation)
+        replacements["judge_report_json"] = repair_feedback
+    else:
+        replacements["domain_glossary"] = _section_body(blob, "Glossário de Domínio")
+        replacements["few_shot_examples"] = _section_body(
+            blob,
+            "Exemplo aprovado (referência de formato)",
+        )
     for key, value in replacements.items():
         placeholder = "{" + key + "}"
         if placeholder not in prompt:
@@ -116,7 +143,12 @@ def _section_body(blob: ContextBlob, title: str) -> str:
     return ""
 
 
-def _validate_semantics(blob: ContextBlob, data: dict[str, Any]) -> None:
+def _validate_semantics(
+    blob: ContextBlob,
+    data: dict[str, Any],
+    *,
+    repair_mode: bool = False,
+) -> None:
     valid_criteria = {
         str(criterion.get("id"))
         for criterion in blob.story.acceptance_criteria
@@ -135,6 +167,10 @@ def _validate_semantics(blob: ContextBlob, data: dict[str, Any]) -> None:
         if not case["id"].startswith(expected_prefix):
             raise AgentOutputError(
                 f"Agent 1 semantic validation failed: {case['id']} does not match {expected_prefix}NN."
+            )
+        if repair_mode and not str(case.get("correcao_aplicada", "")).strip():
+            raise AgentOutputError(
+                f"Agent 1 semantic validation failed: {case['id']} must include correcao_aplicada during repair."
             )
         covered = set(case["criterios_cobertos"])
         unknown = covered - valid_criteria
