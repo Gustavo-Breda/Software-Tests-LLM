@@ -18,7 +18,10 @@ _THINKING_BUDGET = 8_192
 # minimum total token budget for thinking models (thinking + output combined)
 _GEMINI_MIN_OUTPUT_TOKENS = 16_384
 
-_RETRYABLE = ("ServerError", "ServiceUnavailable", "TooManyRequests", "ResourceExhausted")
+# transient server errors — short exponential backoff (1s, 2s)
+_RETRYABLE_SERVER = ("ServerError", "ServiceUnavailable", "TooManyRequests", "ResourceExhausted")
+# connection/TLS hangs — longer fixed backoff (30s, 60s) to let rate-limit window reset
+_RETRYABLE_TIMEOUT = ("TimeoutError", "ConnectTimeout", "ReadTimeout", "PoolTimeout", "ConnectError")
 
 
 def _is_thinking_model(model: str) -> bool:
@@ -97,12 +100,19 @@ class GeminiClient(LLMClient):
                 break
             except Exception as exc:
                 exc_name = type(exc).__name__
-                if attempt < 2 and any(kw in exc_name for kw in _RETRYABLE):
-                    last_exc = exc
-                    wait = 2 ** attempt
-                    log.warning("Transient error (attempt %d): %s — retrying in %ds", attempt + 1, exc_name, wait)
-                    time.sleep(wait)
-                    continue
+                if attempt < 2:
+                    if any(kw in exc_name for kw in _RETRYABLE_SERVER):
+                        wait = 2 ** attempt
+                        log.warning("Server error (attempt %d): %s — retrying in %ds", attempt + 1, exc_name, wait)
+                        last_exc = exc
+                        time.sleep(wait)
+                        continue
+                    if any(kw in exc_name for kw in _RETRYABLE_TIMEOUT):
+                        wait = 30 * (attempt + 1)
+                        log.warning("Connection timeout (attempt %d): %s — retrying in %ds", attempt + 1, exc_name, wait)
+                        last_exc = exc
+                        time.sleep(wait)
+                        continue
                 raise
 
         elapsed = time.perf_counter() - start
