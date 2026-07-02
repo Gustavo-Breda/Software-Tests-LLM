@@ -176,6 +176,7 @@ def run_phase4(
             errors.append(error)
             continue
 
+        log.info("[%s] Running Agent 2 (judge + repair loop)...", blob.story_id)
         try:
             judge_result = agent2_judge.run(blob, agent1_output, client)
             for attempt_index, attempt_report in enumerate(judge_result.attempt_reports):
@@ -184,6 +185,17 @@ def run_phase4(
                     json.dumps(attempt_report.to_dict(), ensure_ascii=False, indent=2) + "\n",
                     encoding="utf-8",
                 )
+                log.info(
+                    "[%s] Agent 2 attempt-%d saved — decision=%s approved=%d rejected=%d problems=%d omitted=%d path=%s",
+                    blob.story_id,
+                    attempt_index,
+                    attempt_report.decisao,
+                    len(attempt_report.casos_aprovados),
+                    len(attempt_report.casos_reprovados),
+                    len(attempt_report.problemas),
+                    len(attempt_report.cenarios_omitidos_sugeridos),
+                    report_path,
+                )
                 print(f"[runner] agent2 saved story={blob.story_id} attempt={attempt_index} path={report_path}")
             for repair_output in judge_result.repair_generations:
                 repair_path = repaired_destination / f"{blob.story_id}_attempt-{repair_output.attempt}.json"
@@ -191,12 +203,27 @@ def run_phase4(
                     json.dumps(repair_output.output.to_dict(), ensure_ascii=False, indent=2) + "\n",
                     encoding="utf-8",
                 )
+                log.info(
+                    "[%s] Repair attempt-%d saved — cases=%d alerts=%d path=%s",
+                    blob.story_id,
+                    repair_output.attempt,
+                    len(repair_output.output.test_cases),
+                    len(repair_output.output.alertas),
+                    repair_path,
+                )
                 print(f"[runner] repair saved story={blob.story_id} attempt={repair_output.attempt} path={repair_path}")
             if judge_result.repair_generations:
                 final_path = repaired_destination / f"{blob.story_id}_final.json"
                 final_path.write_text(
                     json.dumps(judge_result.final_generation.to_dict(), ensure_ascii=False, indent=2) + "\n",
                     encoding="utf-8",
+                )
+                log.info(
+                    "[%s] Repair final saved — cases=%d alerts=%d path=%s",
+                    blob.story_id,
+                    len(judge_result.final_generation.test_cases),
+                    len(judge_result.final_generation.alertas),
+                    final_path,
                 )
                 print(f"[runner] repair final saved story={blob.story_id} path={final_path}")
             agent2_results.append(
@@ -215,15 +242,27 @@ def run_phase4(
                 }
             )
             if judge_result.rejected_after_repair:
+                log.error(
+                    "[%s] Agent 2 → REPROVADO after %d repair attempt(s)",
+                    blob.story_id,
+                    judge_result.repair_attempts,
+                )
                 print(f"[runner] story rejected_after_repair story={blob.story_id}")
                 rejected_after_repair += 1
             else:
+                log.info(
+                    "[%s] Agent 2 → %s after %d repair attempt(s)",
+                    blob.story_id,
+                    judge_result.final_output.decisao,
+                    judge_result.repair_attempts,
+                )
                 print(
                     f"[runner] story done story={blob.story_id} "
                     f"repair_attempts={judge_result.repair_attempts} "
                     f"decision={judge_result.final_output.decisao}"
                 )
         except Exception as exc:
+            log.error("[%s] Agent 2 → FAILED: %s: %s", blob.story_id, type(exc).__name__, exc)
             error = _error_payload(blob.story_id, "agent2", exc)
             print(f"[runner] agent2 error story={blob.story_id} type={type(exc).__name__}: {exc}")
             agent2_results.append(error)
@@ -236,12 +275,15 @@ def run_phase4(
         "errors": len(errors),
     }
     log.info(
-        "Done — total=%d | agent0_ok=%d | agent1_ok=%d | blocked=%d | errors=%d",
+        "Done — total=%d | agent0_ok=%d | agent1_ok=%d | agent2_ok=%d | blocked=%d | errors=%d | repair_attempts=%d | rejected_after_repair=%d",
         len(agent0_results),
-        summary["agent0_ok"],
-        summary["agent1_ok"],
-        summary["blocked"],
-        summary["errors"],
+        sum(1 for item in agent0_results if item.get("ok")),
+        sum(1 for item in agent1_results if item.get("ok")),
+        sum(1 for item in agent2_results if item.get("ok")),
+        len(blocked),
+        len(errors),
+        sum(item["count"] for item in repair_attempts),
+        rejected_after_repair,
     )
 
     aggregate = {

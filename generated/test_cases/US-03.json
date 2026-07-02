@@ -1,0 +1,162 @@
+{
+  "test_cases": [
+    {
+      "id": "TC-03-01",
+      "titulo": "Criar solicitação com dados válidos",
+      "objetivo": "Verificar que um usuário autenticado consegue criar uma solicitação com título, descrição e prioridade válidas.",
+      "criterios_cobertos": [
+        "CA-03.1"
+      ],
+      "tipo": "positivo",
+      "prioridade": "alta",
+      "pre_condicoes": [],
+      "dados_de_teste": {
+        "title": "Título válido",
+        "description": "Descrição válida",
+        "priority": "baixa"
+      },
+      "passos": [
+        "Acessar a rota /requests/new no frontend.",
+        "Preencher o campo 'request-title' com 'Título válido'.",
+        "Preencher o campo 'request-description' com 'Descrição válida'.",
+        "Selecione a prioridade 'baixa'.",
+        "Clicar em 'request-submit'."
+      ],
+      "resultado_esperado": "Resposta 201 do backend. A solicitação é criada com status 'aberta' e data atual em created_at.",
+      "automatizavel": true,
+      "observacoes": "",
+      "correcao_aplicada": ""
+    },
+    {
+      "id": "TC-03-02",
+      "titulo": "Criar solicitação com título inválido (menor que 5 caracteres)",
+      "objetivo": "Verificar que um usuário autenticado não consegue criar uma solicitação com título menor que 5 caracteres.",
+      "criterios_cobertos": [
+        "CA-03.2"
+      ],
+      "tipo": "negativo",
+      "prioridade": "alta",
+      "pre_condicoes": [],
+      "dados_de_teste": {
+        "title": "Título inválido",
+        "description": "Descrição válida",
+        "priority": "baixa"
+      },
+      "passos": [
+        "Acessar a rota /requests/new no frontend.",
+        "Preencher o campo 'request-title' com 'Título inválido'.",
+        "Preencher o campo 'request-description' com 'Descrição válida'.",
+        "Selecione a prioridade 'baixa'.",
+        "Clicar em 'request-submit'."
+      ],
+      "resultado_esperado": "Resposta 422 do backend. A solicitação não é criada.",
+      "automatizavel": true,
+      "observacoes": "",
+      "correcao_aplicada": ""
+    },
+    {
+      "id": "TC-03-03",
+      "titulo": "Criar solicitação com descrição inválida (menor que 10 caracteres)",
+      "objetivo": "Verificar que um usuário autenticado não consegue criar uma solicitação com descrição menor que 10 caracteres.",
+      "criterios_cobertos": [
+        "CA-03.2"
+      ],
+      "tipo": "negativo",
+      "prioridade": "alta",
+      "pre_condicoes": [],
+      "dados_de_teste": {
+        "title": "Título válido",
+        "description": "Descrição inválida",
+        "priority": "baixa"
+      },
+      "passos": [
+        "Acessar a rota /requests/new no frontend.",
+        "Preencher o campo 'request-title' com 'Título válido'.",
+        "Preencher o campo 'request-description' com 'Descrição inválida'.",
+        "Selecione a prioridade 'baixa'.",
+        "Clicar em 'request-submit'."
+      ],
+      "resultado_esperado": "Resposta 422 do backend. A solicitação não é criada.",
+      "automatizavel": true,
+      "observacoes": "",
+      "correcao_aplicada": ""
+    },
+    {
+      "id": "TC-03-04",
+      "titulo": "Criar solicitação com prioridade inválida (não baixa, média ou alta)",
+      "objetivo": "Verificar que um usuário autenticado não consegue criar uma solicitação com prioridade inválida.",
+      "criterios_cobertos": [
+        "CA-03.2"
+      ],
+      "tipo": "negativo",
+      "prioridade": "alta",
+      "pre_condicoes": [],
+      "dados_de_teste": {
+        "title": "Título válido",
+        "description": "Descrição válida",
+        "priority": "inválida"
+      },
+      "passos": [
+        "Acessar a rota /requests/new no frontend.",
+        "Preencher o campo 'request-title' com 'Título válido'.",
+        "Preencher o campo 'request-description' com 'Descrição válida'.",
+        "Selecione a prioridade 'inválida'.",
+        "Clicar em 'request-submit'."
+      ],
+      "resultado_esperado": "Resposta 422 do backend. A solicitação não é criada.",
+      "automatizavel": true,
+      "observacoes": "",
+      "correcao_aplicada": ""
+    },
+    {
+      "id": "TC-03-05",
+      "titulo": "Criar solicitação sem estar autenticado",
+      "objetivo": "Verificar que um usuário não autenticado não consegue criar uma solicitação.",
+      "criterios_cobertos": [
+        "CA-03.3"
+      ],
+      "tipo": "negativo",
+      "prioridade": "alta",
+      "pre_condicoes": [],
+      "dados_de_teste": {
+        "title": "Título válido",
+        "description": "Descrição válida",
+        "priority": "baixa"
+      },
+      "passos": [
+        "Acessar a rota /requests/new no frontend sem autenticar.",
+        "Preencher o campo 'request-title' com 'Título válido'.",
+        "Preencher o campo 'request-description' com 'Descrição válida'.",
+        "Selecione a prioridade 'baixa'.",
+        "Clicar em 'request-submit'."
+      ],
+      "resultado_esperado": "Resposta 401 do backend. A solicitação não é criada.",
+      "automatizavel": true,
+      "observacoes": "",
+      "correcao_aplicada": ""
+    }
+  ],
+  "matriz_rastreabilidade": [
+    {
+      "criterio": "CA-03.1",
+      "casos": [
+        "TC-03-01"
+      ]
+    },
+    {
+      "criterio": "CA-03.2",
+      "casos": [
+        "TC-03-02",
+        "TC-03-03",
+        "TC-03-04"
+      ]
+    },
+    {
+      "criterio": "CA-03.3",
+      "casos": [
+        "TC-03-05"
+      ]
+    }
+  ],
+  "alertas": []
+}

@@ -122,8 +122,6 @@ def _build_prompt(
             "Exemplo aprovado (referência de formato)",
             "História do Usuário e Critérios de Aceitação",
         }),
-        "domain_glossary": _section_body(blob, "Glossário de Domínio"),
-        "few_shot_examples": _section_body(blob, "Exemplo aprovado (referência de formato)"),
     }
     if is_repair:
         replacements["generated_test_cases_json"] = output_to_json(current_generation)

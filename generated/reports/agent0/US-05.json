@@ -1,8 +1,8 @@
 {
   "status": "APROVADA",
   "derivavel": true,
-  "justificativa_derivabilidade": "A história e seus critérios de aceitação estão alinhados com o contexto do sistema, definindo claramente os estados, as regras de propriedade, os códigos de resposta HTTP e as interações de UI necessárias para a execução dos testes.",
-  "observacao_formato": "A história segue o padrão de persona, ação e benefício solicitado.",
+  "justificativa_derivabilidade": "A história está bem escrita e todos os critérios de aceitação estão presentes.",
+  "observacao_formato": "O formato segue as regras estabelecidas.",
   "problemas": [],
   "recomendacao": "Prosseguir para geração de casos de teste."
 }

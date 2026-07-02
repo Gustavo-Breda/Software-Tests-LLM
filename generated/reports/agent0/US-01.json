@@ -1,8 +1,8 @@
 {
   "status": "APROVADA",
   "derivavel": true,
-  "justificativa_derivabilidade": "A história de usuário e os critérios de aceitação estão completos, alinhados com as regras de negócio do sistema (anti-enumeração, lockout, status HTTP) e fornecem todos os detalhes necessários para a criação de casos de teste sem necessidade de suposições.",
-  "observacao_formato": "A história segue o padrão 'Como [persona], quero [ação], para [benefício]' corretamente.",
+  "justificativa_derivabilidade": "Todas as histórias e critérios de aceitação foram verificados e não há problemas ausentes ou dados não especificados.",
+  "observacao_formato": "",
   "problemas": [],
   "recomendacao": "Prosseguir para geração de casos de teste."
 }

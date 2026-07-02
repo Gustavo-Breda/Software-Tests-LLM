@@ -1,0 +1,136 @@
+{
+  "test_cases": [
+    {
+      "id": "TC-02-01",
+      "titulo": "Cadastro bem-sucedido com dados válidos",
+      "objetivo": "Verificar que um visitante com dados válidos consegue criar uma conta e é redirecionado para o login.",
+      "criterios_cobertos": [
+        "CA-02.1"
+      ],
+      "tipo": "positivo",
+      "prioridade": "alta",
+      "pre_condicoes": [
+        "O e-mail informado ainda não existe no banco."
+      ],
+      "dados_de_teste": {
+        "name": "Carla Mendes",
+        "email": "carla.mendes@example.com",
+        "password": "Senha123"
+      },
+      "passos": [
+        "Acessar a rota /register no frontend.",
+        "Preencher o campo 'register-name' com 'Carla Mendes'.",
+        "Preencher 'register-email' com 'carla.mendes@example.com'.",
+        "Preencher 'register-password' com 'Senha123'.",
+        "Clicar em 'register-submit'."
+      ],
+      "resultado_esperado": "Resposta 201 do backend. Elemento 'register-success' aparece com a mensagem de sucesso. Após o redirecionamento, a rota é /login.",
+      "automatizavel": true,
+      "observacoes": "Caminho feliz padrão; valida apenas o fluxo positivo de CA-02.1.",
+      "correcao_aplicada": ""
+    },
+    {
+      "id": "TC-02-02",
+      "titulo": "Rejeição ao cadastrar e-mail já existente",
+      "objetivo": "Verificar que a tentativa de cadastrar um e-mail já presente no banco é rejeitada com 409 e mensagem específica.",
+      "criterios_cobertos": [
+        "CA-02.2"
+      ],
+      "tipo": "negativo",
+      "prioridade": "alta",
+      "pre_condicoes": [
+        "O usuário 'alice@example.com' já existe (dado de seed)."
+      ],
+      "dados_de_teste": {
+        "name": "Outra Alice",
+        "email": "alice@example.com",
+        "password": "OutraSenha9"
+      },
+      "passos": [
+        "Acessar /register.",
+        "Preencher os três campos com os dados de teste.",
+        "Clicar em 'register-submit'."
+      ],
+      "resultado_esperado": "Resposta 409 com detail='E-mail já cadastrado.'. Elemento 'register-error' exibe a mensagem ao usuário. O usuário 'alice@example.com' permanece com seu password_hash original (não foi sobrescrito).",
+      "automatizavel": true,
+      "observacoes": "Cobre apenas a duplicidade; senha intencionalmente válida para isolar a causa raiz.",
+      "correcao_aplicada": ""
+    },
+    {
+      "id": "TC-02-03",
+      "titulo": "Rejeição de senha sem número (só letras)",
+      "objetivo": "Verificar que a complexidade da senha exige ao menos um dígito.",
+      "criterios_cobertos": [
+        "CA-02.3"
+      ],
+      "tipo": "borda",
+      "prioridade": "media",
+      "pre_condicoes": [
+        "E-mail ainda não cadastrado."
+      ],
+      "dados_de_teste": {
+        "name": "Diego Lima",
+        "email": "diego.lima@example.com",
+        "password": "apenasletras"
+      },
+      "passos": [
+        "Acessar /register e preencher os três campos com os dados de teste.",
+        "Clicar em 'register-submit'."
+      ],
+      "resultado_esperado": "Resposta 422. Cadastro não é persistido (consulta posterior no banco confirma ausência). UI mantém o usuário em /register e o botão 'register-submit' continua disponível para nova tentativa.",
+      "automatizavel": true,
+      "observacoes": "Caso simétrico: variar para 'somenteNumeros12345678' cobriria a outra metade da regra (senha sem letra). Recomendar adicionar TC-02-04 análogo.",
+      "correcao_aplicada": ""
+    },
+    {
+      "id": "TC-02-04",
+      "titulo": "Rejeição de nome com menos de 3 caracteres",
+      "objetivo": "Verificar o limite inferior do tamanho do nome.",
+      "criterios_cobertos": [
+        "CA-02.3"
+      ],
+      "tipo": "borda",
+      "prioridade": "baixa",
+      "pre_condicoes": [],
+      "dados_de_teste": {
+        "name": "Eu",
+        "email": "eu@example.com",
+        "password": "Senha123"
+      },
+      "passos": [
+        "Acessar /register.",
+        "Preencher os três campos.",
+        "Clicar em 'register-submit'."
+      ],
+      "resultado_esperado": "Resposta 422. Cadastro não persistido.",
+      "automatizavel": true,
+      "observacoes": "Cobre apenas o limite inferior. Um caso simétrico com 81 caracteres cobriria o limite superior — recomenda-se gerar.",
+      "correcao_aplicada": ""
+    }
+  ],
+  "matriz_rastreabilidade": [
+    {
+      "criterio": "CA-02.1",
+      "casos": [
+        "TC-02-01"
+      ]
+    },
+    {
+      "criterio": "CA-02.2",
+      "casos": [
+        "TC-02-02"
+      ]
+    },
+    {
+      "criterio": "CA-02.3",
+      "casos": [
+        "TC-02-03",
+        "TC-02-04"
+      ]
+    }
+  ],
+  "alertas": [
+    "Cobertura de CA-02.3 está parcial: existem TCs para senha sem número e nome curto, mas não para senha sem letra nem para nome com 81 caracteres. Considerar adicionar.",
+    "Não há TC verificando o limite superior do tamanho da senha (128). Caso de boundary value parking lot."
+  ]
+}

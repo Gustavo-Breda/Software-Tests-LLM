@@ -1,0 +1,141 @@
+{
+  "test_cases": [
+    {
+      "id": "TC-04-01",
+      "titulo": "Listar solicitações do próprio usuário sem filtros",
+      "objetivo": "Verificar que o endpoint retorna apenas as solicitações do próprio usuário, ordenadas por created_at descendente.",
+      "criterios_cobertos": [
+        "CA-04.1"
+      ],
+      "tipo": "positivo",
+      "prioridade": "alta",
+      "pre_condicoes": [],
+      "dados_de_teste": {
+        "email": "alice@example.com"
+      },
+      "passos": [
+        "Acessar a rota /api/requests com autenticação como alice@example.com.",
+        "Verificar que a lista de solicitações retorne apenas as do próprio usuário."
+      ],
+      "resultado_esperado": "Resposta 200 com items=lista_de_solicitações_do_usuario e total=número_de_solicitações_do_usuario.",
+      "automatizavel": true,
+      "observacoes": "",
+      "correcao_aplicada": ""
+    },
+    {
+      "id": "TC-04-02",
+      "titulo": "Filtrar solicitações por status aberta",
+      "objetivo": "Verificar que o endpoint retorna apenas as solicitações do próprio usuário com status aberto.",
+      "criterios_cobertos": [
+        "CA-04.2"
+      ],
+      "tipo": "positivo",
+      "prioridade": "alta",
+      "pre_condicoes": [],
+      "dados_de_teste": {
+        "email": "alice@example.com",
+        "status": "aberta"
+      },
+      "passos": [
+        "Acessar a rota /api/requests com autenticação como alice@example.com.",
+        "Filtrar as solicitações por status aberto."
+      ],
+      "resultado_esperado": "Resposta 200 com items=lista_de_solicitações_abertas e total=número_de_solicitações_abertas.",
+      "automatizavel": true,
+      "observacoes": "",
+      "correcao_aplicada": ""
+    },
+    {
+      "id": "TC-04-03",
+      "titulo": "Filtrar solicitações por prioridade alta",
+      "objetivo": "Verificar que o endpoint retorna apenas as solicitações do próprio usuário com prioridade alta.",
+      "criterios_cobertos": [
+        "CA-04.2"
+      ],
+      "tipo": "positivo",
+      "prioridade": "alta",
+      "pre_condicoes": [],
+      "dados_de_teste": {
+        "email": "alice@example.com",
+        "priority": "alta"
+      },
+      "passos": [
+        "Acessar a rota /api/requests com autenticação como alice@example.com.",
+        "Filtrar as solicitações por prioridade alta."
+      ],
+      "resultado_esperado": "Resposta 200 com items=lista_de_solicitações_altas e total=número_de_solicitações_altas.",
+      "automatizavel": true,
+      "observacoes": "",
+      "correcao_aplicada": ""
+    },
+    {
+      "id": "TC-04-04",
+      "titulo": "Filtrar solicitações por status aberto e prioridade alta",
+      "objetivo": "Verificar que o endpoint retorna apenas as solicitações do próprio usuário com status aberto e prioridade alta.",
+      "criterios_cobertos": [
+        "CA-04.2"
+      ],
+      "tipo": "positivo",
+      "prioridade": "alta",
+      "pre_condicoes": [],
+      "dados_de_teste": {
+        "email": "alice@example.com",
+        "status": "aberta",
+        "priority": "alta"
+      },
+      "passos": [
+        "Acessar a rota /api/requests com autenticação como alice@example.com.",
+        "Filtrar as solicitações por status aberto e prioridade alta."
+      ],
+      "resultado_esperado": "Resposta 200 com items=lista_de_solicitações_abertas_e_altas e total=número_de_solicitações_abertas_e_altas.",
+      "automatizavel": true,
+      "observacoes": "",
+      "correcao_aplicada": ""
+    },
+    {
+      "id": "TC-04-05",
+      "titulo": "Filtro vazio não retorna solicitações",
+      "objetivo": "Verificar que o endpoint retorne uma lista vazia quando nenhum filtro é aplicado.",
+      "criterios_cobertos": [
+        "CA-04.3"
+      ],
+      "tipo": "borda",
+      "prioridade": "alta",
+      "pre_condicoes": [],
+      "dados_de_teste": {
+        "email": "alice@example.com"
+      },
+      "passos": [
+        "Acessar a rota /api/requests com autenticação como alice@example.com.",
+        "Verificar que a lista de solicitações retorne vazia."
+      ],
+      "resultado_esperado": "Resposta 200 com items=[] e total=0.",
+      "automatizavel": true,
+      "observacoes": "",
+      "correcao_aplicada": ""
+    }
+  ],
+  "matriz_rastreabilidade": [
+    {
+      "criterio": "CA-04.1",
+      "casos": [
+        "TC-04-01"
+      ]
+    },
+    {
+      "criterio": "CA-04.2",
+      "casos": [
+        "TC-04-02",
+        "TC-04-03",
+        "TC-04-04"
+      ]
+    },
+    {
+      "criterio": "CA-04.3",
+      "casos": [
+        "TC-04-05"
+      ]
+    }
+  ],
+  "alertas": []
+}

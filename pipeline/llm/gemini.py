@@ -10,7 +10,7 @@ log = logging.getLogger("gemini")
 # Models that support ThinkingConfig. Matched by prefix so versioned variants
 # (e.g. gemini-2.5-flash-001) are also covered. "-lite" models are explicitly
 # excluded — they do not support thinking and would fail with ThinkingConfig.
-_THINKING_MODEL_PREFIXES = ("gemini-2.5-flash", "gemini-2.5-pro", "gemini-3.1-flash")
+_THINKING_MODEL_PREFIXES = ("gemini-2.5-flash", "gemini-2.5-pro", "gemini-3.1-flash-lite")
 
 # thinking budget for reproducibility
 _THINKING_BUDGET = 100_000
@@ -80,10 +80,10 @@ class GeminiClient(LLMClient):
             temperature=temperature,
             max_output_tokens=effective_max,
         )
-        print(
-            f"[gemini] request model={self.model} thinking={is_thinking_model} "
-            f"temp={temperature} max_tokens={effective_max}"
-        )
+        # print(
+        #     f"[gemini] request model={self.model} thinking={is_thinking_model} "
+        #     f"temp={temperature} max_tokens={effective_max}"
+        # )
 
         last_exc: Exception | None = None
         start = time.perf_counter()
