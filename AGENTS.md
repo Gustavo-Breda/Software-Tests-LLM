@@ -4,7 +4,7 @@ Guidance for AI coding agents (Claude Code, Cursor, Copilot, etc.) working in
 this repository. Humans: see [`README.md`](./README.md) for the project overview
 and [`docs/PLAN.md`](./docs/PLAN.md) for the full roadmap and data contracts.
 
-> **Repo stage:** Phases 1 and 2 complete. Phase 3 (Agents 0 & 1) is next.
+> **Repo stage:** Phases 1–3 complete. Phase 4 (Agent 2 — judge + repair loop) is next.
 > Always verify a path exists before editing or running it.
 
 ---
@@ -68,10 +68,10 @@ Follow this order every session:
 | Docker stack (`ollama`, `pipeline`, `backend`, `frontend`) | ✅ Phase 0 done |
 | LLM client layer (`pipeline/llm/`) | ✅ Phase 0 done |
 | Settings & env loader (`pipeline/settings.py`) | ✅ Phase 0 done |
-| Workflow runner (`pipeline/workflow/runner.py`) | ✅ Phase 3 started (runs Agent 0 and Agent 1) |
+| Workflow runner (`pipeline/workflow/runner.py`) | ✅ Phase 3 done (runs Agent 0 and Agent 1) |
 | PoC backend — FastAPI (`app/backend/`) | ✅ Phase 1 done (FastAPI + SQLite + pytest) |
 | PoC frontend — React (`app/frontend/`) | ✅ Phase 1 done (React + Vite + data-testid) |
-| Agents 0–1 quality gate + test generation | ✅ Phase 3 started (schemas + JSON validation + runner integration) |
+| Agents 0–1 quality gate + test generation | ✅ Phase 3 done (schemas + JSON validation + runner integration) |
 | Pipeline agents 2–3, Summarizer | ❌ Phase 4–6 |
 | Context builder, glossary, ui_map | ✅ Phase 2 done |
 | Prompts (`pipeline/prompts/`), schemas (`pipeline/schemas/`) | 🚧 Agent 0–1 done; Agent 2+ pending |

@@ -1,0 +1,166 @@
+{
+  "test_cases": [
+    {
+      "id": "TC-01-01",
+      "titulo": "Login bem-sucedido com credenciais válidas",
+      "objetivo": "Validar que o usuário consegue autenticar e ser redirecionado para a listagem de solicitações.",
+      "criterios_cobertos": [
+        "CA-01.1"
+      ],
+      "tipo": "positivo",
+      "prioridade": "alta",
+      "pre_condicoes": [
+        "Usuário 'alice@example.com' existe no sistema."
+      ],
+      "dados_de_teste": {
+        "email": "alice@example.com",
+        "password": "Senha123"
+      },
+      "passos": [
+        "Acessar a rota /login.",
+        "Preencher [data-testid=login-email] com 'alice@example.com'.",
+        "Preencher [data-testid=login-password] com 'Senha123'.",
+        "Clicar em [data-testid=login-submit]."
+      ],
+      "resultado_esperado": "Resposta 200 do endpoint auth.login com token JWT. Redirecionamento para a rota /requests.",
+      "automatizavel": true,
+      "observacoes": "Caminho feliz.",
+      "correcao_aplicada": ""
+    },
+    {
+      "id": "TC-01-02",
+      "titulo": "Falha de login com e-mail inexistente",
+      "objetivo": "Verificar que o sistema retorna erro genérico para e-mail não cadastrado.",
+      "criterios_cobertos": [
+        "CA-01.2"
+      ],
+      "tipo": "negativo",
+      "prioridade": "alta",
+      "pre_condicoes": [
+        "E-mail 'inexistente@example.com' não consta no banco."
+      ],
+      "dados_de_teste": {
+        "email": "inexistente@example.com",
+        "password": "Senha123"
+      },
+      "passos": [
+        "Acessar a rota /login.",
+        "Preencher [data-testid=login-email] com 'inexistente@example.com'.",
+        "Preencher [data-testid=login-password] com 'Senha123'.",
+        "Clicar em [data-testid=login-submit]."
+      ],
+      "resultado_esperado": "Resposta 401 com a mensagem 'E-mail ou senha inválidos.' exibida em [data-testid=login-error].",
+      "automatizavel": true,
+      "observacoes": "Valida a regra de anti-enumeração.",
+      "correcao_aplicada": ""
+    },
+    {
+      "id": "TC-01-03",
+      "titulo": "Falha de login com senha incorreta",
+      "objetivo": "Verificar que o sistema retorna o mesmo erro genérico para senha incorreta.",
+      "criterios_cobertos": [
+        "CA-01.2"
+      ],
+      "tipo": "negativo",
+      "prioridade": "alta",
+      "pre_condicoes": [
+        "Usuário 'alice@example.com' existe."
+      ],
+      "dados_de_teste": {
+        "email": "alice@example.com",
+        "password": "SenhaErrada"
+      },
+      "passos": [
+        "Acessar a rota /login.",
+        "Preencher [data-testid=login-email] com 'alice@example.com'.",
+        "Preencher [data-testid=login-password] com 'SenhaErrada'.",
+        "Clicar em [data-testid=login-submit]."
+      ],
+      "resultado_esperado": "Resposta 401 com a mensagem 'E-mail ou senha inválidos.' exibida em [data-testid=login-error].",
+      "automatizavel": true,
+      "observacoes": "Valida a regra de anti-enumeração.",
+      "correcao_aplicada": ""
+    },
+    {
+      "id": "TC-01-04",
+      "titulo": "Bloqueio de conta após 5 tentativas falhas",
+      "objetivo": "Verificar o bloqueio temporário após 5 tentativas consecutivas.",
+      "criterios_cobertos": [
+        "CA-01.3"
+      ],
+      "tipo": "borda",
+      "prioridade": "alta",
+      "pre_condicoes": [
+        "Usuário 'bob@example.com' existe."
+      ],
+      "dados_de_teste": {
+        "email": "bob@example.com",
+        "password": "SenhaErrada"
+      },
+      "passos": [
+        "Realizar 5 tentativas de login falhas consecutivas com os dados de teste.",
+        "Tentar realizar login com a senha correta 'Senha123'."
+      ],
+      "resultado_esperado": "Na 6ª tentativa, o sistema retorna 423 Locked com header Retry-After. A mensagem de erro é exibida em [data-testid=login-lockout].",
+      "automatizavel": true,
+      "observacoes": "Requer controle de tempo no teste.",
+      "correcao_aplicada": ""
+    },
+    {
+      "id": "TC-01-05",
+      "titulo": "Rejeição de e-mail com formato inválido",
+      "objetivo": "Validar a validação de formato de e-mail no login.",
+      "criterios_cobertos": [
+        "CA-01.4"
+      ],
+      "tipo": "negativo",
+      "prioridade": "media",
+      "pre_condicoes": [],
+      "dados_de_teste": {
+        "email": "email_sem_arroba",
+        "password": "Senha123"
+      },
+      "passos": [
+        "Acessar a rota /login.",
+        "Preencher [data-testid=login-email] com 'email_sem_arroba'.",
+        "Preencher [data-testid=login-password] com 'Senha123'.",
+        "Clicar em [data-testid=login-submit]."
+      ],
+      "resultado_esperado": "Resposta 422 Unprocessable Entity. O login não é efetuado.",
+      "automatizavel": true,
+      "observacoes": "Validação de formato via Pydantic.",
+      "correcao_aplicada": ""
+    }
+  ],
+  "matriz_rastreabilidade": [
+    {
+      "criterio": "CA-01.1",
+      "casos": [
+        "TC-01-01"
+      ]
+    },
+    {
+      "criterio": "CA-01.2",
+      "casos": [
+        "TC-01-02",
+        "TC-01-03"
+      ]
+    },
+    {
+      "criterio": "CA-01.3",
+      "casos": [
+        "TC-01-04"
+      ]
+    },
+    {
+      "criterio": "CA-01.4",
+      "casos": [
+        "TC-01-05"
+      ]
+    }
+  ],
+  "alertas": [
+    "O teste de bloqueio (TC-01-04) exige que o ambiente de teste suporte a manipulação de tempo ou espera ativa de 60 segundos.",
+    "Não foi incluído teste para o reset do contador de tentativas após login bem-sucedido, embora mencionado no CA-01.3; recomenda-se adicionar como TC-01-06."
+  ]
+}
