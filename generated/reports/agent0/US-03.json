@@ -1,0 +1,23 @@
+{
+  "status": "PRECISA_DE_ESCLARECIMENTO",
+  "derivavel": false,
+  "justificativa_derivabilidade": "Embora a história cubra os fluxos principais, há omissões críticas sobre o comportamento da UI e da API em cenários de erro e validação que impedem a criação de testes precisos sem suposições.",
+  "observacao_formato": "A história segue o padrão solicitado.",
+  "problemas": [
+    {
+      "criterio_id": "CA-03.2",
+      "tipo": "omissao",
+      "descricao": "O critério menciona que campos vazios ou fora dos limites retornam 422, mas não especifica o formato da resposta de erro (detalhes do Pydantic) nem se a UI deve exibir mensagens de erro específicas para cada campo.",
+      "impacto_em_testes": "O analista não sabe se deve validar apenas o status code ou o corpo da resposta (JSON de erros do FastAPI) e se a UI deve apresentar feedback visual imediato ao usuário.",
+      "pergunta_para_o_product_owner": "Qual deve ser o comportamento da UI ao receber o erro 422? Devemos exibir mensagens de erro individuais abaixo de cada campo ou uma mensagem global?"
+    },
+    {
+      "criterio_id": "CA-03.1",
+      "tipo": "omissao",
+      "descricao": "O critério afirma que 'o usuário volta para a lista e a nova solicitação aparece no topo', mas não define o comportamento caso a rede falhe ou o servidor retorne erro após o envio.",
+      "impacto_em_testes": "Não há definição sobre o estado da tela de criação (ex: manter os dados preenchidos ou limpar) em caso de erro de processamento.",
+      "pergunta_para_o_product_owner": "Em caso de erro na submissão, o formulário deve manter os dados preenchidos para correção ou ser limpo?"
+    }
+  ],
+  "recomendacao": "Refinar os critérios de aceitação para incluir o comportamento esperado da UI em cenários de erro e confirmar se a estrutura de resposta 422 seguirá estritamente o padrão do FastAPI definido no contexto do sistema."
+}

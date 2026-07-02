@@ -1,0 +1,153 @@
+{
+  "test_cases": [
+    {
+      "id": "TC-05-01",
+      "titulo": "Cancelamento bem-sucedido de solicitação aberta",
+      "objetivo": "Validar que o dono da solicitação consegue cancelar uma solicitação com status 'aberta'.",
+      "criterios_cobertos": [
+        "CA-05.1"
+      ],
+      "tipo": "positivo",
+      "prioridade": "alta",
+      "pre_condicoes": [
+        "Usuário 'alice@example.com' autenticado.",
+        "Existe uma solicitação com status 'aberta' de propriedade de 'alice@example.com'."
+      ],
+      "dados_de_teste": {
+        "request_title": "Solicitação de Teste Aberta"
+      },
+      "passos": [
+        "Navegar para /requests.",
+        "Localizar a linha da solicitação com título 'Solicitação de Teste Aberta'.",
+        "Clicar no botão com [data-testid=request-row-cancel].",
+        "Verificar se o [data-testid=cancel-dialog] é exibido contendo o título 'Solicitação de Teste Aberta'.",
+        "Clicar em [data-testid=cancel-confirm]."
+      ],
+      "resultado_esperado": "Resposta 200 do endpoint /api/requests/{id}/cancel. O status da solicitação no banco é alterado para 'cancelada' e 'cancelled_at' é preenchido.",
+      "automatizavel": true,
+      "observacoes": "Caminho feliz para status 'aberta'.",
+      "correcao_aplicada": ""
+    },
+    {
+      "id": "TC-05-02",
+      "titulo": "Cancelamento bem-sucedido de solicitação em análise",
+      "objetivo": "Validar que o dono da solicitação consegue cancelar uma solicitação com status 'em_analise'.",
+      "criterios_cobertos": [
+        "CA-05.1"
+      ],
+      "tipo": "positivo",
+      "prioridade": "alta",
+      "pre_condicoes": [
+        "Usuário 'alice@example.com' autenticado.",
+        "Existe uma solicitação com status 'em_analise' de propriedade de 'alice@example.com'."
+      ],
+      "dados_de_teste": {
+        "request_title": "Solicitação em Análise"
+      },
+      "passos": [
+        "Navegar para /requests.",
+        "Localizar a linha da solicitação com título 'Solicitação em Análise'.",
+        "Clicar no botão com [data-testid=request-row-cancel].",
+        "Clicar em [data-testid=cancel-confirm] no dialog."
+      ],
+      "resultado_esperado": "Resposta 200 do endpoint /api/requests/{id}/cancel. Status alterado para 'cancelada'.",
+      "automatizavel": true,
+      "observacoes": "Caminho feliz para status 'em_analise'.",
+      "correcao_aplicada": ""
+    },
+    {
+      "id": "TC-05-03",
+      "titulo": "Bloqueio de cancelamento de solicitação de outro usuário",
+      "objetivo": "Garantir que um usuário não consiga cancelar solicitações que não lhe pertencem.",
+      "criterios_cobertos": [
+        "CA-05.2"
+      ],
+      "tipo": "negativo",
+      "prioridade": "alta",
+      "pre_condicoes": [
+        "Usuário 'alice@example.com' autenticado.",
+        "Existe uma solicitação de propriedade de 'bob@example.com'."
+      ],
+      "dados_de_teste": {
+        "request_id_bob": "id_da_solicitacao_do_bob"
+      },
+      "passos": [
+        "Tentar realizar um POST para /api/requests/{id_da_solicitacao_do_bob}/cancel com o token de 'alice@example.com'."
+      ],
+      "resultado_esperado": "Resposta 403 com a mensagem 'Você não pode cancelar uma solicitação de outro usuário.'. A solicitação de Bob permanece inalterada.",
+      "automatizavel": true,
+      "observacoes": "Teste de segurança de propriedade.",
+      "correcao_aplicada": ""
+    },
+    {
+      "id": "TC-05-04",
+      "titulo": "Erro ao cancelar solicitação inexistente",
+      "objetivo": "Validar o retorno da API ao tentar cancelar um ID inválido.",
+      "criterios_cobertos": [
+        "CA-05.2"
+      ],
+      "tipo": "negativo",
+      "prioridade": "media",
+      "pre_condicoes": [
+        "Usuário 'alice@example.com' autenticado."
+      ],
+      "dados_de_teste": {
+        "invalid_id": "999999"
+      },
+      "passos": [
+        "Tentar realizar um POST para /api/requests/999999/cancel com o token de 'alice@example.com'."
+      ],
+      "resultado_esperado": "Resposta 404 com a mensagem 'Solicitação não encontrada.'.",
+      "automatizavel": true,
+      "observacoes": "Validação de integridade de recurso.",
+      "correcao_aplicada": ""
+    },
+    {
+      "id": "TC-05-05",
+      "titulo": "Erro ao cancelar solicitação já finalizada",
+      "objetivo": "Validar que solicitações em estado terminal não podem ser canceladas.",
+      "criterios_cobertos": [
+        "CA-05.3"
+      ],
+      "tipo": "borda",
+      "prioridade": "media",
+      "pre_condicoes": [
+        "Usuário 'alice@example.com' autenticado.",
+        "Existe uma solicitação com status 'finalizada' de propriedade de 'alice@example.com'."
+      ],
+      "dados_de_teste": {
+        "request_id": "id_da_solicitacao_finalizada"
+      },
+      "passos": [
+        "Tentar realizar um POST para /api/requests/{id_da_solicitacao_finalizada}/cancel com o token de 'alice@example.com'."
+      ],
+      "resultado_esperado": "Resposta 409 com a mensagem 'Somente solicitações 'aberta' ou 'em análise' podem ser canceladas.'. A solicitação permanece com status 'finalizada'.",
+      "automatizavel": true,
+      "observacoes": "Teste de transição de estado proibida.",
+      "correcao_aplicada": ""
+    }
+  ],
+  "matriz_rastreabilidade": [
+    {
+      "criterio": "CA-05.1",
+      "casos": [
+        "TC-05-01",
+        "TC-05-02"
+      ]
+    },
+    {
+      "criterio": "CA-05.2",
+      "casos": [
+        "TC-05-03",
+        "TC-05-04"
+      ]
+    },
+    {
+      "criterio": "CA-05.3",
+      "casos": [
+        "TC-05-05"
+      ]
+    }
+  ],
+  "alertas": []
+}
