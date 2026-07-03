@@ -1,0 +1,19 @@
+{
+  "story_id": "US-02",
+  "stage": "agent0",
+  "error": {
+    "type": "RawAgentResponseError",
+    "message": "Strict gate violation: APROVADA requires derivavel=true and problemas=[]."
+  },
+  "provider": "ollama",
+  "model": "llama3",
+  "metadata": {
+    "latency_seconds": 8.640394169982756,
+    "prompt_tokens": 5709,
+    "completion_tokens": 451,
+    "raw": {
+      "done_reason": "stop"
+    }
+  },
+  "raw_response": "{\n  \"status\": \"APROVADA\",\n  \"derivavel\": true,\n  \"justificativa_derivabilidade\": \"A US-02 tem critérios de aceitação claros e específicos, permitindo a geração de casos de teste funcionais.\",\n  \"observacao_formato\": \"\",\n  \"problemas\": [\n    {\n      \"criterio_id\": \"CA-02.1\",\n      \"tipo\": \"omissao\",\n      \"descricao\": \"O critério não especifica se o cadastro é persistido após sucesso.\",\n      \"impacto_em_testes\": \"O Agent 1 teria que inventar se a resposta é 201 e qual é o estado do sistema após o cadastro.\",\n      \"pergunta_para_o_product_owner\": \"Qual é o status do sistema após um cadastro bem-sucedido?\"\n    },\n    {\n      \"criterio_id\": \"CA-02.2\",\n      \"tipo\": \"omissao\",\n      \"descricao\": \"O critério não especifica se a mensagem de erro para e-mail duplicado é exibida no frontend.\",\n      \"impacto_em_testes\": \"O Agent 1 teria que inventar se a resposta é 409 e qual é a mensagem exibida ao usuário.\",\n      \"pergunta_para_o_product_owner\": \"Qual é a mensagem de erro exibida quando um e-mail já existe?\"\n    },\n    {\n      \"criterio_id\": \"CA-02.3\",\n      \"tipo\": \"omissao\",\n      \"descricao\": \"O critério não especifica se o cadastro não persiste para senhas sem número ou letras.\",\n      \"impacto_em_testes\": \"O Agent 1 teria que inventar se a resposta é 422 e qual é o estado do sistema após uma tentativa de cadastro com senha inválida.\",\n      \"pergunta_para_o_product_owner\": \"Qual é o status do sistema quando um usuário tenta cadastrar com senha sem número ou letras?\"\n    }\n  ],\n  \"recomendacao\": \"Prosseguir para geração de casos de teste.\"\n}"
+}

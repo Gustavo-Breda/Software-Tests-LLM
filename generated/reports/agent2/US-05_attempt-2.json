@@ -1,0 +1,39 @@
+{
+  "status_geral": "REPROVADO",
+  "pontuacao": {
+    "cobertura": 0,
+    "fidelidade_ao_requisito": 0,
+    "clareza": 0,
+    "automatizabilidade": 0
+  },
+  "casos_aprovados": [],
+  "casos_reprovados": [
+    "TC-05-01",
+    "TC-05-02"
+  ],
+  "problemas": [
+    {
+      "caso_de_teste": "TC-05-01",
+      "tipo": "fato_incorreto",
+      "descricao": "O caso assume que a solicitação está em status 'aberta' ou 'em análise', mas não há evidência na história de que isso seja verdade.",
+      "evidencia_na_historia": "A história diz que o usuário pode cancelar uma solicitação própria em status 'aberta' ou 'em análise', mas não especifica como verificar se a solicitação está em um desses status.",
+      "acao_recomendada": "Adicionar um passo para verificar o status da solicitação antes de tentar cancelá-la."
+    },
+    {
+      "caso_de_teste": "TC-05-02",
+      "tipo": "fato_incorreto",
+      "descricao": "O caso assume que a solicitação está em status 'em análise', mas não há evidência na história de que isso seja verdade.",
+      "evidencia_na_historia": "A história diz que o usuário pode cancelar uma solicitação própria em status 'aberta' ou 'em análise', mas não especifica como verificar se a solicitação está em um desses status.",
+      "acao_recomendada": "Adicionar um passo para verificar o status da solicitação antes de tentar cancelá-la."
+    }
+  ],
+  "cenarios_omitidos_sugeridos": [
+    {
+      "descricao": "Cancelar uma solicitação própria em status 'cancelada' ou 'finalizada'",
+      "criterio_relacionado": "CA-05.3",
+      "justificativa": "Esses cenários são necessários para garantir que o sistema não permita cancelar uma solicitação que já está em um estado final.",
+      "tipo_sugerido": "negativo"
+    }
+  ],
+  "decisao": "REPROVADO"
+}

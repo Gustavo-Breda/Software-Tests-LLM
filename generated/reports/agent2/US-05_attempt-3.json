@@ -1,0 +1,47 @@
+{
+  "status_geral": "REPROVADO",
+  "pontuacao": {
+    "cobertura": 5,
+    "fidelidade_ao_requisito": 3,
+    "clareza": 4,
+    "automatizabilidade": 6
+  },
+  "casos_aprovados": [],
+  "casos_reprovados": [
+    "TC-05-01",
+    "TC-05-02",
+    "TC-05-03",
+    "TC-05-04"
+  ],
+  "problemas": [
+    {
+      "caso_de_teste": "TC-05-03",
+      "tipo": "omissao",
+      "descricao": "O cenário de cancelamento de solicitação própria em status 'cancelada' não está presente.",
+      "evidencia_na_historia": "A história não menciona a possibilidade de cancelar uma solicitação que já foi cancelada.",
+      "acao_recomendada": "Adicionar o cenário de cancelamento de solicitação própria em status 'cancelada'"
+    },
+    {
+      "caso_de_teste": "TC-05-04",
+      "tipo": "omissao",
+      "descricao": "O cenário de cancelamento de solicitação própria em status 'finalizada' não está presente.",
+      "evidencia_na_historia": "A história não menciona a possibilidade de cancelar uma solicitação que já foi finalizada.",
+      "acao_recomendada": "Adicionar o cenário de cancelamento de solicitação própria em status 'finalizada'"
+    }
+  ],
+  "cenarios_omitidos_sugeridos": [
+    {
+      "descricao": "Cancelar solicitação própria em status 'cancelada'",
+      "criterio_relacionado": "CA-05.3",
+      "justificativa": "Essa é uma situação importante para garantir a consistência do sistema.",
+      "tipo_sugerido": "borda"
+    },
+    {
+      "descricao": "Cancelar solicitação própria em status 'finalizada'",
+      "criterio_relacionado": "CA-05.3",
+      "justificativa": "Essa é uma situação importante para garantir a consistência do sistema.",
+      "tipo_sugerido": "borda"
+    }
+  ],
+  "decisao": "REPROVADO"
+}

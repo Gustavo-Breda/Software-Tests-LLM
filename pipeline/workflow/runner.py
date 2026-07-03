@@ -12,6 +12,7 @@ from pipeline.context import ContextBuilder
 from pipeline.log import setup
 from pipeline.settings import get_settings
 from pipeline.llm.factory import get_client
+from pipeline.agents.utils import RawAgentResponseError
 
 
 def run_agent0_all(
@@ -44,6 +45,7 @@ def run_agent0_all(
             print(f"[runner] agent0 saved story={blob.story_id} path={report_path}")
         except Exception as exc:
             has_error = True
+            raw_path = _save_raw_error("agent0", blob.story_id, exc, reports_dir)
             print(f"[runner] agent0 error story={blob.story_id} type={type(exc).__name__}: {exc}")
             result = {
                 "story_id": blob.story_id,
@@ -51,6 +53,7 @@ def run_agent0_all(
                 "error": {
                     "type": type(exc).__name__,
                     "message": str(exc),
+                    "raw_response_path": str(raw_path) if raw_path else "",
                 },
             }
         results.append(result)
@@ -125,7 +128,10 @@ def run_phase5(
             )
             print(f"[runner] agent3 saved story={blob.story_id} path={story_scripts_dir}")
         except Exception as exc:
+            raw_path = _save_raw_error("agent3", blob.story_id, exc, scripts_destination.parent / "reports")
             error = _error_payload(blob.story_id, "agent3", exc)
+            if raw_path:
+                error["error"]["raw_response_path"] = str(raw_path)
             codegen_results.append(error)
             errors.append(error)
             print(f"[runner] agent3 error story={blob.story_id} type={type(exc).__name__}: {exc}")
@@ -225,7 +231,10 @@ def run_phase4(
 
         except Exception as exc:
             log.error("[%s] Agent 0 → FAILED: %s: %s", blob.story_id, type(exc).__name__, exc)
+            raw_path = _save_raw_error("agent0", blob.story_id, exc, agent0_destination.parent)
             error = _error_payload(blob.story_id, "agent0", exc)
+            if raw_path:
+                error["error"]["raw_response_path"] = str(raw_path)
             print(f"[runner] agent0 error story={blob.story_id} type={type(exc).__name__}: {exc}")
             agent0_results.append(error)
             errors.append(error)
@@ -257,7 +266,10 @@ def run_phase4(
             )
         except Exception as exc:
             log.error("[%s] Agent 1 → FAILED: %s: %s", blob.story_id, type(exc).__name__, exc)
+            raw_path = _save_raw_error("agent1", blob.story_id, exc, agent0_destination.parent)
             error = _error_payload(blob.story_id, "agent1", exc)
+            if raw_path:
+                error["error"]["raw_response_path"] = str(raw_path)
             print(f"[runner] agent1 error story={blob.story_id} type={type(exc).__name__}: {exc}")
             agent1_results.append(error)
             errors.append(error)
@@ -350,7 +362,10 @@ def run_phase4(
                 )
         except Exception as exc:
             log.error("[%s] Agent 2 → FAILED: %s: %s", blob.story_id, type(exc).__name__, exc)
+            raw_path = _save_raw_error("agent2", blob.story_id, exc, agent0_destination.parent)
             error = _error_payload(blob.story_id, "agent2", exc)
+            if raw_path:
+                error["error"]["raw_response_path"] = str(raw_path)
             print(f"[runner] agent2 error story={blob.story_id} type={type(exc).__name__}: {exc}")
             agent2_results.append(error)
             errors.append(error)
@@ -458,6 +473,44 @@ def _error_payload(story_id: str, stage: str, exc: Exception) -> dict[str, Any]:
             "message": str(exc),
         },
     }
+
+
+def _save_raw_error(
+    stage: str,
+    story_id: str,
+    exc: Exception,
+    reports_root: Path | None,
+    *,
+    context_label: str | None = None,
+) -> Path | None:
+    if not isinstance(exc, RawAgentResponseError):
+        return None
+    root = reports_root or Path("generated") / "reports"
+    destination = root / "raw" / stage
+    destination.mkdir(parents=True, exist_ok=True)
+    label = context_label or str(exc.metadata.get("context_label") or "").strip()
+    suffix = f"_{_safe_filename(label)}" if label else ""
+    path = destination / f"{story_id}{suffix}.json"
+    payload = {
+        "story_id": story_id,
+        "stage": stage,
+        "context_label": label,
+        "error": {
+            "type": type(exc).__name__,
+            "message": str(exc),
+        },
+        "provider": exc.provider,
+        "model": exc.model,
+        "metadata": exc.metadata,
+        "raw_response": exc.raw_text,
+    }
+    path.write_text(json.dumps(payload, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
+    print(f"[runner] raw response saved story={story_id} stage={stage} path={path}")
+    return path
+
+
+def _safe_filename(value: str) -> str:
+    return re.sub(r"[^A-Za-z0-9_.-]+", "-", value).strip("-")
 
 
 def main() -> None:

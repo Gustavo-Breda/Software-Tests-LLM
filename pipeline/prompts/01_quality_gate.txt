@@ -68,8 +68,12 @@ Regras obrigatórias:
 - Se algo não estiver claro, formule uma pergunta objetiva para o Product Owner e registre os problemas em "problemas": [...].
 - Se não houver problemas, retorne "problemas": [], status "APROVADA" e "derivavel" = true
 - Se "problemas" não estiver vazio, retorne status "PRECISA_DE_ESCLARECIMENTO" e "derivavel" = false.
-- Nunca retorne status "APROVADA" com problemas.
+- Nunca retorne status "APROVADA" com o campo "problemas" diferente de um [] vazio.
 - Nunca retorne status "PRECISA_DE_ESCLARECIMENTO" com "problemas": [].
+TODOS os campos do JSON devem estar preenchidos.
+Caso a US esteja aprovada:
+    - o campo "recomendacao" deve ter o valor "Prosseguir para geração de casos de teste."
+    - o campo "justivicativa_derivabilidade" deve conter um texto com a justificativa do por que é possivel derivar casos de teste com a US.
 Retorne estritamente em JSON, sem texto fora do JSON:
 {
     "status": "APROVADA" | "PRECISA_DE_ESCLARECIMENTO",
@@ -88,4 +92,3 @@ Retorne estritamente em JSON, sem texto fora do JSON:
     ],
     "recomendacao": "..."
 }
-TODOS os campos do JSON devem estar preenchidos, caso a US esteja aprovada, a recomendação deve ser "Prosseguir para geração de casos de teste."

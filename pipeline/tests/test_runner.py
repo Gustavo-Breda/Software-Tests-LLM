@@ -1,8 +1,9 @@
 import json
 
 from pipeline.context import ContextBuilder
+from pipeline.agents.utils import RawAgentResponseError
 from pipeline.llm.adapter import LLMClient, LLMResponse
-from pipeline.workflow.runner import run_phase4, run_phase5
+from pipeline.workflow.runner import _save_raw_error, run_phase4, run_phase5
 
 
 class SequenceClient(LLMClient):
@@ -141,6 +142,12 @@ def _agent3_payload(story_number: str) -> dict:
     }
 
 
+def _agent0_missing_recommendation_payload() -> dict:
+    payload = _approved_payload("US-01")
+    payload.pop("recomendacao")
+    return payload
+
+
 def _agent2_rejected_payload(story_number: str) -> dict:
     return {
         "status_geral": "REPROVADO",
@@ -277,3 +284,61 @@ def test_runner_phase5_generates_scripts_for_approved_stories(tmp_path):
     assert aggregate["summary"]["agent3_skipped"] == 0
     assert (tmp_path / "scripts" / "US-01" / "test_us_01.py").is_file()
     assert (tmp_path / "scripts" / "US-05" / "pendencias_de_automacao.json").is_file()
+
+
+def test_runner_saves_raw_response_for_validation_errors(tmp_path):
+    responses = [
+        json.dumps(_agent0_missing_recommendation_payload()),
+        json.dumps(_approved_payload("US-02")),
+        json.dumps(_agent1_payload("02")),
+        json.dumps(_agent2_approved_payload("02")),
+        json.dumps(_approved_payload("US-03")),
+        json.dumps(_agent1_payload("03")),
+        json.dumps(_agent2_approved_payload("03")),
+        json.dumps(_approved_payload("US-04")),
+        json.dumps(_agent1_payload("04")),
+        json.dumps(_agent2_approved_payload("04")),
+        json.dumps(_approved_payload("US-05")),
+        json.dumps(_agent1_payload("05")),
+        json.dumps(_agent2_approved_payload("05")),
+    ]
+    client = SequenceClient(responses)
+
+    aggregate, exit_code = run_phase4(
+        client,
+        agent0_reports_dir=tmp_path / "agent0",
+        test_cases_dir=tmp_path / "test_cases",
+        agent2_reports_dir=tmp_path / "agent2",
+        repaired_test_cases_dir=tmp_path / "repaired",
+    )
+
+    raw_path = tmp_path / "raw" / "agent0" / "US-01.json"
+    assert exit_code == 1
+    assert raw_path.is_file()
+    assert aggregate["agent0"][0]["error"]["raw_response_path"] == str(raw_path)
+    assert "raw_response" in json.loads(raw_path.read_text(encoding="utf-8"))
+
+
+def test_runner_saves_raw_response_with_context_label_without_overwrite(tmp_path):
+    first = RawAgentResponseError(
+        "first error",
+        raw_text='{"first": true}',
+        provider="fake",
+        model="fake-model",
+        metadata={"context_label": "generate"},
+    )
+    second = RawAgentResponseError(
+        "second error",
+        raw_text='{"second": true}',
+        provider="fake",
+        model="fake-model",
+        metadata={"context_label": "repair-attempt-1"},
+    )
+
+    first_path = _save_raw_error("agent1", "US-03", first, tmp_path)
+    second_path = _save_raw_error("agent1", "US-03", second, tmp_path)
+
+    assert first_path == tmp_path / "raw" / "agent1" / "US-03_generate.json"
+    assert second_path == tmp_path / "raw" / "agent1" / "US-03_repair-attempt-1.json"
+    assert json.loads(first_path.read_text(encoding="utf-8"))["context_label"] == "generate"
+    assert json.loads(second_path.read_text(encoding="utf-8"))["raw_response"] == '{"second": true}'

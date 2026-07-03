@@ -11,6 +11,7 @@
 # Schema         : pipeline/schemas/agent1_out.json
 #
 import json
+import re
 from dataclasses import asdict, dataclass, field
 from typing import Any
 
@@ -18,7 +19,7 @@ import yaml
 
 from ..llm.adapter import LLMClient, LLMResponse
 from ..context import ContextBlob
-from .utils import AgentOutputError, extract_json_object, load_prompt, validate_schema
+from .utils import AgentOutputError, REPO_ROOT, extract_json_object, load_prompt, validate_schema, wrap_raw_response_error
 
 
 _SYSTEM_PROMPT = (
@@ -80,18 +81,20 @@ def run(
             _repair_prompt(prompt, response.text, str(last_error)) if last_error and response else prompt,
             system=_SYSTEM_PROMPT,
             temperature=0.1 if attempt else 0.2,
-            max_tokens=8192,
+            max_tokens=20_048,
         )
         try:
             data = extract_json_object(response.text)
-            _normalize_contract_defaults(blob, data)
+            _normalize_contract_defaults(blob, data, repair_mode=is_repair)
             validate_schema(data, "agent1_out.json")
             _validate_semantics(blob, data, repair_mode=is_repair)
             break
         except AgentOutputError as exc:
             last_error = exc
             if attempt >= _MAX_OUTPUT_REPAIR_ATTEMPTS:
-                raise
+                raw_exc = wrap_raw_response_error(exc, response)
+                raw_exc.metadata["context_label"] = mode
+                raise raw_exc from exc
             print(
                 f"[agent1] retry story={blob.story_id} mode={mode} "
                 f"attempt={attempt + 1} reason={exc}"
@@ -116,8 +119,9 @@ def _repair_prompt(original_prompt: str, invalid_response: str, error: str) -> s
         + "Sua resposta anterior foi rejeitada pelo validador.\n"
         + f"Erro: {error}\n\n"
         + "Retorne novamente o JSON completo, corrigido, sem texto fora do JSON. "
-        + "Não omita campos obrigatórios. Mantenha a matriz de rastreabilidade "
-        + "consistente com criterios_cobertos. Gere menos casos se necessário."
+        + "Não omita campos obrigatórios. Não reduza cobertura. Preserve casos "
+        + "aprovados no feedback do Agent 2. Mantenha a matriz de rastreabilidade "
+        + "consistente com criterios_cobertos."
     )
 
 
@@ -142,7 +146,10 @@ def _build_prompt(
         "touched_screens": story.touched_screens,
         "touched_endpoints": story.touched_endpoints,
     }
+    story_number = story.id.removeprefix("US-")
     replacements = {
+        "story_id": story.id,
+        "test_case_id_prefix": f"TC-{story_number}-",
         "user_story": yaml.safe_dump(story_payload, allow_unicode=True, sort_keys=False),
         "acceptance_criteria": yaml.safe_dump(
             story.acceptance_criteria,
@@ -179,8 +186,14 @@ def _section_body(blob: ContextBlob, title: str) -> str:
     return ""
 
 
-def _normalize_contract_defaults(blob: ContextBlob, data: dict[str, Any]) -> None:
+def _normalize_contract_defaults(
+    blob: ContextBlob,
+    data: dict[str, Any],
+    *,
+    repair_mode: bool = False,
+) -> None:
     data.setdefault("alertas", [])
+    story_number = blob.story_id.removeprefix("US-")
     valid_criteria = [
         str(criterion.get("id"))
         for criterion in blob.story.acceptance_criteria
@@ -193,8 +206,12 @@ def _normalize_contract_defaults(blob: ContextBlob, data: dict[str, Any]) -> Non
     for case in cases:
         if not isinstance(case, dict):
             continue
+        if "id" in case:
+            case["id"] = _normalize_case_id(str(case["id"]), story_number)
         case.setdefault("automatizavel", True)
         case.setdefault("observacoes", "")
+        if repair_mode:
+            case.setdefault("correcao_aplicada", "nenhuma - caso preservado")
 
     matrix = []
     for criterion in valid_criteria:
@@ -211,6 +228,18 @@ def _normalize_contract_defaults(blob: ContextBlob, data: dict[str, Any]) -> Non
             }
         )
     data["matriz_rastreabilidade"] = matrix
+
+
+def _normalize_case_id(case_id: str, story_number: str) -> str:
+    match = re.fullmatch(r"TC-?US-?0?(\d{1,2})-(\d{1,2})", case_id, flags=re.IGNORECASE)
+    if match and match.group(1).zfill(2) == story_number:
+        return f"TC-{story_number}-{match.group(2).zfill(2)}"
+
+    match = re.fullmatch(r"TC-0?(\d{1,2})-(\d{1,2})", case_id, flags=re.IGNORECASE)
+    if match and match.group(1).zfill(2) == story_number:
+        return f"TC-{story_number}-{match.group(2).zfill(2)}"
+
+    return case_id
 
 
 def _validate_semantics(
@@ -276,11 +305,19 @@ def _validate_semantics(
                 )
 
     for criterion, matrix_cases in matrix_by_criterion.items():
+        if not repair_mode and not matrix_cases:
+            raise AgentOutputError(
+                f"Agent 1 semantic validation failed: {criterion} must be covered by at least one test case."
+            )
         for case_id in matrix_cases:
             if criterion not in case_by_id[case_id]["criterios_cobertos"]:
                 raise AgentOutputError(
                     f"Agent 1 semantic validation failed: matrix lists {case_id} for {criterion}, but case does not cover it."
                 )
+
+    _validate_documented_selectors(cases)
+    _validate_no_unsupported_exact_totals(blob, cases)
+    _validate_boundary_values(blob, cases)
 
 
 def _validate_string_list(values: list[str], location: str) -> None:
@@ -289,6 +326,186 @@ def _validate_string_list(values: list[str], location: str) -> None:
             raise AgentOutputError(
                 f"Agent 1 semantic validation failed: {location}[{index}] must be a non-empty string."
             )
+
+
+def _validate_documented_selectors(cases: list[dict[str, Any]]) -> None:
+    documented = _documented_testids()
+    referenced: set[str] = set()
+    for case in cases:
+        text = _case_text(case)
+        referenced.update(re.findall(r"data-testid[=\s:'\"\[]+([a-z0-9_-]+)", text, flags=re.IGNORECASE))
+        referenced.update(re.findall(r"\b(?:login|register|request|requests|filter|cancel)-[a-z0-9_-]+\b", text))
+
+    unknown = sorted(selector for selector in referenced if selector not in documented)
+    if unknown:
+        raise AgentOutputError(
+            f"Agent 1 semantic validation failed: undocumented data-testid selectors {unknown}."
+        )
+
+
+def _documented_testids() -> set[str]:
+    path = REPO_ROOT / "pipeline" / "context" / "ui_map.json"
+    ui_map = json.loads(path.read_text(encoding="utf-8"))
+    selectors: set[str] = set()
+    for screen in ui_map.get("screens", {}).values():
+        for selector in screen.get("selectors", {}).values():
+            match = re.search(r"data-testid=([^\]]+)", str(selector))
+            if match:
+                selectors.add(match.group(1))
+    return selectors
+
+
+def _validate_no_unsupported_exact_totals(blob: ContextBlob, cases: list[dict[str, Any]]) -> None:
+    context_text = _normalise_text_for_search(blob.text)
+    pattern = re.compile(
+        r"\b(?:total|quantidade|listar|exibir|mostrar)\D{0,24}(\d+)\b",
+        flags=re.IGNORECASE,
+    )
+    for case in cases:
+        for number in pattern.findall(_case_text(case)):
+            if not _has_exact_total_evidence(context_text, number):
+                raise AgentOutputError(
+                    f"Agent 1 semantic validation failed: {case['id']} asserts exact total {number} without context evidence."
+                )
+
+
+def _validate_boundary_values(blob: ContextBlob, cases: list[dict[str, Any]]) -> None:
+    criteria_by_id = {
+        str(criterion.get("id")): _criterion_text(criterion)
+        for criterion in blob.story.acceptance_criteria
+        if criterion.get("id")
+    }
+    for case in cases:
+        criteria_text = " ".join(criteria_by_id[criterion] for criterion in case["criterios_cobertos"])
+        criteria_norm = _normalise_text(criteria_text)
+        data = case.get("dados_de_teste", {})
+        if not isinstance(data, dict):
+            continue
+
+        _validate_length_boundary(case, data, criteria_norm)
+        _validate_password_boundaries(case, data, criteria_norm)
+        _validate_priority_enum(case, data, criteria_norm)
+
+
+def _validate_length_boundary(case: dict[str, Any], data: dict[str, Any], criteria_text: str) -> None:
+    for field_name, value in data.items():
+        if not isinstance(value, str):
+            continue
+        field_norm = _normalise_text(str(field_name))
+        if "titulo" in field_norm or "title" in field_norm:
+            _assert_text_boundary(case, field_name, value, criteria_text, "titulo")
+        if "descricao" in field_norm or "description" in field_norm:
+            _assert_text_boundary(case, field_name, value, criteria_text, "descricao")
+        if "nome" in field_norm or "name" in field_norm:
+            _assert_text_boundary(case, field_name, value, criteria_text, "nome")
+
+
+def _assert_text_boundary(
+    case: dict[str, Any],
+    field_name: str,
+    value: str,
+    criteria_text: str,
+    requirement_name: str,
+) -> None:
+    if not _case_mentions_invalid_boundary(case, requirement_name):
+        return
+    shorter_match = re.search(rf"{requirement_name}[^.。;,]*menor (?:que|do que) (\d+)", criteria_text)
+    if shorter_match:
+        limit = int(shorter_match.group(1))
+        if len(value) >= limit:
+            raise AgentOutputError(
+                f"Agent 1 semantic validation failed: {case['id']} field {field_name} must have length < {limit}."
+            )
+    longer_match = re.search(rf"{requirement_name}[^.。;,]*maior (?:que|do que) (\d+)", criteria_text)
+    if longer_match:
+        limit = int(longer_match.group(1))
+        if len(value) <= limit:
+            raise AgentOutputError(
+                f"Agent 1 semantic validation failed: {case['id']} field {field_name} must have length > {limit}."
+            )
+
+
+def _validate_password_boundaries(case: dict[str, Any], data: dict[str, Any], criteria_text: str) -> None:
+    password_items = [
+        (str(field_name), value)
+        for field_name, value in data.items()
+        if isinstance(value, str)
+        and (
+            "password" in _normalise_text(str(field_name))
+            or "senha" in _normalise_text(str(field_name))
+        )
+    ]
+    if not password_items:
+        return
+
+    case_text = _normalise_text(_case_text(case))
+    for field_name, value in password_items:
+        if "senha" in criteria_text and "menor que 8" in criteria_text and "curt" in case_text and len(value) >= 8:
+            raise AgentOutputError(
+                f"Agent 1 semantic validation failed: {case['id']} field {field_name} must have length < 8."
+            )
+        if "sem letra" in case_text and any(char.isalpha() for char in value):
+            raise AgentOutputError(
+                f"Agent 1 semantic validation failed: {case['id']} field {field_name} must not contain letters."
+            )
+        if "sem numero" in case_text and any(char.isdigit() for char in value):
+            raise AgentOutputError(
+                f"Agent 1 semantic validation failed: {case['id']} field {field_name} must not contain numbers."
+            )
+
+
+def _validate_priority_enum(case: dict[str, Any], data: dict[str, Any], criteria_text: str) -> None:
+    if "prioridade" not in criteria_text or "fora do enum" not in criteria_text:
+        return
+    case_text = _normalise_text(_case_text(case))
+    if "fora do enum" not in case_text and "invalida" not in case_text:
+        return
+    valid = {"baixa", "media", "alta"}
+    for field_name, value in data.items():
+        if "prior" not in _normalise_text(str(field_name)) or not isinstance(value, str):
+            continue
+        if _normalise_text(value) in valid:
+            raise AgentOutputError(
+                f"Agent 1 semantic validation failed: {case['id']} field {field_name} must use priority outside enum."
+            )
+
+
+def _case_mentions_invalid_boundary(case: dict[str, Any], requirement_name: str) -> bool:
+    text = _normalise_text(_case_text(case))
+    if requirement_name not in text:
+        return False
+    return any(marker in text for marker in ("menor", "maior", "curt", "long", "inval"))
+
+
+def _case_text(case: dict[str, Any]) -> str:
+    return json.dumps(case, ensure_ascii=False)
+
+
+def _criterion_text(criterion: dict[str, Any]) -> str:
+    return " ".join(str(value) for value in criterion.values())
+
+
+def _normalise_text(text: str) -> str:
+    replacements = str.maketrans(
+        {"á": "a", "à": "a", "ã": "a", "â": "a", "é": "e", "ê": "e", "í": "i", "ó": "o", "ô": "o", "õ": "o", "ú": "u", "ç": "c"}
+    )
+    return text.lower().translate(replacements)
+
+
+def _normalise_text_for_search(text: str) -> str:
+    return _normalise_text(text)
+
+
+def _has_exact_total_evidence(context_text: str, number: str) -> bool:
+    evidence_patterns = (
+        rf"\btotal\s*[=:]\s*{re.escape(number)}\b",
+        rf"\bquantidade\s*[=:]\s*{re.escape(number)}\b",
+        rf"\bowns\s+{re.escape(number)}\s+requests\b",
+        rf"\b{re.escape(number)}\s+solicitacoes\b",
+        rf"\b{re.escape(number)}\s+requests\b",
+        rf"\bitems\s*=\s*\[\]\s*e\s*total\s*=\s*{re.escape(number)}\b",
+    )
+    return any(re.search(pattern, context_text) for pattern in evidence_patterns)
 
 
 def _to_output(data: dict[str, Any], response: LLMResponse) -> GenerationOutput:

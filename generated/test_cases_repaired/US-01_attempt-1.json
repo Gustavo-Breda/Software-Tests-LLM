@@ -1,216 +1,119 @@
 {
   "test_cases": [
     {
-      "id": "TC-01-01",
-      "titulo": "Login bem-sucedido com e-mail e senha válidos",
-      "objetivo": "Verificar que um usuário cadastrado com e-mail e senha corretos realiza login com sucesso e é redirecionado para a tela de listagem de solicitações.",
-      "criterios_cobertos": [
-        "CA-01.1"
-      ],
-      "tipo": "positivo",
-      "prioridade": "alta",
-      "pre_condicoes": [
-        "O usuário 'alice@example.com' está cadastrado com senha 'Senha123'."
-      ],
-      "dados_de_teste": {
-        "email": "alice@example.com",
-        "senha": "Senha123"
-      },
-      "passos": [
-        "Acessar a rota /login no frontend.",
-        "Preencher o campo 'login-email' com 'alice@example.com'.",
-        "Preencher o campo 'login-password' com 'Senha123'.",
-        "Clicar em 'login-submit'."
-      ],
-      "resultado_esperado": "Resposta 200 do backend com token JWT no corpo. O usuário é redirecionado para a tela de listagem de solicitações (/requests).",
-      "automatizavel": true,
-      "observacoes": "Caminho feliz padrão; valida apenas o fluxo positivo de CA-01.1.",
-      "correcao_aplicada": "nenhuma — caso aprovado"
-    },
-    {
-      "id": "TC-01-02",
-      "titulo": "Login falho com e-mail inexistente ou senha incorreta",
-      "objetivo": "Verificar que o login com e-mail inexistente ou senha incorreta retorna 401 com mensagem genérica.",
+      "id": "TC-01-03",
+      "titulo": "Login rejeitado com senha incorreta",
+      "objetivo": "Verificar que a tentativa de login com uma senha incorreta é rejeitada.",
       "criterios_cobertos": [
         "CA-01.2"
       ],
       "tipo": "negativo",
       "prioridade": "alta",
-      "pre_condicoes": [
-        "O e-mail 'email_sem_arroba' não existe no banco."
-      ],
+      "pre_condicoes": [],
       "dados_de_teste": {
-        "email": "email_sem_arroba",
-        "senha": "Senha123"
+        "email": "alice@example.com",
+        "password": "SenhaErrada"
       },
       "passos": [
-        "Acessar a rota /login.",
-        "Preencher o campo 'login-email' com 'email_sem_arroba'.",
-        "Preencher o campo 'login-password' com 'Senha123'.",
-        "Clicar em 'login-submit'."
+        "Acessar a rota /login no frontend.",
+        "Preencher o campo 'login-email' com 'alice@example.com'.",
+        "Preencher o campo 'login-password' com 'SenhaErrada'.",
+        "Clicar em 'btn_submit'."
       ],
-      "resultado_esperado": "Resposta 401 com detail='E-mail ou senha inválidos.' e o elemento 'login-error' exibe a mensagem ao usuário.",
+      "resultado_esperado": "Resposta 401 do backend. Mensagem de erro: 'E-mail ou senha inválidos.'.",
       "automatizavel": true,
-      "observacoes": "Cobre apenas a mensagem genérica; não revela se o e-mail existe.",
-      "correcao_aplicada": "nenhuma — caso aprovado"
-    },
-    {
-      "id": "TC-01-03",
-      "titulo": "Bloqueio da conta após 5 tentativas falhas consecutivas",
-      "objetivo": "Verificar que após 5 tentativas falhas consecutivas no mesmo e-mail, a conta é bloqueada por 60 segundos.",
-      "criterios_cobertos": [
-        "CA-01.3"
-      ],
-      "tipo": "borda",
-      "prioridade": "alta",
-      "pre_condicoes": [
-        "O usuário 'bob@example.com' está cadastrado com senha 'Senha123'."
-      ],
-      "dados_de_teste": {
-        "email": "bob@example.com",
-        "senha": "Senha123"
-      },
-      "passos": [
-        "Acessar a rota /login.",
-        "Preencher o campo 'login-email' com 'bob@example.com'.",
-        "Preencher o campo 'login-password' com 'Senha123'.",
-        "Clicar em 'login-submit'.",
-        "Repetir a tentativa 5 vezes com senha incorreta."
-      ],
-      "resultado_esperado": "Resposta 423 com header Retry-After: 60 e detail='Conta bloqueada. Tente novamente em 60 segundos.'.",
-      "automatizavel": true,
-      "observacoes": "Cobre apenas o bloqueio após 5 tentativas; login bem-sucedido reseta o contador.",
-      "correcao_aplicada": "correção aplicada: adicionado cenário omitido conforme sugestão do juiz"
+      "observacoes": "",
+      "correcao_aplicada": "Ajuste na mensagem de erro para refletir a história correta."
     },
     {
       "id": "TC-01-04",
-      "titulo": "Login falho com e-mail em formato inválido",
-      "objetivo": "Verificar que o login com e-mail em formato inválido retorna 422 Unprocessable Entity.",
+      "titulo": "Login rejeitado com e-mail em formato inválido",
+      "objetivo": "Verificar que a tentativa de login com um e-mail em formato inválido é rejeitada.",
       "criterios_cobertos": [
         "CA-01.4"
       ],
       "tipo": "negativo",
       "prioridade": "alta",
-      "pre_condicoes": [
-        "O e-mail 'email_sem_arroba' não existe no banco."
-      ],
+      "pre_condicoes": [],
       "dados_de_teste": {
-        "email": "email_sem_arroba",
-        "senha": "Senha123"
+        "email": "email_sem_arroba"
       },
       "passos": [
-        "Acessar a rota /login.",
+        "Acessar a rota /login no frontend.",
         "Preencher o campo 'login-email' com 'email_sem_arroba'.",
         "Preencher o campo 'login-password' com 'Senha123'.",
-        "Clicar em 'login-submit'."
+        "Clicar em 'btn_submit'."
       ],
-      "resultado_esperado": "Resposta 422 com detail='E-mail inválido.' e o elemento 'login-error' exibe a mensagem ao usuário.",
+      "resultado_esperado": "Resposta 422 do backend. Mensagem de erro: 'E-mail ou senha inválidos.'.",
       "automatizavel": true,
-      "observacoes": "Cobre apenas o formato inválido do e-mail.",
+      "observacoes": "",
       "correcao_aplicada": "nenhuma — caso aprovado"
     },
     {
       "id": "TC-01-05",
-      "titulo": "Login com e-mail válido e senha incorreta",
-      "objetivo": "Verificar que o login com e-mail válido e senha incorreta retorna 401 com mensagem genérica.",
+      "titulo": "Login bloqueado após 5 tentativas falhas consecutivas",
+      "objetivo": "Verificar que a conta é bloqueada por 60 segundos após 5 tentativas de login falhas.",
       "criterios_cobertos": [
-        "CA-01.2"
+        "CA-01.3"
       ],
-      "tipo": "negativo",
+      "tipo": "borda",
       "prioridade": "alta",
-      "pre_condicoes": [
-        "O usuário 'alice@example.com' está cadastrado com senha 'Senha123'."
-      ],
+      "pre_condicoes": [],
       "dados_de_teste": {
-        "email": "alice@example.com",
-        "senha": "Senha124"
+        "email": "alice@example.com"
       },
       "passos": [
-        "Acessar a rota /login.",
+        "Acessar a rota /login no frontend.",
         "Preencher o campo 'login-email' com 'alice@example.com'.",
-        "Preencher o campo 'login-password' com 'Senha124'.",
-        "Clicar em 'login-submit'."
+        "Preencher o campo 'login-password' com 'Senha123'.",
+        "Clicar em 'btn_submit'."
       ],
-      "resultado_esperado": "Resposta 401 com detail='E-mail ou senha inválidos.' e o elemento 'login-error' exibe a mensagem ao usuário.",
+      "resultado_esperado": "Resposta 423 do backend. Mensagem de erro: 'Conta bloqueada. Tente novamente em N segundos.'.",
       "automatizavel": true,
-      "observacoes": "Cobre apenas a senha incorreta; não revela se o e-mail existe.",
+      "observacoes": "",
       "correcao_aplicada": "nenhuma — caso aprovado"
     },
     {
       "id": "TC-01-06",
-      "titulo": "Login com e-mail válido e senha correta após bloqueio",
-      "objetivo": "Verificar que o login bem-sucedido após o bloqueio reseta o contador de tentativas falhas.",
+      "titulo": "Cenário omitido: Login com e-mail bloqueado por lockout",
+      "objetivo": "Verificar que o usuário não pode realizar login com um e-mail bloqueado por lockout.",
       "criterios_cobertos": [
         "CA-01.3"
       ],
-      "tipo": "borda",
+      "tipo": "negativo",
       "prioridade": "alta",
-      "pre_condicoes": [
-        "O usuário 'bob@example.com' foi bloqueado após 5 tentativas falhas consecutivas."
-      ],
+      "pre_condicoes": [],
       "dados_de_teste": {
-        "email": "bob@example.com",
-        "senha": "Senha123"
+        "email": "alice@example.com"
       },
       "passos": [
-        "Acessar a rota /login.",
-        "Preencher o campo 'login-email' com 'bob@example.com'.",
+        "Acessar a rota /login no frontend.",
+        "Preencher o campo 'login-email' com 'alice@example.com'.",
         "Preencher o campo 'login-password' com 'Senha123'.",
-        "Clicar em 'login-submit'."
+        "Clicar em 'btn_submit'."
       ],
-      "resultado_esperado": "Resposta 200 com token JWT no corpo. O usuário é redirecionado para a tela de listagem de solicitações (/requests).",
+      "resultado_esperado": "Resposta 423 do backend. Mensagem de erro: 'Conta bloqueada. Tente novamente em N segundos.'.",
       "automatizavel": true,
-      "observacoes": "Cobre apenas o reset do contador após login bem-sucedido.",
-      "correcao_aplicada": "nenhuma — caso aprovado"
-    },
-    {
-      "id": "TC-01-07",
-      "titulo": "Login com senha correta durante o bloqueio",
-      "objetivo": "Verificar que durante o bloqueio, tentativas com senha correta são rejeitadas com 423 Locked.",
-      "criterios_cobertos": [
-        "CA-01.3"
-      ],
-      "tipo": "borda",
-      "prioridade": "alta",
-      "pre_condicoes": [
-        "O usuário 'bob@example.com' foi bloqueado após 5 tentativas falhas consecutivas."
-      ],
-      "dados_de_teste": {
-        "email": "bob@example.com",
-        "senha": "Senha123"
-      },
-      "passos": [
-        "Acessar a rota /login.",
-        "Preencher o campo 'login-email' com 'bob@example.com'.",
-        "Preencher o campo 'login-password' com 'Senha123'.",
-        "Clicar em 'login-submit'."
-      ],
-      "resultado_esperado": "Resposta 423 com header Retry-After: 60 e detail='Conta bloqueada. Tente novamente em 60 segundos.'.",
-      "automatizavel": true,
-      "observacoes": "Cobre a rejeição de tentativas com senha correta durante o bloqueio.",
+      "observacoes": "",
       "correcao_aplicada": "cenário omitido adicionado conforme sugestão do juiz"
     }
   ],
   "matriz_rastreabilidade": [
     {
       "criterio": "CA-01.1",
-      "casos": [
-        "TC-01-01"
-      ]
+      "casos": []
     },
     {
       "criterio": "CA-01.2",
       "casos": [
-        "TC-01-02",
-        "TC-01-05"
+        "TC-01-03"
       ]
     },
     {
       "criterio": "CA-01.3",
       "casos": [
-        "TC-01-03",
-        "TC-01-06",
-        "TC-01-07"
+        "TC-01-05",
+        "TC-01-06"
       ]
     },
     {
@@ -220,7 +123,5 @@
       ]
     }
   ],
-  "alertas": [
-    "Correção do TC-01-03 não aplicada: exigiria assumir regra de negócio sobre tentativas com senha correta durante o bloqueio, ausente na história."
-  ]
+  "alertas": []
 }

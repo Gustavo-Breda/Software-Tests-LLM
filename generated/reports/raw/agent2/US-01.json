@@ -1,0 +1,19 @@
+{
+  "story_id": "US-01",
+  "stage": "agent2",
+  "error": {
+    "type": "RawAgentResponseError",
+    "message": "Schema validation failed at problemas.0.evidencia_na_historia: '' should be non-empty"
+  },
+  "provider": "ollama",
+  "model": "llama3.1:8b",
+  "metadata": {
+    "latency_seconds": 9.831307426007697,
+    "prompt_tokens": 12152,
+    "completion_tokens": 278,
+    "raw": {
+      "done_reason": "stop"
+    }
+  },
+  "raw_response": "{\n  \"status_geral\": \"APROVADO\",\n  \"pontuacao\": {\n    \"cobertura\": 8,\n    \"fidelidade_ao_requisito\": 9,\n    \"clareza\": 7,\n    \"automatizabilidade\": 6\n  },\n  \"casos_aprovados\": [\"TC-02-01\", \"TC-02-03\"],\n  \"casos_reprovados\": [],\n  \"problemas\": [\n    {\n      \"caso_de_teste\": \"TC-02-04\",\n      \"tipo\": \"baixa_automatizabilidade\",\n      \"descricao\": \"Passos vagos e não objetivos\",\n      \"evidencia_na_historia\": \"\",\n      \"acao_recomendada\": \"Revisar passos para torná-los mais concretos\"\n    }\n  ],\n  \"cenarios_omitidos_sugeridos\": [\n    {\n      \"descricao\": \"Verificar limite superior do tamanho da senha\",\n      \"criterio_relacionado\": \"CA-02.3\",\n      \"justificativa\": \"Para garantir que a regra de validação seja completa\",\n      \"tipo_sugerido\": \"borda\"\n    }\n  ],\n  \"decisao\": \"APROVADO\"\n}"
+}

@@ -39,8 +39,8 @@ from typing import Any
 
 from ..llm.adapter import LLMClient, LLMResponse
 from ..context import ContextBlob
-from .agent1_generate import GenerationOutput, run as agent1_run
-from .utils import AgentOutputError, extract_json_object, load_prompt, validate_schema
+from .agent1_generate import GenerationOutput, TestCase, run as agent1_run
+from .utils import AgentOutputError, RawAgentResponseError, extract_json_object, load_prompt, validate_schema, wrap_raw_response_error
 
 _MAX_REPAIR_ATTEMPTS = 3
 _SYSTEM_PROMPT = (
@@ -113,7 +113,13 @@ class JudgeRunResult:
         }
 
 
-def _call_judge(blob: ContextBlob, generation: GenerationOutput, client: LLMClient) -> JudgeOutput:
+def _call_judge(
+    blob: ContextBlob,
+    generation: GenerationOutput,
+    client: LLMClient,
+    *,
+    attempt: int,
+) -> JudgeOutput:
     print(
         f"[agent2] judge start story={blob.story_id} cases={len(generation.test_cases)}"
     )
@@ -122,12 +128,17 @@ def _call_judge(blob: ContextBlob, generation: GenerationOutput, client: LLMClie
         prompt,
         system=_SYSTEM_PROMPT,
         temperature=0.2,
-        max_tokens=8192,
+        max_tokens=20_048,
     )
-    data = extract_json_object(response.text)
-    _normalize_decision_consistency(data)
-    validate_schema(data, "agent2_out.json")
-    _validate_semantics(blob, generation, data)
+    try:
+        data = extract_json_object(response.text)
+        _normalize_decision_consistency(data)
+        validate_schema(data, "agent2_out.json")
+        _validate_semantics(blob, generation, data)
+    except AgentOutputError as exc:
+        raw_exc = wrap_raw_response_error(exc, response)
+        raw_exc.metadata["context_label"] = f"judge-attempt-{attempt}"
+        raise raw_exc from exc
     output = _to_output(data, response)
     print(
         f"[agent2] judge done story={blob.story_id} decisao={output.decisao} "
@@ -147,7 +158,7 @@ def run(blob: ContextBlob, generation: GenerationOutput, client: LLMClient) -> J
 
     while True:
         print(f"[agent2] attempt={attempt} story={blob.story_id}")
-        result = _call_judge(blob, current_gen, client)
+        result = _call_judge(blob, current_gen, client, attempt=attempt)
         attempt_reports.append(result)
 
         if result.decisao == "APROVADO":
@@ -174,12 +185,17 @@ def run(blob: ContextBlob, generation: GenerationOutput, client: LLMClient) -> J
         feedback = _build_repair_feedback(result)
         attempt += 1
         print(f"[agent2] repair start story={blob.story_id} attempt={attempt}")
-        current_gen = agent1_run(
-            blob,
-            client,
-            repair_feedback=feedback,
-            current_generation=current_gen,
-        )
+        try:
+            repaired_gen = agent1_run(
+                blob,
+                client,
+                repair_feedback=feedback,
+                current_generation=current_gen,
+            )
+        except RawAgentResponseError as exc:
+            exc.metadata["context_label"] = f"repair-attempt-{attempt}"
+            raise
+        current_gen = _merge_preserved_approved_cases(blob, current_gen, repaired_gen, result)
         repair_generations.append(RepairGeneration(attempt=attempt, output=current_gen))
         print(
             f"[agent2] repair done story={blob.story_id} attempt={attempt} "
@@ -192,14 +208,39 @@ def _build_repair_feedback(judge: JudgeOutput) -> str:
 
 
 def _normalize_decision_consistency(data: dict[str, Any]) -> None:
+    approved = list(dict.fromkeys(data.get("casos_aprovados") or []))
+    rejected = list(dict.fromkeys(data.get("casos_reprovados") or []))
+    rejected_set = set(rejected)
+
+    for problem in data.get("problemas") or []:
+        if not isinstance(problem, dict):
+            continue
+        case_id = problem.get("caso_de_teste")
+        if case_id and case_id != "GERAL":
+            rejected_set.add(case_id)
+
+    if rejected_set:
+        data["casos_reprovados"] = sorted(rejected_set)
+        data["casos_aprovados"] = [case_id for case_id in approved if case_id not in rejected_set]
+    else:
+        data["casos_aprovados"] = approved
+        data["casos_reprovados"] = rejected
+
     has_rejection_evidence = bool(
         data.get("casos_reprovados")
         or data.get("problemas")
         or data.get("cenarios_omitidos_sugeridos")
     )
-    if data.get("decisao") == "APROVADO" and has_rejection_evidence:
-        data["decisao"] = "REPROVADO"
-        data["status_geral"] = "REPROVADO"
+    if has_rejection_evidence:
+        if "decisao" in data:
+            data["decisao"] = "REPROVADO"
+        if "status_geral" in data:
+            data["status_geral"] = "REPROVADO"
+    elif "decisao" in data and "status_geral" in data and (
+        data.get("decisao") == "APROVADO" or data.get("status_geral") == "APROVADO"
+    ):
+        data["decisao"] = "APROVADO"
+        data["status_geral"] = "APROVADO"
 
 
 def _build_prompt(blob: ContextBlob, generation: GenerationOutput) -> str:
@@ -286,6 +327,10 @@ def _validate_semantics(
             raise AgentOutputError(
                 f"Agent 2 semantic validation failed: unknown problem case ID {case_id}."
             )
+        if case_id != "GERAL" and case_id not in rejected:
+            raise AgentOutputError(
+                f"Agent 2 semantic validation failed: problem case {case_id} must be listed in casos_reprovados."
+            )
 
     for scenario in omitted:
         criterion_id = scenario["criterio_relacionado"]
@@ -293,6 +338,90 @@ def _validate_semantics(
             raise AgentOutputError(
                 f"Agent 2 semantic validation failed: unknown omitted criterion {criterion_id}."
             )
+        justification = _normalise_text(str(scenario.get("justificativa", "")))
+        description = _normalise_text(str(scenario.get("descricao", "")))
+        if _says_not_in_story(justification) or _says_not_in_story(description):
+            raise AgentOutputError(
+                "Agent 2 semantic validation failed: omitted scenario cannot be justified as not mentioned in the story."
+            )
+
+
+def _merge_preserved_approved_cases(
+    blob: ContextBlob,
+    previous: GenerationOutput,
+    repaired: GenerationOutput,
+    judge: JudgeOutput,
+) -> GenerationOutput:
+    problem_ids = {
+        problem.caso_de_teste
+        for problem in judge.problemas
+        if problem.caso_de_teste != "GERAL"
+    }
+    preserve_ids = set(judge.casos_aprovados) - problem_ids
+    previous_by_id = {case.id: case for case in previous.test_cases}
+    repaired_by_id = {case.id: case for case in repaired.test_cases}
+
+    merged_cases: list[TestCase] = []
+    seen: set[str] = set()
+    for case in repaired.test_cases:
+        if case.id in preserve_ids and case.id in previous_by_id:
+            merged_cases.append(_with_repair_note(previous_by_id[case.id]))
+        else:
+            merged_cases.append(case)
+        seen.add(case.id)
+
+    for case_id in previous.test_cases:
+        if case_id.id in preserve_ids and case_id.id not in seen:
+            merged_cases.append(_with_repair_note(case_id))
+            seen.add(case_id.id)
+
+    criteria = [
+        str(criterion.get("id"))
+        for criterion in blob.story.acceptance_criteria
+        if criterion.get("id")
+    ]
+    matrix = [
+        {
+            "criterio": criterion,
+            "casos": [
+                case.id for case in merged_cases if criterion in case.criterios_cobertos
+            ],
+        }
+        for criterion in criteria
+    ]
+    return GenerationOutput(
+        test_cases=merged_cases,
+        matriz_rastreabilidade=matrix,
+        alertas=repaired.alertas,
+        raw_response=repaired.raw_response,
+    )
+
+
+def _with_repair_note(case: TestCase) -> TestCase:
+    data = case.__dict__.copy()
+    data["correcao_aplicada"] = data.get("correcao_aplicada") or "nenhuma - caso preservado"
+    return TestCase(**data)
+
+
+def _says_not_in_story(text: str) -> bool:
+    markers = (
+        "nao menciona",
+        "não menciona",
+        "nao mencionado",
+        "não mencionado",
+        "nao esta na historia",
+        "não está na história",
+        "nao consta",
+        "não consta",
+    )
+    return any(marker in text for marker in markers)
+
+
+def _normalise_text(text: str) -> str:
+    replacements = str.maketrans(
+        {"á": "a", "à": "a", "ã": "a", "â": "a", "é": "e", "ê": "e", "í": "i", "ó": "o", "ô": "o", "õ": "o", "ú": "u", "ç": "c"}
+    )
+    return text.lower().translate(replacements)
 
 
 def _to_output(data: dict[str, Any], response: LLMResponse) -> JudgeOutput:

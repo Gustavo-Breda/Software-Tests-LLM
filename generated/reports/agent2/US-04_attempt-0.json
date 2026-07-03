@@ -1,21 +1,39 @@
 {
-  "status_geral": "APROVADO",
+  "status_geral": "REPROVADO",
   "pontuacao": {
-    "cobertura": 9,
-    "fidelidade_ao_requisito": 10,
-    "clareza": 8,
+    "cobertura": 6,
+    "fidelidade_ao_requisito": 8,
+    "clareza": 7,
     "automatizabilidade": 9
   },
-  "casos_aprovados": [
+  "casos_aprovados": [],
+  "casos_reprovados": [
     "TC-04-01",
-    "TC-04-02",
-    "TC-04-03",
-    "TC-04-04",
-    "TC-04-05",
-    "TC-04-06"
+    "TC-04-02"
   ],
-  "casos_reprovados": [],
-  "problemas": [],
-  "cenarios_omitidos_sugeridos": [],
-  "decisao": "APROVADO"
+  "problemas": [
+    {
+      "caso_de_teste": "TC-04-01",
+      "tipo": "omissao",
+      "descricao": "O caso não cobre o critério CA-04.2.",
+      "evidencia_na_historia": "Critério de aceitação CA-04.2: Os filtros de status e prioridade são combináveis.",
+      "acao_recomendada": "Adicionar um novo caso que cubra o critério CA-04.2."
+    },
+    {
+      "caso_de_teste": "TC-04-02",
+      "tipo": "inconsistencia",
+      "descricao": "O caso assume que o filtro de status e prioridade são combináveis, mas a história não menciona isso.",
+      "evidencia_na_historia": "Critério de aceitação CA-04.2: Os filtros de status e prioridade são combináveis.",
+      "acao_recomendada": "Revisar a história para garantir que o critério CA-04.2 seja mencionado corretamente."
+    }
+  ],
+  "cenarios_omitidos_sugeridos": [
+    {
+      "descricao": "Filtro de status e prioridade combinados.",
+      "criterio_relacionado": "CA-04.2",
+      "justificativa": "Essa é uma situação importante para garantir que o sistema seja robusto e funcione corretamente.",
+      "tipo_sugerido": "positivo"
+    }
+  ],
+  "decisao": "REPROVADO"
 }

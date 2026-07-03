@@ -1,0 +1,19 @@
+{
+  "story_id": "US-02",
+  "stage": "agent2",
+  "error": {
+    "type": "RawAgentResponseError",
+    "message": "Agent 2 semantic validation failed: unknown approved case IDs ['TC-02-01', 'TC-02-02']."
+  },
+  "provider": "ollama",
+  "model": "llama3.1:8b",
+  "metadata": {
+    "latency_seconds": 6.150616099010222,
+    "prompt_tokens": 5995,
+    "completion_tokens": 341,
+    "raw": {
+      "done_reason": "stop"
+    }
+  },
+  "raw_response": "{\n  \"status_geral\": \"APROVADO\",\n  \"pontuacao\": {\n    \"cobertura\": 8,\n    \"fidelidade_ao_requisito\": 9,\n    \"clareza\": 7,\n    \"automatizabilidade\": 6\n  },\n  \"casos_aprovados\": [\"TC-02-01\", \"TC-02-02\"],\n  \"casos_reprovados\": [],\n  \"problemas\": [\n    {\n      \"caso_de_teste\": \"TC-02-03\",\n      \"tipo\": \"omissao\",\n      \"descricao\": \"Falta de cenário para senha sem letra.\",\n      \"evidencia_na_historia\": \"CA-02.3: Senha sem número (apenas letras), senha sem letra (apenas números), senha curta (<8) ou nome fora de 3-80 caracteres retornam 422 e o cadastro não é criado.\",\n      \"acao_recomendada\": \"Adicionar cenário para cobrir a ausência de letra na senha.\"\n    }\n  ],\n  \"cenarios_omitidos_sugeridos\": [\n    {\n      \"descricao\": \"Cenário que testa a criação de conta com nome fora do limite superior (81 caracteres).\",\n      \"criterio_relacionado\": \"CA-02.3\",\n      \"justificativa\": \"Para garantir que o sistema não permita nomes muito longos.\",\n      \"tipo_sugerido\": \"borda\"\n    }\n  ],\n  \"decisao\": \"APROVADO\"\n}"
+}

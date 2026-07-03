@@ -28,7 +28,8 @@ Regras obrigatórias:
 3. Aplique análise de valor-limite quando o critério tiver limites explícitos de tamanho, número, data, tentativas ou prazo.
 4. Cada caso de teste deve cobrir ao menos um critério de aceitação real da história atual.
 5. Use apenas IDs de critérios presentes em <acceptance_criteria>, no formato "CA-XX.Y".
-6. O ID de cada caso deve seguir "TC-XX-NN", em que "XX" é o número da story e "NN" é sequência com dois dígitos. Exemplo: para US-02, use "TC-02-01".
+6. Esta história é {story_id}. O ID de cada caso deve começar obrigatoriamente com "{test_case_id_prefix}" e terminar com dois dígitos sequenciais. Exemplos válidos para esta história: "{test_case_id_prefix}01", "{test_case_id_prefix}02".
+   Exemplos inválidos: "TC-US-05-01", "TC-US05-01", "TC-5-01", "CT-05-01".
 7. Use "tipo" apenas como "positivo", "negativo" ou "borda".
 8. Use "prioridade" apenas como "alta", "media" ou "baixa" sem acento.
 9. Os passos devem ser objetivos o suficiente para virar automação Selenium sem ambiguidade. Evite passos como "preencha os dados corretamente".
@@ -39,12 +40,16 @@ Regras obrigatórias:
 14. Todo objeto em "test_cases" deve conter todos os campos do formato canônico, incluindo "automatizavel" e "observacoes".
 15. O objeto raiz deve conter obrigatoriamente "test_cases", "matriz_rastreabilidade" e "alertas", mesmo quando "alertas" for [].
 16. Não inclua análise textual das classes de equivalência; inclua apenas os casos no JSON final.
+17. Valores de borda devem satisfazer literalmente a regra. Se o critério pede título menor que 5 caracteres, use valor real com 4 caracteres ou menos, por exemplo "Abcd"; não use rótulo simbólico como "Título Muito Curto". Se pede maior que 100, use texto real com 101+ caracteres.
+18. Para senha com regra de 8 caracteres, use valor real menor que 8 quando testar senha curta. Para "sem letra", use valor só com números. Para "sem número", use valor só com letras.
+19. Não afirme total exato, quantidade exata ou número de registros se esse número não estiver explícito na história, nos critérios, no contexto ou nos dados seed.
+20. Quando mencionar seletores, use apenas `data-testid` existentes no <system_context>. Não invente nomes de seletor.
 
 Formato canônico:
 {
   "test_cases": [
     {
-      "id": "TC-XX-01",
+      "id": "{test_case_id_prefix}01",
       "titulo": "...",
       "objetivo": "...",
       "criterios_cobertos": ["CA-XX.Y"],
@@ -63,7 +68,7 @@ Formato canônico:
   "matriz_rastreabilidade": [
     {
       "criterio": "CA-XX.Y",
-      "casos": ["TC-XX-01"]
+      "casos": ["{test_case_id_prefix}01"]
     }
   ],
   "alertas": []
@@ -74,4 +79,6 @@ Antes de responder, verifique internamente:
 - Todo caso listado na matriz existe em "test_cases".
 - Todo critério em "criterios_cobertos" existe na história atual.
 - Nenhum caso usa regra de negócio ausente.
+- Nenhum caso usa valor de borda falso ou simbólico.
+- Nenhum resultado esperado afirma total exato sem evidência.
 - O exemplo aprovado é apenas referência de formato; os casos gerados devem ser específicos da história atual.

@@ -13,6 +13,40 @@ class AgentOutputError(ValueError):
     pass
 
 
+class RawAgentResponseError(AgentOutputError):
+    def __init__(
+        self,
+        message: str,
+        *,
+        raw_text: str,
+        provider: str,
+        model: str,
+        metadata: dict[str, Any] | None = None,
+    ) -> None:
+        super().__init__(message)
+        self.raw_text = raw_text
+        self.provider = provider
+        self.model = model
+        self.metadata = metadata or {}
+
+
+def wrap_raw_response_error(exc: AgentOutputError, response: Any) -> RawAgentResponseError:
+    if isinstance(exc, RawAgentResponseError):
+        return exc
+    return RawAgentResponseError(
+        str(exc),
+        raw_text=getattr(response, "text", ""),
+        provider=getattr(response, "provider", ""),
+        model=getattr(response, "model", ""),
+        metadata={
+            "latency_seconds": getattr(response, "latency_seconds", 0.0),
+            "prompt_tokens": getattr(response, "prompt_tokens", None),
+            "completion_tokens": getattr(response, "completion_tokens", None),
+            "raw": getattr(response, "raw", {}),
+        },
+    )
+
+
 def load_prompt(name: str) -> str:
     path = REPO_ROOT / "pipeline" / "prompts" / name
     if not path.is_file():

@@ -41,6 +41,14 @@ def _blob():
     return ContextBuilder.from_repo().build("US-01")
 
 
+def _blob_us03():
+    return ContextBuilder.from_repo().build("US-03")
+
+
+def _blob_us04():
+    return ContextBuilder.from_repo().build("US-04")
+
+
 def _valid_payload() -> dict:
     return {
         "test_cases": [
@@ -139,7 +147,10 @@ def test_agent1_accepts_valid_json():
     assert "{acceptance_criteria}" not in client.prompts[0]
     assert "{system_context}" not in client.prompts[0]
     assert "{few_shot_examples}" not in client.prompts[0]
-    assert client.calls[0]["max_tokens"] == 8192
+    assert "{story_id}" not in client.prompts[0]
+    assert "{test_case_id_prefix}" not in client.prompts[0]
+    assert "TC-01-" in client.prompts[0]
+    assert client.calls[0]["max_tokens"] == 20048
 
 
 def test_agent1_rejects_malformed_json():
@@ -202,3 +213,141 @@ def test_agent1_normalizes_recoverable_contract_fields():
     assert output.alertas == []
     assert output.test_cases[0].automatizavel is True
     assert output.matriz_rastreabilidade[0]["casos"] == ["TC-01-01"]
+
+
+def test_agent1_normalizes_us_prefixed_case_ids():
+    payload = _valid_payload()
+    payload["test_cases"][0]["id"] = "TC-US-01-01"
+    payload["matriz_rastreabilidade"][0]["casos"] = ["TC-US-01-01"]
+    client = FakeClient(json.dumps(payload))
+
+    output = agent1_generate.run(_blob(), client)
+
+    assert output.test_cases[0].id == "TC-01-01"
+    assert output.matriz_rastreabilidade[0]["casos"] == ["TC-01-01"]
+
+
+def test_agent1_normalizes_missing_repair_correction():
+    payload = _valid_payload()
+    client = FakeClient(json.dumps(payload))
+
+    output = agent1_generate.run(
+        _blob(),
+        client,
+        repair_feedback=json.dumps({"decisao": "REPROVADO"}),
+        current_generation=agent1_generate.run(_blob(), FakeClient(json.dumps(_valid_payload()))),
+    )
+
+    assert output.test_cases[0].correcao_aplicada == "nenhuma - caso preservado"
+
+
+def test_agent1_rejects_missing_criterion_coverage():
+    payload = _valid_payload()
+    payload["test_cases"][3]["criterios_cobertos"] = ["CA-01.1"]
+    client = FakeClient(json.dumps(payload))
+
+    with pytest.raises(AgentOutputError, match="CA-01.4 must be covered"):
+        agent1_generate.run(_blob(), client)
+
+
+def test_agent1_rejects_undocumented_selector():
+    payload = _valid_payload()
+    payload["test_cases"][0]["passos"].append("Clicar em login-fake.")
+    client = FakeClient(json.dumps(payload))
+
+    with pytest.raises(AgentOutputError, match="undocumented data-testid selectors"):
+        agent1_generate.run(_blob(), client)
+
+
+def test_agent1_rejects_false_short_title_boundary():
+    payload = {
+        "test_cases": [
+            {
+                "id": "TC-03-01",
+                "titulo": "Criar solicitação válida",
+                "objetivo": "Validar criação com dados válidos.",
+                "criterios_cobertos": ["CA-03.1"],
+                "tipo": "positivo",
+                "prioridade": "alta",
+                "pre_condicoes": ["Usuário autenticado."],
+                "dados_de_teste": {
+                    "titulo": "Título válido",
+                    "descricao": "Descrição válida com tamanho suficiente.",
+                    "prioridade": "alta",
+                },
+                "passos": ["Preencher request-title.", "Clicar em request-submit."],
+                "resultado_esperado": "Resposta 201.",
+                "automatizavel": True,
+                "observacoes": "",
+            },
+            {
+                "id": "TC-03-02",
+                "titulo": "Título muito curto",
+                "objetivo": "Validar título menor que 5.",
+                "criterios_cobertos": ["CA-03.2"],
+                "tipo": "negativo",
+                "prioridade": "alta",
+                "pre_condicoes": ["Usuário autenticado."],
+                "dados_de_teste": {
+                    "titulo": "Título Muito Curto",
+                    "descricao": "Descrição válida com tamanho suficiente.",
+                    "prioridade": "alta",
+                },
+                "passos": ["Preencher request-title com título curto."],
+                "resultado_esperado": "Resposta 422.",
+                "automatizavel": True,
+                "observacoes": "",
+            },
+            {
+                "id": "TC-03-03",
+                "titulo": "Criar sem autenticação",
+                "objetivo": "Validar criação sem token.",
+                "criterios_cobertos": ["CA-03.3"],
+                "tipo": "borda",
+                "prioridade": "alta",
+                "pre_condicoes": [],
+                "dados_de_teste": {
+                    "titulo": "Título válido",
+                    "descricao": "Descrição válida com tamanho suficiente.",
+                    "prioridade": "alta",
+                },
+                "passos": ["Enviar requisição sem token."],
+                "resultado_esperado": "Resposta 401.",
+                "automatizavel": True,
+                "observacoes": "",
+            },
+        ],
+        "matriz_rastreabilidade": [],
+        "alertas": [],
+    }
+    client = FakeClient(json.dumps(payload))
+
+    with pytest.raises(AgentOutputError, match="must have length < 5"):
+        agent1_generate.run(_blob_us03(), client)
+
+
+def test_agent1_rejects_exact_total_without_context_evidence():
+    payload = {
+        "test_cases": [
+            {
+                "id": "TC-04-01",
+                "titulo": "Listar solicitações próprias",
+                "objetivo": "Validar listagem sem filtros.",
+                "criterios_cobertos": ["CA-04.1", "CA-04.2", "CA-04.3"],
+                "tipo": "positivo",
+                "prioridade": "alta",
+                "pre_condicoes": ["Usuário autenticado."],
+                "dados_de_teste": {"status": "aberta", "priority": "alta"},
+                "passos": ["Acessar /requests."],
+                "resultado_esperado": "Resposta 200 com total=9.",
+                "automatizavel": True,
+                "observacoes": "",
+            }
+        ],
+        "matriz_rastreabilidade": [],
+        "alertas": [],
+    }
+    client = FakeClient(json.dumps(payload))
+
+    with pytest.raises(AgentOutputError, match="exact total 9"):
+        agent1_generate.run(_blob_us04(), client)

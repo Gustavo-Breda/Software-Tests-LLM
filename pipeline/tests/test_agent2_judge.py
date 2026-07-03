@@ -190,6 +190,8 @@ def test_agent2_normalizes_approved_with_problems_to_rejected_and_repairs():
     result = agent2_judge.run(_blob(), _generation_output(), client)
 
     assert result.attempt_reports[0].decisao == "REPROVADO"
+    assert "TC-01-03" not in result.attempt_reports[0].casos_aprovados
+    assert "TC-01-03" in result.attempt_reports[0].casos_reprovados
     assert result.repair_attempts == 1
     assert result.final_output.decisao == "APROVADO"
 
@@ -246,6 +248,25 @@ def test_agent2_repairs_approved_payload_with_problems():
     assert result.attempt_reports[0].decisao == "REPROVADO"
 
 
+def test_agent2_rejects_omitted_scenario_not_mentioned_in_story():
+    payload = _approved_judge_payload()
+    payload["status_geral"] = "REPROVADO"
+    payload["decisao"] = "REPROVADO"
+    payload["casos_aprovados"] = ["TC-01-01", "TC-01-02", "TC-01-03", "TC-01-04"]
+    payload["cenarios_omitidos_sugeridos"] = [
+        {
+            "descricao": "Validar regra que a história não menciona.",
+            "criterio_relacionado": "CA-01.3",
+            "justificativa": "A história não menciona esse cenário.",
+            "tipo_sugerido": "borda",
+        }
+    ]
+    client = SequenceClient([json.dumps(payload)])
+
+    with pytest.raises(AgentOutputError, match="not mentioned in the story"):
+        agent2_judge.run(_blob(), _generation_output(), client)
+
+
 def test_repair_uses_repair_prompt_and_requires_correcao_aplicada():
     client = SequenceClient([json.dumps(_generation_payload(include_correction=True))])
 
@@ -276,6 +297,52 @@ def test_loop_stops_when_judge_approves_after_repair():
     assert result.repair_attempts == 1
     assert len(result.repair_generations) == 1
     assert result.repair_generations[0].attempt == 1
+
+
+def test_repair_merge_preserves_approved_cases_omitted_by_model():
+    partial_repair = _generation_payload(include_correction=True)
+    partial_repair["test_cases"] = [partial_repair["test_cases"][2]]
+    partial_repair["matriz_rastreabilidade"] = [
+        {"criterio": "CA-01.1", "casos": []},
+        {"criterio": "CA-01.2", "casos": []},
+        {"criterio": "CA-01.3", "casos": ["TC-01-03"]},
+        {"criterio": "CA-01.4", "casos": []},
+    ]
+    client = SequenceClient(
+        [
+            json.dumps(_rejected_judge_payload()),
+            json.dumps(partial_repair),
+            json.dumps(_approved_judge_payload()),
+        ]
+    )
+
+    result = agent2_judge.run(_blob(), _generation_output(), client)
+
+    repaired = result.repair_generations[0].output
+    assert [case.id for case in repaired.test_cases] == [
+        "TC-01-03",
+        "TC-01-01",
+        "TC-01-02",
+        "TC-01-04",
+    ]
+    assert repaired.matriz_rastreabilidade[0]["casos"] == ["TC-01-01"]
+
+
+def test_repair_merge_keeps_unproblematic_approved_case_unchanged():
+    repair = _generation_payload(include_correction=True)
+    repair["test_cases"][0]["titulo"] = "Título alterado indevidamente"
+    client = SequenceClient(
+        [
+            json.dumps(_rejected_judge_payload()),
+            json.dumps(repair),
+            json.dumps(_approved_judge_payload()),
+        ]
+    )
+
+    result = agent2_judge.run(_blob(), _generation_output(), client)
+
+    preserved = {case.id: case for case in result.repair_generations[0].output.test_cases}
+    assert preserved["TC-01-01"].titulo == "Login bem-sucedido"
 
 
 def test_loop_fails_after_max_repairs():

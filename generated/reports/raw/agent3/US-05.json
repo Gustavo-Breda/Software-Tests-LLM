@@ -1,0 +1,19 @@
+{
+  "story_id": "US-05",
+  "stage": "agent3",
+  "error": {
+    "type": "RawAgentResponseError",
+    "message": "Agent 3 semantic validation failed: missing test function for TC-05-03."
+  },
+  "provider": "ollama",
+  "model": "llama3.1:8b",
+  "metadata": {
+    "latency_seconds": 8.846220892010024,
+    "prompt_tokens": 8054,
+    "completion_tokens": 275,
+    "raw": {
+      "done_reason": "stop"
+    }
+  },
+  "raw_response": "{\n  \"arquivos\": {\n    \"conftest.py\": \"from selenium import webdriver\\nfrom selenium.webdriver.common.by import By\\nfrom selenium.webdriver.support.ui import WebDriverWait\\nfrom selenium.webdriver.support import expected_conditions as EC\\ndef setup_function(self):\\n    self.driver = webdriver.Chrome()\\n    self.driver.get('http://localhost:5173')\\ndef teardown_function(self):\\n    self.driver.quit()\",\n    \"pages.py\": \"class RequestPage:\\n    def __init__(self, driver):\\n        self.driver = driver\\n        self.cancel_button = (By.XPATH, '//button[@data-testid=\\\"request-row-cancel\\\"]')\\n    def cancel_request(self):\\n        self.driver.find_element(*self.cancel_button).click()\",\n    \"test_us_05.py\": \"import pytest\\nfrom pages import RequestPage\\n@pytest.fixture\\ndef request_page(driver):\\n    return RequestPage(driver)\\ndef test_tc_05_01(request_page):\\n    # Cancelamento bem-sucedido de solicitação em status 'aberta'\\n    request_page.cancel_request()\\ndef test_tc_05_02(request_page):\\n    # Cancelamento bem-sucedido de solicitação em status 'em_analise'\\n    request_page.cancel_request()\"\n  },\n  \"pendencias_de_automacao\": []\n}"
+}

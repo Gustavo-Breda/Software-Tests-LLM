@@ -15,7 +15,7 @@ import yaml
 
 from ..llm.adapter import LLMClient, LLMResponse
 from ..context import ContextBlob
-from .utils import AgentOutputError, extract_json_object, load_prompt, validate_schema
+from .utils import AgentOutputError, extract_json_object, load_prompt, validate_schema, wrap_raw_response_error
 
 
 _SYSTEM_PROMPT = (
@@ -57,9 +57,12 @@ def run(blob: ContextBlob, client: LLMClient) -> QualityGateOutput:
         temperature=0.2,
         max_tokens=20_048,
     )
-    data = extract_json_object(response.text)
-    validate_schema(data, "agent0_out.json")
-    _validate_strict_gate(data)
+    try:
+        data = extract_json_object(response.text)
+        validate_schema(data, "agent0_out.json")
+        _validate_strict_gate(data)
+    except AgentOutputError as exc:
+        raise wrap_raw_response_error(exc, response) from exc
     output = _to_output(data, response)
     print(
         f"[agent0] done story={blob.story_id} status={output.status} "

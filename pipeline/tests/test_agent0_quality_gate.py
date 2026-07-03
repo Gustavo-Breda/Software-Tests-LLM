@@ -3,7 +3,7 @@ import json
 import pytest
 
 from pipeline.agents import agent0_quality_gate
-from pipeline.agents.utils import AgentOutputError
+from pipeline.agents.utils import AgentOutputError, RawAgentResponseError
 from pipeline.context import ContextBuilder
 from pipeline.llm.adapter import LLMClient, LLMResponse
 
@@ -97,8 +97,9 @@ def test_agent0_rejects_schema_invalid_json():
     payload.pop("recomendacao")
     client = FakeClient(json.dumps(payload))
 
-    with pytest.raises(AgentOutputError, match="Schema validation failed"):
+    with pytest.raises(RawAgentResponseError, match="Schema validation failed") as exc_info:
         agent0_quality_gate.run(_blob(), client)
+    assert '"status": "APROVADA"' in exc_info.value.raw_text
 
 
 def test_agent0_rejects_inconsistent_strict_gate_json():

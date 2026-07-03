@@ -154,6 +154,8 @@ Agent 1 writes test cases to `generated/test_cases/`.
 Agent 2 writes judge reports to `generated/reports/agent2/` and repaired cases
 to `generated/test_cases_repaired/`.
 Agent 3 writes Selenium/PyTest scripts to `generated/scripts/<story_id>/`.
+When validation fails, the raw LLM response is saved under
+`generated/reports/raw/<agent>/<story_id>.json` for debugging.
 
 ### 6. Work with the Context Builder (Phase 2)
 

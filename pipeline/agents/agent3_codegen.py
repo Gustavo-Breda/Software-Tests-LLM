@@ -39,7 +39,7 @@ from typing import Any
 from ..llm.adapter import LLMClient, LLMResponse
 from ..context import ContextBlob
 from .agent1_generate import GenerationOutput
-from .utils import AgentOutputError, REPO_ROOT, extract_json_object, load_prompt, validate_schema
+from .utils import AgentOutputError, REPO_ROOT, extract_json_object, load_prompt, validate_schema, wrap_raw_response_error
 
 
 _SYSTEM_PROMPT = (
@@ -70,11 +70,14 @@ def run(blob: ContextBlob, generation: GenerationOutput, client: LLMClient) -> C
         prompt,
         system=_SYSTEM_PROMPT,
         temperature=0.1,
-        max_tokens=8192,
+        max_tokens=20_048,
     )
-    data = extract_json_object(response.text)
-    validate_schema(data, "agent3_out.json")
-    _validate_semantics(blob, generation, data)
+    try:
+        data = extract_json_object(response.text)
+        validate_schema(data, "agent3_out.json")
+        _validate_semantics(blob, generation, data)
+    except AgentOutputError as exc:
+        raise wrap_raw_response_error(exc, response) from exc
     output = CodegenOutput(
         arquivos=data["arquivos"],
         pendencias_de_automacao=data["pendencias_de_automacao"],
