@@ -3,6 +3,7 @@
 
 # local verification / scratch notes (não subir)
 VERIFICATION.txt
+# generated/
 
 # editor
 .DS_Store
@@ -12,3 +13,6 @@ Thumbs.db
 __pycache__
 *.pyc
 *.pyo
+
+# pipeline execution log
+# /pipeline.log

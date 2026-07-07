@@ -1,0 +1,77 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://software-tests-llm.local/schemas/agent0_out.json",
+  "title": "Agent 0 Quality Gate Output",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "status",
+    "derivavel",
+    "justificativa_derivabilidade",
+    "observacao_formato",
+    "problemas",
+    "recomendacao"
+  ],
+  "properties": {
+    "status": {
+      "type": "string",
+      "enum": ["APROVADA", "PRECISA_DE_ESCLARECIMENTO"]
+    },
+    "derivavel": {
+      "type": "boolean"
+    },
+    "justificativa_derivabilidade": {
+      "type": "string",
+      "minLength": 1
+    },
+    "observacao_formato": {
+      "type": "string"
+    },
+    "problemas": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "criterio_id",
+          "tipo",
+          "descricao",
+          "impacto_em_testes",
+          "pergunta_para_o_product_owner"
+        ],
+        "properties": {
+          "criterio_id": {
+            "type": "string",
+            "minLength": 1
+          },
+          "tipo": {
+            "type": "string",
+            "enum": [
+              "ambiguidade",
+              "omissao",
+              "inconsistencia",
+              "criterio_nao_testavel",
+              "falta_de_dado"
+            ]
+          },
+          "descricao": {
+            "type": "string",
+            "minLength": 1
+          },
+          "impacto_em_testes": {
+            "type": "string",
+            "minLength": 1
+          },
+          "pergunta_para_o_product_owner": {
+            "type": "string",
+            "minLength": 1
+          }
+        }
+      }
+    },
+    "recomendacao": {
+      "type": "string",
+      "minLength": 1
+    }
+  }
+}

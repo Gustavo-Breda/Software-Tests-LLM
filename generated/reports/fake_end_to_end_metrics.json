@@ -1,0 +1,135 @@
+{
+  "simulado": true,
+  "base_oraculo": "data/golden",
+  "case_quality": {
+    "generated_cases": 29,
+    "expected_cases": 51,
+    "correct_generated_cases": 26,
+    "matched_expected_cases": 32,
+    "precision": 0.8966,
+    "recall": 0.6275,
+    "f1": 0.7382,
+    "omission_rate": 0.3725,
+    "incorrect_fact_rate": 0.1034,
+    "acceptance_criteria_coverage": {
+      "total": 16,
+      "covered": 16,
+      "rate": 1.0,
+      "missing": []
+    }
+  },
+  "automation_quality": {
+    "script_collect_rate": 1.0,
+    "pending_automation_count": 3,
+    "stories": [
+      {
+        "story_id": "US-01",
+        "collect_ok": true,
+        "pendencias_de_automacao": 1
+      },
+      {
+        "story_id": "US-02",
+        "collect_ok": true,
+        "pendencias_de_automacao": 0
+      },
+      {
+        "story_id": "US-03",
+        "collect_ok": true,
+        "pendencias_de_automacao": 1
+      },
+      {
+        "story_id": "US-04",
+        "collect_ok": true,
+        "pendencias_de_automacao": 1
+      },
+      {
+        "story_id": "US-05",
+        "collect_ok": true,
+        "pendencias_de_automacao": 0
+      }
+    ],
+    "functional_success_rate": 0.8966,
+    "functional_success_rate_note": "Valor ilustrativo para o relatorio fake: 26 de 29 scripts executados passaram."
+  },
+  "judge_efficacy": {
+    "reported_problems": 10,
+    "confirmed_reported_problems": 8,
+    "missed_human_problems": 3,
+    "precision": 0.8,
+    "recall": 0.7273
+  },
+  "perceived_effort": {
+    "pipeline_review_minutes": 96.0,
+    "manual_authoring_minutes": 240.0,
+    "manual_to_pipeline_ratio": 2.5
+  },
+  "execution_snapshot": {
+    "tests_total": 29,
+    "tests_passed": 26,
+    "tests_failed": 3,
+    "classified_failures": [
+      {
+        "case_id": "TC-03-06",
+        "categoria": "teste",
+        "descricao": "Caso esperava 403 para JWT expirado, mas a API real retorna 401."
+      },
+      {
+        "case_id": "TC-04-04R",
+        "categoria": "seletor",
+        "descricao": "Selector do empty state mudou de requests-empty para requests-empty-state em uma branch de frontend."
+      },
+      {
+        "case_id": "TC-05-01R",
+        "categoria": "sistema",
+        "descricao": "Resposta 200 ocorreu, mas cancelled_at nao foi persistido em uma execucao seedada."
+      }
+    ]
+  },
+  "story_breakdown": [
+    {
+      "story_id": "US-01",
+      "generated_cases": 5,
+      "correct_generated_cases": 5,
+      "matched_expected_cases": 5,
+      "expected_cases": 8,
+      "omitted_expected_cases": 3,
+      "spurious_or_incorrect_cases": 0
+    },
+    {
+      "story_id": "US-02",
+      "generated_cases": 7,
+      "correct_generated_cases": 6,
+      "matched_expected_cases": 7,
+      "expected_cases": 11,
+      "omitted_expected_cases": 4,
+      "spurious_or_incorrect_cases": 1
+    },
+    {
+      "story_id": "US-03",
+      "generated_cases": 6,
+      "correct_generated_cases": 5,
+      "matched_expected_cases": 6,
+      "expected_cases": 16,
+      "omitted_expected_cases": 10,
+      "spurious_or_incorrect_cases": 1
+    },
+    {
+      "story_id": "US-04",
+      "generated_cases": 5,
+      "correct_generated_cases": 4,
+      "matched_expected_cases": 6,
+      "expected_cases": 8,
+      "omitted_expected_cases": 2,
+      "spurious_or_incorrect_cases": 1
+    },
+    {
+      "story_id": "US-05",
+      "generated_cases": 6,
+      "correct_generated_cases": 6,
+      "matched_expected_cases": 8,
+      "expected_cases": 8,
+      "omitted_expected_cases": 0,
+      "spurious_or_incorrect_cases": 0
+    }
+  ]
+}

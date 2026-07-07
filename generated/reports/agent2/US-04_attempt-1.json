@@ -1,0 +1,42 @@
+{
+  "status_geral": "REPROVADO",
+  "pontuacao": {
+    "cobertura": 6,
+    "fidelidade_ao_requisito": 8,
+    "clareza": 7,
+    "automatizabilidade": 9
+  },
+  "casos_aprovados": [
+    "TC-04-01",
+    "TC-04-02"
+  ],
+  "casos_reprovados": [
+    "TC-04-03",
+    "TC-04-04"
+  ],
+  "problemas": [
+    {
+      "caso_de_teste": "TC-04-03",
+      "tipo": "omissao",
+      "descricao": "Filtro de status cancelada não foi considerado.",
+      "evidencia_na_historia": "CA-04.2: Os filtros de status e prioridade são combináveis.",
+      "acao_recomendada": "Incluir cenário com filtro status=cancelada."
+    },
+    {
+      "caso_de_teste": "TC-04-04",
+      "tipo": "inconsistencia",
+      "descricao": "Caso TC-04-02 e TC-04-04 são idênticos.",
+      "evidencia_na_historia": "Nenhuma",
+      "acao_recomendada": "Remover caso duplicado."
+    }
+  ],
+  "cenarios_omitidos_sugeridos": [
+    {
+      "descricao": "Filtro de status aberta e prioridade alta combinados.",
+      "criterio_relacionado": "CA-04.2",
+      "justificativa": "Para garantir que os filtros sejam realmente combináveis.",
+      "tipo_sugerido": "positivo"
+    }
+  ],
+  "decisao": "REPROVADO"
+}

@@ -1,0 +1,1756 @@
+--- PAGE 1 ---
+Generative AI Solutions for Software Quality:
+Assessing Industrial Readiness
+Andre Gheventer1, Patricia do Amaral Gurgel1,
+Carlos Henrique Brito2, Rafael Maiani de Mello1,
+Sabrina Rocha3, Rodrigo Feitosa3, Guilherme Horta Travassos3
+1*Computing Institute, Federal University of Rio de Janeiro, Rio de
+Janeiro, Brazil.
+2*Polytehcnic School of Engineering, Federal University of Rio de
+Janeiro, Rio de Janeiro, Brazil.
+3*Systems Engineering and Computer Science Graduate Program,
+Federal University of Rio de Janeiro, Rio de Janeiro, Brazil.
+*Corresponding author: Andre Gheventer. E-mail: gheventer@ufrj.br
+Contributing authors: gheventer@ufrj.br; patriciaamaralgurgel@ufrj.br;
+carloshenriquefbf@poli.ufrj.br; rafaelmello@ic.ufrj.br;
+sabrinarocha@cos.ufrj.br; rfeitosa@cos.ufrj.br; ght@cos.ufrj.br;
+Abstract
+Context: Software quality is undergoing a profound transformation, driven by
+state-of-the-art research on the application of emerging technologies in software
+development processes. Specifically, the use of generative Artificial Intelligence
+(AI) may represent an opportunity to advance the state of practice in this
+domain. Objectives: To assess the industrial readiness and availability of Gen-
+erative AI-based solutions for software quality, classifying them according to
+ISO/IEC25010attributesandSDLCphases.Method:Anempiricalassessment
+ofthestateofpracticewasconducted,employingaRapidMultivocalLiterature
+Review(RMLR)protocolasadatacollectioninstrumenttoscreenevidencefrom
+academicdatabases(Scopus)andgreyliterature(Google,GitHub,PapersWith-
+Code). Results: We identified 24 potentially usable solutions. However, the
+analysisrevealsalowtechnologicalmaturity,withmostsolutionsbeingacademic
+prototypes hampered by fundamental technical limitations and adoption chal-
+lenges.Theseincludethe“lastmileproblem”intranslatingresearchprototypes
+into reliable, production-ready tools; the “strategic adoption dilemma” forc-
+ing practitioners to trade off between proprietary lock-in and high open-source
+1
+
+--- PAGE 2 ---
+infrastructure costs; and the “scarcity of realistic public data,” which drives a
+generalization gap due to reliance on synthetic or leaked benchmarks Conclu-
+sions:GenerativeAIinsoftwarequalityremainsanemergingbutimmaturefield,
+hampered by a critical reliability gap between academic prototypes and indus-
+trialneeds.Advancingthisdomainrequiresmovingbeyondanarrowcode-centric
+focus to address the quality of the AI systems themselves, expanding research
+acrossallSDLCphasesandISO25010attributes.Weconcludewitharoadmap
+advocating for contamination-free benchmarks, explainable architectures, and
+robust guidelines for real-world integration.
+Keywords:GenerativeArtificialIntelligence,LargeLanguageModel,LLM,Software
+Engineering
+1 Introduction
+SoftwareEngineering(SE)hasundergoneprofoundtransformationsinrecentdecades,
+drivenbyemergingtechnologies,witharecentemphasisonGenerativeArtificialIntel-
+ligence (AI), whose potential to impact software quality processes significantly has
+been widely researched. Recent studies have described expectations of significant pro-
+ductivitygainsacrossvariousstagesoftheSoftwareDevelopmentLifeCycle(SDLC),
+driven by these new technologies. Specifically in software quality, there is growing
+adoptionofGenerativeAI-basedsolutionsforSEactivitiessuchasvulnerabilitydetec-
+tion (Kalouptsoglou et al. 2026, 2025), test generation and automation (Alagarsamy
+et al. 2025; Tang et al. 2024), defect localization (Qin et al. 2025; Xu et al. 2026),
+codeverificationandsecurity(Fakhouryetal.2024;Washizaki2024).Thesesolutions
+havebeenrecognizedfortheirabilitytoreducehumanintervention,accelerateproject
+schedules, decrease manual effort, shorten development time, and consequently con-
+tribute to improving software quality (Hou et al. 2024; Banh et al. 2025; Raghi et al.
+2024).
+However, software quality is a multifaceted concept. To assess the potential effec-
+tivenessofGenAIinthesesolutions,itisimportanttodefinequalitybeyondsubjective
+metrics and align it with standardized models that subdivide quality into specific
+characteristics, such as functional suitability, reliability, performance efficiency, secu-
+rity, and maintainability (ISO/IEC 2011). This model type provides researchers and
+practitioners with a systematic approach to benchmarking and evaluating software
+products based on clearly defined criteria (Rafi et al. 2025).
+Despitethesepotentialadvantages,adoptingGenerativeAI-basedsolutionsinSE,
+especiallythosebasedonlargelanguagemodels(LLMs),hasprovencomplexandchal-
+lenging.Amongthem,issuesrelatedtoethics,security,privacy,dependenceonexternal
+vendors, and the potential biases inherent to the AI models stand out (Russo 2024;
+Terragni et al. 2025). Moreover, the effective adoption of these solutions depends on
+developmentteams’abilitytointegratethesetechnologiesintotheirworkflows(Russo
+2024).Beyondthesecross-cuttingchallenges,priorresearchhasalsoreportedsolution-
+specific technical limitations affecting real-world adoption, including issues related to
+robustness across heterogeneous software projects, high rate of false positives, limited
+2
+
+--- PAGE 3 ---
+explainability of model outputs, dependence on public data quality, and the difficul-
+tiesinproducingdeveloper-actionableresultsinpracticalenvironments(Siavvasetal.
+2024; Zhou et al. 2025; Garousi et al. 2025).
+These systemic issues are underscored by recent empirical observations regarding
+thefrictionofadoptingthesetechnologiesinreal-worldsettings.Forinstance,Travas-
+sos et al. (2025) highlights significant integration barriers, a heavy reliance on ad-hoc
+prompting,andtheburdenofextensivemanualvalidationtoensurequalityincritical
+domains. In light of this scenario, mapping and analyzing the evidence-based Gener-
+ative AI solutions available for use, while observing their limitations, challenges, and
+gaps, becomes a relevant task to investigate whether such scarcity of robust tools is a
+systemic characteristic of the field. For this study, we operationalize the key concepts
+of the research question as follows:
+• Availability: Public accessibility of the solution artifacts, such as source code,
+binaries, or access via internet-based platforms, combined with sufficient docu-
+mentation to allow independent exploration, replication, and evaluation by third
+parties.
+• IndustrialReadiness:Degreeoftechnologicalmaturityandoperationalstability
+requiredforportabilityanduseinproductionenvironments.Thisencompassesnot
+only robustness and scalability but also the identification of potential limitations
+and risks that could hinder industrial adoption.
+Given this context, this study aims to answer the following research question:
+RQ1: What is the current state of industrial readiness and availability of Gen-
+erative AI-based academic and commercial solutions to support software quality
+activities in Software Engineering?
+To answer this question, we conducted an empirical assessment of the state of prac-
+tice. We employed a Rapid Multivocal Literature Review (RMLR) protocol as a data
+collection instrument to integrate evidence from both scientific and grey literature.
+Thisapproachfocusesonidentifying,coding,andanalyzingGenerativeAI-basedsolu-
+tions that are currently supporting or have clear potential for practical application in
+software quality activities.
+Finally, the concept of “Generative AI-based solution” adopted in this study is
+broad regarding artifact types (e.g., tools, frameworks, applications), but strictly
+defined in terms of the underlying technology. Our focus is on solutions capable of
+producing or synthesizing new content associated with software quality activities.
+Consequently, approaches relying exclusively on predictive or discriminative models
+(typicallyencoder-onlyarchitecturessuchastheBERTfamily)forclassificationtasks
+are excluded from this study. This distinction ensures that the evaluation addresses
+the specific limitations and maturity challenges inherent to generative technologies,
+suchasnon-determinismandhallucinationrisks,distinguishingthemfromestablished
+predictive paradigms.
+3
+
+--- PAGE 4 ---
+ThisstudymakesthefollowingkeycontributionstothefieldofsoftwarequalityinSE:
+• A critical assessment of 24 potentially usable Generative AI-based solutions
+for software quality, detailing industrial readiness patterns and maturity trends
+through a qualitative analysis of representative evidence.
+• Adiagnosticanalysisofthecurrenttechnologicallandscape,identifyingsystemic
+limitationsandchallengessuchaslowtechnologicalmaturity,alackofindustrial
+validation, and significant adoption barriers.
+• A conceptualization of the underlying causes for the observed academia-industry
+gap, including the ”Last Mile Problem” in academic research and the ”Strategic
+Adoption Dilemma” faced by practitioners.
+• A proposal of a roadmap for future research aimed at bridging this gap, advo-
+catingforindustrialcasestudies,thedevelopmentofexperimentalstandardsand
+qualityguidelines,andanexpandedscopebeyondcode-levelqualitytotransform
+academic prototypes into reliable, production-ready systems.
+The remainder of this paper is structured as follows: initially, in Section 2, we ana-
+lyze related work to position our contribution; then, Section 3 details the empirical
+methodologyanddatacollectionprotocolappliedtoidentifyevidence-basedsolutions
+available for use; next, Section 4 presents the assessment results derived from the
+identified solutions; Section 5 provides a discussion of the findings, interpreting their
+meaning and situating them within the broader research context; Section 6 discusses
+the threats to the validity of the study; finally, Section 7 concludes the paper by sum-
+marizing the implications of our work and presenting a proposal of a roadmap for
+future research.
+2 Related Work
+Several studies have investigated the role of Generative AI in Software Engineering
+(SE),aimingtounderstandhowresearchersandpractitionersevaluateandapplythis
+technology.Toeffectivelypositionourcontribution,weanalyzethemostrelevantprior
+investigations, highlighting their scope, key findings, and limitations in the context of
+industrial readiness. Table 1 summarizes this analysis.
+Regarding general overviews, Hou et al. (2023) conducted a comprehensive Sys-
+tematic Literature Review (SLR) covering 395 articles to categorize the application
+of Large Language Models (LLMs) across 85 SE tasks. While this work provides a
+broad academic landscape, its extensive scope inevitably dilutes the depth of analysis
+regarding software quality, focusing on research trends rather than operational matu-
+rity. Similarly, Zhang et al. (2024) unified perspectives from NLP and SE, offering
+a critical technical analysis of model architectures. Their work highlights important
+issues, such as the manipulation of benchmarks, but remains a theoretical synthesis
+that does not address the practical availability of solutions for production environ-
+ments.Fromasociotechnicalperspective,Bazzanetal.(2024)performedaMultivocal
+LiteratureReview(MLR)toexploreriskslikehallucinationsandbias.Whileessential
+4
+
+--- PAGE 5 ---
+for understanding ethical impacts, this study discusses risks as general phenomena
+and does not technically evaluate how specific existing solutions mitigate these risks
+in industrial workflows.
+Other studies have narrowed their scope to specific sub-domains. Schmid et al.
+(2025)focusedonsoftwarearchitecture,identifyingtrendstowardsdecoder-onlymod-
+els but restricting the analysis to architectural tasks and academic experimentation.
+In the security domain, Zhou et al. (2025) provided a specialized SLR on vulnera-
+bility detection and repair. They identified critical algorithmic limitations, such as
+the lack of high-quality datasets and input granularity. While definitive for security,
+their work centers on model performance metrics rather than the broader operational
+readiness of quality assurance solutions. Finally, addressing the state of practice in
+testing, Garousi et al. (2025) conducted a Systematic Tool Review of 56 commercial
+AI-powered tools. Their empirical study provides valuable insights into features like
+self-healing; however, the scope is strictly confined to proprietary testing products,
+limiting the analysis of the underlying Generative AI models.
+As Table 1 illustrates, the existing body of knowledge has predominantly adopted
+eitherahigh-leveltheoreticalperspectiveoranarrowdomain-specificfocus.Acritical
+gap emerges from this analysis: the lack of a consolidated assessment of the industrial
+readinessofGenerativeAIspecificallyforSoftwareQualityactivities.Previousefforts
+have largely mapped what is theoretically possible or what commercial testing tools
+claim to do. This study addresses this gap by employing a multivocal data collection
+protocol to capture both academic prototypes and available tools, evaluating their
+maturity against the immediate needs of practitioners, such as infrastructure require-
+ments and support mechanisms, thereby bridging the disconnect between theoretical
+research and industrial adoption.
+3 Methodology
+This study aligns with recent investigations in software quality that use systematic
+review protocols as a rigorous diagnostic tool to establish the state of the art before
+proposing technical advancements or guidelines (Ahmad and Kuo 2025). However,
+given our specific objective of assessing industrial readiness rather than relying solely
+onacademictheory,weadaptedthisapproachtoaRapidMultivocalLiteratureReview
+(RMLR) protocol.
+Rapid Literature Reviews (RLRs) are an agile form of knowledge synthesis, opti-
+mized to deliver timely evidence for emerging fields. While traditional Systematic
+Literature Reviews (SLRs) emphasize exhaustive coverage, aiming to “identify, eval-
+uate and interpret all available research” (Kitchenham 2004), RLRs streamline the
+processtocapturekeytrendsandimmediateapplicability (Cartaxoetal.2018;Hamel
+et al. 2021; Pizard et al. 2024). Given the rapid growth of Generative AI, a tradi-
+tional SLR protocol risks obsolescence before data extraction is even complete. Thus,
+an RLR protocol represents a methodologically sound choice to establish a rigorous
+baseline of the state of practice. Although this approach may not cover all the steps
+of a full SLR, recent empirical assessments suggest that RLRs enable the identifica-
+tion of findings in Software Engineering (SE) comparable to those obtained through
+5
+
+--- PAGE 6 ---
+gnireenignE
+erawtfoS
+ni IA
+evitareneG
+no
+snoitagitsevnI
+roirP
+fo
+sisylanA
+evitarapmoC
+:1
+elbaT
+kroW
+ruO
+morf
+noitcnitsiD
+yeK
+secruoS
+ataD
+sucoF
+/
+epocS
+ygolodohteM
+ydutS
+cimedacadaorbasedivorP
+ylnOsesabataDcimedacA
+tra-eht-fo-etats,evisneherpmoC
+erutaretiLcitametsyS
+)3202(.lateuoH
+ehtsworranydutsruO.epacsdnal
+).cte,viXra,MCA,EEEI(
+snoitacilppaMLLllafoweivrevo
+)RLS(weiveR
+dnaytilauqerawtfosotepocs
+nosucofahtiw,sksatES58ssorca
+ybecitcarpfoetatsehtsezisahpme
+.seuqinhcetdna,stesatad,sledom
+yfitnedioterutaretilyerggnidulcni .snoituloselbacilppayllairtsudni
+sksirdnatcapmilarenegehtserolpxE
+elgooG(cimedacA
+daorbehtfosisylanalevel-hgiH
+erutaretiLlacovitluM
+.latenazzaB
+,ralunargaedivorpeW.IAneGfo
+)erolpXEEEI,ralohcS
+,ESniIAevitareneGfotcapmi
+)RLM(weiveR
+)4202(
+cfiicepsfotnemssessalacinhcet
+erutaretiLyerGdna
+esu,stcepsalatnemadnufgnirevoc
+.tnemyolpedrofelbaliavasnoitulos
+.)hcraeSelgooG(
+,.g.e(sksirdna,stfieneb,sesac
+.)saib,msiraigalp
+dnalacinhcetanosesucoF
+morfsesabataDcimedacA
+dnaPLNfosevitcepsrepehtsefiinU
+yevruS
+.lategnahZ
+hcraeserehtfosisehtnyslaciteroeht
+PLNdnaESehthtob
+,edocrofsledomegaugnalnoES
+)4202(
+asedivorpydutssihT.dlefi
+.seitinummoc
+.sksat+04dnasledom+07gnirevoc
+fotnemssessadetneiro-renoititcarp
+dnanoituloveehtnosucoF
+foytilibaliavadnassenidaereht
+.sledomedocfoymonoxat
+.snoitulos
+slootgnitsetnoyllacfiicepssesucoF
+loot(secruosyrtsudnI
+gnitsetderewop-IAfonoitaulavE
+looTcitametsyS
+.lateisuoraG
+.atadlaciripmewensetarenegdna
+)sweiverresu,setisbew
+riehtgnissessa,yrtsudnimorfsloot
++)RTS(weiveR
+)5202(
+redaorbasrevoctnemssessaruO
+morfatadyramirpdna
+snoitatimildna,stfieneb,serutaef
+ydutSlaciripmE
+slootsetalerrocdnaepocsytilauq
+.tnemirepxenworieht
+.ydutslaciripmewenahguorht
+.ecnedivecfiitneicshtiw
+erutcetihcraehtnoylworransesucoF
+EScimedacareit-poT
+MLLfoweivercfiicepsylhgiH
+erutaretiLcitametsyS
+.latedimhcS
+erawtfosehttegrateW.niamod
+.slanruojdnasecnerefnoc
+erutcetihcraerawtfosrofsnoitacilppa
+)RLS(weiveR
+)5202(
+lootssessadnaniamodytilauq
+,snoisicedngised,.g.e(sksat
+.ytirutam
+.asrev-ecivdna)noitareneg
+ytirucesnoyllacitrevsesucoF
+,ES(sesabataDcimedacA
+rofsMLLfoweiverdezilaicepS
+erutaretiLcitametsyS
+.lateuohZ
+sessessaydutsruO.scirtem
+.)seunevytiruceS,IA
+,riaperdnanoitcetedytilibarenluv
+)RLS(weiveR
+)5202(
+lanoitarepo(ssenidaerlairtsudni
+.snoitatimilcimhtiroglagniyfitnedi
+redaorbssorca)troppusdnaytilibats
+.seitivitcaytilauq
+sessessa
+ylticilpxE
+:sucoF
+euqinU
+dna )supocS(
+cimedacA
+rof
+elbaliava
+snoitulos
+IA
+evitareneG
+tnemssessA
+laciripmE
+ydutS
+sihT
+gnippam
+yb
+ssenidaer
+lairtsudni
+,elgooG(
+erutaretiL
+yerG
+ytilauq
+erawtfos
+ni
+esu
+lacitcarp
+ecitcarP
+fo
+etatS
+fo
+rof
+laitnetop
+htiw
+snoitulos
+).CWP
+dna
+buHtiG
+.seitivitca
+RLMR
+gnisu(
+eht gnigdirb
+,noitpoda
+etaidemmi
+)locotorp
+dna hcraeser
+cimedaca
+neewteb
+pag
+.sdeen
+lairtsudni
+6
+
+--- PAGE 7 ---
+comprehensive SLRs, while providing more timely, actionable evidence for decision-
+making and connecting scientific evidence with practitioner needs (Pena et al. 2024;
+Pizard et al. 2024).
+AnRMLRextendstheRLRframeworkbyincorporatinggreyliterature(GL)into
+its search process, including materials not published in scientific or peer-reviewed
+venues,andisoftengroundedinthepracticalexperienceandtechnicalinsightsofpro-
+fessionals. The use of grey literature in SE is strongly associated with evidence-based
+methods and literature reviews in the field, typically encompassing code repositories,
+white papers, and technical documentation, which are commonly identified through
+Google Search (Garousi et al. 2016, 2020). As noted by these authors, while GL is
+vital for capturing practical insights in emerging fields with strong industry involve-
+ment,itintroducesrisksregardingqualityandsourcebias.Toaddressthesechallenges
+andensurecredibility,weemployedaqualityappraisalprocedurethatfilteredsources
+based on:
+1. Authority and Credibility: Prioritizing sources from verifiable organizations or
+recognized practitioners over anonymous or unverified content.
+2. Technical Evidence: Selecting sources that provide concrete use cases, tool cate-
+gorizations, or architectural details, rather than purely opinion-based or high-level
+marketing descriptions.
+This GL appraisal process ensured that the final selection included only reliable,
+evidence-basedsolutions,sourcedfrombothpeer-reviewedpublicationsandgreyliter-
+ature, explicitly excluding subjective or purely promotional material. To systematize
+the analysis of these diverse sources, this assessment implemented a structured pro-
+tocol based on the Rapid Multivocal Literature Review methodology. By adhering
+to the meta-protocol defined by (Rocha et al. 2025), we established a rigorous foun-
+dation enabled not just the identification but the critical assessment of Generative
+AI-basedsolutionsavailableforindustrialapplication.Tooperationalizethisobjective,
+the main research question was decomposed into ten specific subquestions, guiding
+the systematic extraction and technical characterization of the collected evidence:
+• RQ1a. Where can these solutions be found?
+• RQ1b. What Generative AI models are used by the solutions?
+• RQ1c. How can these solutions be used?
+• RQ1d. What technical and operational constraints should be considered when
+adopting these solutions?
+• RQ1e.Whatarethelimitationsandchallengesfacedbytheidentifiedsolutions?
+• RQ1f. What is the maturity level of these solutions?
+• RQ1g. Is there technical documentation, support, or an active community that
+facilitates their use in academic and industrial contexts?
+• RQ1h. What types of users or roles are supported by these solutions?
+7
+
+--- PAGE 8 ---
+• RQ1i. What type of technical support is offered?
+• RQ1j. Is there collaboration with industry to validate the proposed solutions
+through case studies or experiments?
+These subquestions guided data collection and synthesis throughout the RMLR,
+enabling a more detailed analysis aligned with the interests of both the scientific
+community and industry. The construction of the search string in both the scientific
+and grey literature was based on the PICOC approach - Population, Intervention,
+Comparison, Outcome, and Context (Petticrew and Roberts 2006), widely used in
+systematicreviewsinthecomputingfield.TheelementsofourPICOCframeworkare
+detailed in Table 2. In this study, the Comparison element was deemed inapplicable,
+as no direct comparisons between interventions were expected or required to answer
+the research questions.
+Table 2: PICOC Elements Used for Search String Construction
+Elements Terms
+Population ”Test*” OR ”Quality” OR ”Validation*” OR ”Verification*” OR ”Technical Debt”
+OR”DefectDetection”OR”SoftwareInspection”OR”ModelCheck*”OR”Debug*”
+OR”CodeReview”
+Intervention ”Generative AI” OR ”Generative Artificial Intelligence” OR ”Generative Model*”
+OR ”Large Language Model*” OR ”Language Model*” OR ”Small Language
+Model*”OR”LLM*”OR”RAG”OR”RetrievalAugmentedGeneration”OR”Nat-
+uralLanguageProcessing”OR”NLP”OR”AIAgent”OR”AIMulti-Agent”
+Comparison N/A
+Outcome ”Application*”OR”Technolog*”OR”Approach*”OR”Method*”OR”Tool*”OR
+”Framework*” OR ”Solution*” OR ”Strateg*” OR ”Model*” OR ”System*” OR
+”Platform*”OR”Technique*”
+Context ”SoftwareEngineering”
+To ensure complete transparency and facilitate reproducibility, all hyperlinks pre-
+sented throughout this study, whether in the main text, footnotes, or references, were
+accessed and verified as active on December 20, 2025.
+3.1 Inclusion and exclusion criteria
+Toensuretherelevanceoftheevidenceselectedforanalysis,wedefinedexplicitinclu-
+sion and exclusion criteria, as presented in Tables 3 and 4. These criteria are not
+intended to assess the individual quality of Generative AI-based solutions available.
+Instead, the goal is to map and interpret the current landscape using an analyti-
+cal framework derived from the research subquestions (RQ1a-RQ1j). These questions
+cover dimensions such as usage patterns, access and availability, technical and oper-
+ational constraints, maturity, documentation, support, and potential for industrial
+application.Thesedimensionsguidetheapplicationofthematiccodingtotheselected
+8
+
+--- PAGE 9 ---
+evidence, allowing the identification of patterns, trends, and gaps in the use of
+Generative AI for software quality.
+Table 3: Inclusion Criteria
+IC Criteria
+IC1 Thesourcemustbeinthecontextofsoftwareengineering.
+IC2 ThesourcemustpresentaGenerativeAI-basedsolution2,applicabletosoftwarequality.
+IC3 Thesourcemustreportaprimarystudyoranapplicationcaseinthefield.
+IC4 Thesourcemustdescribeanevidence-basedsolutionwithpotentialforindustrialuse.
+IC5 ThesourcemusthavebeenpublishedafterDecember20213.
+IC6 Thesourcemustprovidedatatoansweratleastoneoftheresearchquestions.
+2ThisstudyfocusesonidentifyingandanalyzingsolutionsbasedonGenerativeAI(e.g.,GPT,Llama,
+Codex),capableofproducingnewartifacts.Approachesthatrelyexclusivelyondiscriminativemodels
+(e.g.,BERT,RoBERTa,andCodeBERT)areexcludedbecausetheyrepresentadistincttechnological
+paradigm,beingtypicallysubjecttospecificarchitecturalconstraints(e.g.,inputtokenlimits)that
+woulddistortthecomparativediagnosisofindustrialreadinesstargetedbythisanalysis.
+3The initial cutoff date was defined based on the public release of ChatGPT in 2022. This marks
+the transition to the modern Generative AI era, characterized by the democratization of access
+throughuser-friendlygraphicalinterfacesandIDEplugins.Whileearliergenerativemodelsexisted,
+this period saw a surge in interest from researchers and practitioners due to the ease of use and
+reducedtechnicalbarriersformodelinteraction.
+Table 4: Exclusion Criteria
+EC Criteria
+EC1 Thesourcedoesnotmeetatleastoneoftheinclusioncriteria(IC)
+EC2 Thesourceisduplicated
+EC3 Thesourceisnotavailableforfreeaccessorthroughinstitutionalaccess
+EC4 ThesourceiswritteninalanguageotherthanEnglish,unlessanofficialEnglishtranslation
+isavailable
+EC5 Thesourceisasecondarystudy
+3.2 Search Strategy and data sources
+To identify relevant publications, we designed and executed a search strategy encom-
+passing both scientific and grey literature. The specific sources, search strings, and
+execution process are detailed below.
+Data SourcesForthescientificliterature,weselectedScopusasthesoledatabasefor
+study identification, following the approach adopted by Baldassarre et al. (2021) and
+Cartaxo et al. (2018), who highlight Scopus is the largest database of peer-reviewed
+literature in Software Engineering (SE) and has been widely used in rapid reviews
+in this domain. To expand our grey literature search, we used Google Search with
+9
+
+--- PAGE 10 ---
+two domain-specific restrictions4 to focus on relevant content from these platforms.
+We chose GitHub because it is widely used for sharing and maintaining open-source
+software projects, and PapersWithCode for organizing open-access academic articles
+related to machine learning.
+Search Strings The search strings, presented in Table 5, were systematically con-
+structedbasedonthePICOCapproachdetailedpreviouslyinthissection(seeTable2).
+A key distinction was made between the Scopus string and the grey literature string.
+During initial pilot searches, we observed that Google’s search engine, regardless of
+the access method (conventional interface or API), did not reliably process the full,
+complex Boolean query used for Scopus. This often resulted in truncated results and
+significant loss of evidence, especially when filtering for specific platforms such as
+GitHub and PapersWithCode. This limitation is inherent to the search engine’s func-
+tionality and is likely related to an internal cap on the number of logical connectors
+or search terms that can be included in a single query. To ensure query compatibility
+while preserving the core search intent, the grey literature string was reformulated by
+removing the ’Outcome’ element from the PICOC structure.
+Execution and Refinement The search strings were executed on their respective
+platforms. For the scientific literature, the query was run on the Scopus advanced
+search interface, accessed via the institutional subscription provided by Brazil’s
+CAPES Periodicals Portal5. For the grey literature, the execution was multi-staged.
+First, the search string was tested on Google’s standard search interface to validate
+the query and ensure the results were compatible and relevant. Once validated, the
+Google Custom Search API (Google 2025) was used to extract results into a spread-
+sheet for management and analysis systematically. In line with standard practices for
+multivocal reviews (Cartaxo et al. 2018), we relied on Google Search’s ranking algo-
+rithmandlimitedourinspectiontothefirst100resultsforeachgreyliteraturequery.
+Furthermore, we adopted an adapted snowballing strategy tailored for grey literature:
+during the review of the retrieved pages, we also explored relevant hyperlinks that
+pointedtootherpotentiallypertinentsolutionsnotcapturedbytheinitialsearch.This
+additional step aimed to broaden coverage and capture solutions that, although not
+directly listed among the top results of the queries, could be relevant to the review’s
+inclusion criteria.
+4Addedtogreyliteraturesearchstrings:site:github.comandsite:paperswithcode.com.
+5https://www.periodicos.capes.gov.br/
+10
+
+--- PAGE 11 ---
+Table 5: Search Strings
+Base Strings
+Scopus TITLE-ABS-KEY((”Test*”OR”Quality”OR”Validation*”OR”Verifica-
+tion*”OR”TechnicalDebt”OR”DefectDetection”OR”SoftwareInspection”
+OR ”Model Check*” OR ”Debug*” OR ”Code Review”) AND (”Genera-
+tive AI” OR ”Generative Artificial Intelligence” OR ”Generative Model*”
+OR”LargeLanguageModel*”OR”LanguageModel*”OR”SmallLanguage
+Model*” OR ”LLM*” OR ”RAG” OR ”Retrieval Augmented Generation”
+OR ”Natural Language Processing” OR ”NLP” OR ”AI Agent” OR ”AI
+Multi-Agent”)AND(”Application*”OR”Technolog*”OR”Approach*”OR
+”Method*” OR ”Tool*” OR ”Framework*” OR ”Solution*” OR ”Strateg*”
+OR”Model*”OR”System*”OR”Platform*”OR”Technique*”)AND(”soft-
+wareengineering”))ANDPUBYEAR¿2021AND(EXCLUDE(DOCTYPE6,
+”cr”))AND(LIMIT-TO(LANGUAGE,”English”))
+Grey Literature
+Common (”Test” OR ”Quality” OR ”Validation” OR ”Verification” OR ”Techni-
+cal Debt” OR ”Defect Detection” OR ”Software Inspection” OR ”Model
+Checking” OR ”Debug” OR ”Code Review”) AND (”Generative AI” OR
+”GenerativeArtificialIntelligence”OR”LargeLanguageModel”OR”LLM”)
+AND(”SoftwareEngineering”)after:2021
+Google Add-site:youtube.com7 -site:github.com -site:paperswithcode.com
+GitHub Addsite:github.com
+PapersWithCode Addsite:paperswithcode.com/paper8
+6(DOCTYPE, ”cr”) = Conference review. These are not documents or articles, but rather a cover
+explainingaspecificevent.
+7Videos were excluded to prioritize written sources that facilitate structured data extraction and
+contentanalysis.
+8Theterm”paper”wasaddedtothequery,aimingtoreturnonlyarticlesintheresults.
+3.3 Execution and Screening Process
+ThesearchstringswereappliedbetweenAprilandMay2025.Theyyielded732publications,
+ofwhich522wereretrievedfromtheScopusdatabaseand210fromGoogleSearch,including
+100 from Google itself, 100 from GitHub, and 10 from PapersWithCode. Although the plan
+wastoevaluatethefirst100resultsfromeachplatform,onlytenresultsonPapersWithCode
+matchedthesearchstring.Toensurearigorousandtransparentselectionofthemostrelevant
+studies,weconductedamulti-stagescreeningprocess,asillustratedinFigure1.Theprocess
+was divided into two parallel streams, one for scientific literature and the other for grey
+literature.
+The study selection process was conducted by three authors affiliated with the Post-
+graduate Program in Computer Science. The two primary reviewers work as Information
+Security Analysts in their respective organizations, while disagreements were resolved by a
+third author with solid industry background as a Software Developer. To ensure method-
+ological rigor and consistency, the entire process was supervised by two other authors, both
+senior researchers with extensive experience in Evidence-Based Software Engineering
+11
+
+--- PAGE 12 ---
+Fig. 1: RMLR screening process
+To quantitatively validate the consistency of the selection process, we established a sta-
+tistical agreement protocol. We utilized the Linear Weighted Cohen’s Kappa metric, which
+is suitable for the ordinal nature of our scoring scale (1 = Not Accept < 3 = Doubt < 5 =
+Accept). Unlike simple agreement, this metric assigns partial credit to close matches while
+penalizing severe disagreements more heavily. To interpret the coefficients, we adopted the
+standard guidelines established by Landis and Koch (1977), as detailed in Table 6.
+Table 6: Kappa agreement interpretation scale (Landis and Koch 1977)
+Kappa Value Strength of Agreement
+< 0.00 Poor
+0.00 – 0.20 Slight
+0.21 – 0.40 Fair
+0.41 – 0.60 Moderate
+0.61 – 0.80 Substantial
+0.81 – 1.00 Almost Perfect
+12
+
+--- PAGE 13 ---
+3.3.1 Screening of Scientific Literature
+The 522 studies retrieved from Scopus underwent a three-stage screening process executed
+bytwoprimaryreviewers,withathirdrevieweractingasamediator.Toensureconsistency
+and transparency, the reviewers applied a standardized rating scale strictly mapped to the
+inclusion (Table 3) and exclusion (Table 4) criteria. This systematic approach prioritized
+evidence retention over immediate exclusion. Specifically:
+5 Stars (Accept): Assigned when the study appeared to satisfy all inclusion criteria
+(IC1–IC6), demonstrating clear relevance to Generative AI in software quality.
+3 Stars (Doubt): Assigned when relevance could not be determined due to insufficient
+detail (e.g., vague title regarding IC4, ensuring that ambiguous cases were not discarded
+prematurely).
+1Star(Notaccept):Assignedwhenthestudyclearlyviolatedaninclusioncriterionormet
+an exclusion criterion (e.g., EC5 - secondary study, or failing IC2 by using discriminative
+models).
+Based on this classification scheme, the screening process was executed in three sequential
+stages:
+1. Stage 1 (Title Screening):First,themetadataofall522publicationswereimported
+intotwoseparateJabRef9libraries,allowingtworeviewerstoassessthemindependently.
+Each reviewer classified the titles using a three-point scale: five stars (accept), three
+stars (doubt), and one star (reject). The inter-rater agreement for this stage yielded a
+Linear Weighted Kappa of 0.45 (Moderate Agreement). Given this level of agreement,
+whichisconsistentwiththeambiguityoftitlesinemergingfields,weappliedaninclusive
+consensus rule to prioritize recall: studies with a combined score of 6, 8, or 10 stars
+proceeded to the next stage. This strategy ensured that, alongside the 49 unanimously
+acceptedstudies,80studieswithconflictingordoubtfulratingswereretainedforfurther
+examination. Conversely, 393 studies (score of 2 or 4) were excluded. The complete
+screening logic is detailed in Table 7. This initial screening reduced the candidate set
+to 129.
+Table 7: Screening logic and decisions for Stage 1 and Stage 2
+Stage 1 Stage 2
+Reviewer 1 Reviewer 2 Score
+Decision Decision
+5(Accept) 5(Accept) 10 Proceeded Included(Unanimous)
+5(Accept) 3(Doubt) 8 Proceeded Mediated(Reviewer 3)
+3(Doubt) 5(Accept) 8 Proceeded Mediated(Reviewer 3)
+5(Accept) 1(Reject) 6 Proceeded Mediated(Reviewer 3)
+1(Reject) 5(Accept) 6 Proceeded Mediated(Reviewer 3)
+3(Doubt) 3(Doubt) 6 Proceeded Mediated(Reviewer 3)
+3(Doubt) 1(Reject) 4 Excluded Mediated(Reviewer 3)
+1(Reject) 3(Doubt) 4 Excluded Mediated(Reviewer 3)
+1(Reject) 1(Reject) 2 Excluded Excluded(Unanimous)
+9https://www.jabref.org/
+13
+
+--- PAGE 14 ---
+2. Stage 2 (Abstract and Keyword Screening): The same two reviewers indepen-
+dently assessed the remaining 129 studies based on their abstracts and keywords. At
+thisstage,theJabRefapplicationwasalsousedtoassignthesameclassifications:5,3,
+or1stars.Theinter-rateragreementyieldedaLinearWeightedKappaof0.53(Moder-
+ate Agreement). This improvement (compared to 0.45 in Stage 1) reflects the reduced
+ambiguity when accessing abstract-level details. In this stage, we applied a strict con-
+sensusmechanism:30studiesunanimouslyaccepted(5and5stars)wereautomatically
+included, while 38 studies unanimously rejected (1 and 1 stars) were excluded. The
+remaining 61 cases, involving disagreements or doubts, were arbitrated by the third
+reviewer. After detailed analysis, the mediator selected 20 of these conflicting studies
+for inclusion. This stage refined the selection to 50 studies.
+3. Stage3(Full-textAnalysis):Thefinal50studieswereorganizedinaspreadsheetfor
+the full-text review. These studies underwent a cross-review process where each paper
+was evaluated by two independent reviewers, retaining the 3-point scale to capture
+decisionnuances.Theaverageinter-rateragreementyieldedaLinearWeightedKappaof
+0.70(SubstantialAgreement),confirmingthereliabilityoftheselectionwhenfulldetails
+were available. In this process, 7 studies were unanimously accepted (score 10), and 30
+wereunanimouslyrejected(score2).Theremaining13discrepancieswerediscussedina
+consensusmeetinginvolvingthesupervisors.Thisresolutionprocessledtotheinclusion
+of2additionalstudies,resultinginafinalsetof 9 primary studiesfromthescientific
+literature.
+3.3.2 Screening of Grey Literature
+A similar structured approach was applied to the 210 grey literature sources retrieved. To
+manage the process, the titles and URLs of these sources were imported into a spreadsheet.
+Given the heterogeneous nature of this literature, we proceeded directly to a full-content
+review. The 210 sources were distributed among the three reviewers for an initial indepen-
+dent assessment, during which each was classified as ”accepted,” ”rejected,” or ”doubtful.”
+Following this initial classification, a cross-review stage was conducted, in which a second
+independentreviewerre-evaluatedeachsourcetoensurereliability.Aswiththescientificliter-
+ature,anydiscrepanciesbetweenthetworeviewerswereresolvedatafinalconsensusmeeting
+attendedbyallreviewers.Thisrigorousprocessresultedintheselectionof13primarysources
+from the grey literature.
+3.3.3 Final Set of Selected Studies
+Uponcompletionofbothscreeningstreams,atotalof22publications (9fromScopusand13
+from grey literature) were selected for data extraction and analysis. It is worth noting that
+while the initial search yielded a high volume of results, the strict application of Inclusion
+CriterionIC4(evidence-basedsolutionwithpotentialforindustrialuse)significantlyreduced
+the final set. This reduction, in itself, is a preliminary finding that underscores the scarcity
+of ”ready-to-use” solutions amid a plethora of theoretical proposals in the field.
+3.4 Data Coding and Synthesis
+Dataextractionwasperformedusingastructuredschemaderiveddirectlyfromtheresearch
+questions (RQ1a-RQ1j). To ensure consistency and mitigate individual bias, the primary
+metadataandqualitativedatawereextractedbyoneoftheauthorsandsubsequentlyverified
+14
+
+--- PAGE 15 ---
+byasecondindependentreviewer.Followingextraction,theanalysiswasconductedthrough
+aniterativeprocessofthematiccoding (Yang2025).Thisapproachallowedthemes,patterns,
+and categorizations to emerge directly from a deep reading and interpretation of the pub-
+lications. Due to the heterogeneity of the data, we used this analysis to identify recurring
+patterns of readiness across the selected studies, highlighting representative examples that
+illustrate broader industrial trends. By transforming the raw descriptive content into struc-
+turedanalyticalinsights,wesoughttogainadeeperunderstandingoftheevidencecontained
+in the collected material (Cruzes and Dyba 2011).
+We applied this method to create a structured overview of the mapped Generative AI-
+based solutions. This framework was guided by the dimensions outlined in our research
+subquestions.Akeystepwasclassifyingtheprimary objective ofeachsolution,aspresented
+in Tables 8 and 9. To this end, we analyzed the descriptive excerpts from each source. Since
+GenerativeAItoolsareoftenmulti-purpose,weestablishedaprioritizationrule:functionali-
+tiesdirectlyrelatedtosoftwarequalitywereprioritizedovergenericcapabilities.Forexample,
+if a solution offered both generic code generation and specific test case generation, it was
+coded under the latter to align with the scope of this work.
+Followingthisprioritization,eachsolutionwassystematicallycategorizedaccordingtoa
+taxonomy based on the ISO/IEC 25010 quality model and the Software Development Life
+Cycle(SDLC)phases.Whiletheseframeworksencompassabroaderrangeofattributesand
+stages,ourmappingfocusesonthecategoriesactuallyidentifiedwithintheselectedsolutions:
+• Security: Solutions focused on vulnerability detection, penetration testing, or secure
+code enforcement.
+• Reliability:Solutionsaimingtodetectdefects,bugs,oranomaliestoensureoperational
+stability.
+• Maintainability:Solutionsthatfacilitatemodificationandtesting,includingautomated
+test generation and instrumentation.
+Additionally, solutions were mapped to their primary operating phase identified in our
+sample: Coding, Testing, or Operations. The resulting classification is detailed in ‘Attr’ and
+‘Phs’ columns of Tables 8 and 9.
+4 Results
+Thissectionpresentstheresultsofourtechnicalassessment.Tables8and9categorizethe24
+identified solutions10 based on their origin (academic prototypes vs. commercial products).
+Thesubsequentsubsectionsevaluatetheircharacteristicsandmaturity,structuredaccording
+to our research questions (RQ1a-RQ1j).
+10Oneoftheselectedprimarysourcespresentedthreesolutions.
+15
+
+--- PAGE 16 ---
+Table 8: Academic studies (non-commercial solutions)
+ID Study Source Type Attr Phs Solution Objective12
+1 DeVitoetal.(2023) Scopus CP REL COD DefectdetectioninsourcecodeandTest
+casegeneration
+2 HappeandCito(2023) GitHub CP SEC TST Securitypenetrationtesting
+3 Kangetal.(2023) Scopus CP MNT TST Testcasegeneration
+4 Lietal.(2023) Scopus CP REL COD DefectdetectioninsourcecodeandTest
+casegeneration
+5 Chenetal.(2024) GitHub CP REL COD Defectdetectioninsourcecode
+6 Kangetal.(2024) Scopus JA MNT TST Testcasegeneration(evolutionofsolution
+(Kangetal.2023))
+7 Mansuretal.(2024) Scopus CP REL COD Defectdetectioninsourcecode
+8 Pateletal.(2024) Scopus JA MNT TST Testdatabasegeneration
+9 Phanetal.(2024) GitHub PR REL COD Defectdetectioninsourcecode
+10 Shengetal.(2024) Scopus CP SEC COD Detectionofsecurityvulnerabilitiesin
+sourcecode
+11 Xiaetal.(2024) Scopus CP REL COD Defectdetectioninsourcecode
+12 Yangetal.(2024) GitHub CP REL COD Defectdetectioninsourcecode
+13 Ahmedetal.(2025) GitHub PR SEC COD Detectionofsecurityvulnerabilitiesin
+sourcecode
+14 Bhandarietal.(2025) Scopus JA SEC COD Detectionofsecurityvulnerabilitiesin
+sourcecode
+15 Kessel(2025) GitHub PR MNT TST Instrumentationforexperimentsandcode
+propertyanalysis
+16 Kikutaetal.(2025) GitHub PR REL OPS ChaosEngineering(CE)automation
+17 Shaoetal.(2025) GitHub PR SEC COD Detectionofsecurityvulnerabilitiesin
+sourcecode(variousartifacts)
+18 Steenhoeketal.(2025) GitHub PR SEC COD Detectionofsecurityvulnerabilitiesin
+sourcecode
+19 Xiaetal.(2025) GitHub JA REL COD Defectdetectioninsourcecode
+20 Yuetal.(2025) GitHub CP REL COD Defectdetectioninsourcecode
+Type:CP-ConferencePaper;JA-JournalArticle;PR-PreprintArticle
+Attr(ISO25010):SEC-Security;REL-Reliability;MNT-Maintainability
+Phs(SDLCPhase):COD-Coding;TST-Testing;OPS-Operation/Maintenance
+12Ifthesolutionhasmultipleobjectives,onlythoserelatedtosoftwarequalitywereclassified.
+16
+
+--- PAGE 17 ---
+Table 9: Web references (commercial solutions)
+ID Industry Source Name Attr Phs Solution Objective
+Publications
+GitHubCopilot13 REL COD Defectdetectioninsourcecode
+andTestcasegeneration
+1 Index.dev(2024) Google Snykplatform14 SEC COD Detectionofsecurity
+vulnerabilitiesinsourcecode
+Testim15 MNT TST Testautomation
+2 SEDaily(2024) Google GitLabDuo16 SEC COD Securityvulnerabilitydetection
+Attr(ISO25010):SEC-Security;REL-Reliability;MNT-Maintainability
+Phs(SDLCPhase):COD-Coding;TST-Testing
+13https://github.com/copilot/
+14https://snyk.io/
+15https://www.testim.io/
+16https://about.gitlab.com/gitlab-duo/
+17
+
+--- PAGE 18 ---
+Theoverallanalysisrevealsaheterogeneouslandscape.Theacademicsolutions,detailed
+in Table 8, are largely experimental prototypes with significant barriers to industrial adop-
+tion.Incontrast,thecommercialsolutionslistedinTable9,alreadyavailableonthemarket
+in software-as-a-service (SaaS11) format, demonstrate higher readiness for practical use.
+Althoughrelevantasacontextualreference,thesesolutionswerenotconsideredintheformu-
+lationofresearchquestionanswers,astheylackpubliclyaccessible,specifictechnicaldetails
+about their Generative AI implementations needed to answer our research questions (e.g.,
+the particular models used, technical constraints, or datasets for training), making analyses
+using the same criteria applied to the academic solutions unfeasible.
+Ananalysisofthetables 8and 9revealsadistinctconcentrationofeffortswithinspecific
+domains.Regardingqualityattributes,theidentifiedsolutionspredominantlytargetSecurity
+and Reliability, with a secondary focus on Maintainability through test automation. Other
+ISO 25010 characteristics, such as Functional suitability and Performance efficiency, were
+notprominentlyidentifiedinoursample.IntermsoftheSDLC,thetoolsareclusteredinthe
+Coding andTesting phases.Itisnoteworthythatourmappingidentifiedacompleteabsence
+of solutions addressing earlier phases such as Requirements and Design, demonstrating that
+currentGenerativeAIsolutionsforsoftwarequalityareheavilyconcentratedindownstream
+implementation and verification activities.
+Research Question 1a
+Where can these solutions be found?
+The availability of developed solutions for replication and deployment purposes is not yet a
+consolidatedpractice.WeobservedthatintwocasesinvolvingcomplexRetrieval-Augmented
+Generation (RAG) architectures, the necessary artifacts were not shared (Sheng et al. 2024;
+De Vito et al. 2023). However, many solutions have made their artifacts publicly accessible
+through various platforms. The most common platform is GitHub, which hosts the artifacts
+for several analyzed solutions (Li et al. 2023; Kang et al. 2023; Xia et al. 2024; Kang et al.
+2024; Patel et al. 2024; Mansur et al. 2024; Yu et al. 2025; Kessel 2025; Ahmed et al. 2025;
+Shaoetal.2025;Bhandarietal.2025).Otherplatforms,suchasFigshare17 (Steenhoeketal.
+2025)andHuggingFace18(Ahmedetal.2025),werealsousedtofacilitatereproducibilityand
+adoption of these solutions. Complementarily, prompt engineering techniques are frequently
+documenteddirectlywithinthetechnicalreports(Chenetal.2024;Kikutaetal.2025;Yang
+et al. 2024; Phan et al. 2024).
+Research Question 1b
+What Generative AI models are used by the solutions?
+Foranalysispurposes,theGenerativeArtificialIntelligencemodelsemployedinthesolutions
+were classified into two categories, as detailed below. This classification enables discussion
+not only of the technical aspects but also of the practical implications for adoption, such as
+infrastructure dependencies, data privacy, scalability, and operational costs.
+11A service delivery model in which the user accesses applications via the internet, through paid or
+free (usually limited) subscriptions, without needing to perform local installations. https://csrc.nist.gov/
+glossary/term/softwareasaservice/.
+17https://figshare.com/
+18https://huggingface.co/
+18
+
+--- PAGE 19 ---
+• Closed Models: Generative AI models whose access is provided exclusively through
+interfaces and/or infrastructures controlled by their developers, including those made
+available freely through the web, with no possibility of local execution, direct access to
+the source code, or training components (weights).
+• Open Models: Generative AI models that allow for local execution, direct access to
+the source code, and/or training components (weights).
+Table 10 presents this classification for each of the analyzed solutions, while Table 11
+highlights a subset of these models that are specifically trained on programming data.
+Table 10: Classification of Generative AI Models Used in the Identified Solutions
+Study Closed Models Open Models
+DeVitoetal.(2023) GPT-3.5 none
+HappeandCito(2023) GPT-3.5 none
+Kangetal.(2023) Codex none
+Lietal.(2023) GPT-3.5 none
+Chenetal.(2024) GPT-3.5,GPT-4,Codex StarCoder
+Kangetal.(2024) GPT-3.5,Codex StarCoder,Bloom,Incoder,CodeGen
+Mansuretal.(2024) none Llama3
+Pateletal.(2024) GPT-3.5 Ollama19
+Phanetal.(2024) GPT-3.5 Llama3.1, WizardLM2, Code Llama,
+StarCoder
+Shengetal.(2024) GPT-4o none
+Xiaetal.(2024) GPT-4 StarCoder
+Yangetal.(2024) GPT-4o,Claude-3-Opus none
+Ahmedetal.(2025) GPT-4.1,Claude-3.7-Sonnet Qwen2.5-Coder, Deepseek-Coder,
+Codestral
+Bhandarietal.(2025) none CodeT5,CodeLlama
+Kessel(2025) GPT-4o-mini none
+Kikutaetal.(2025) Gpt-4o, Claude-3.5- Sonnet, Gemini- none
+1.5-Pro
+Shaoetal.(2025) GPT-4o,GPT-4.1,Claude-3.5-Sonnet, none
+Claude-3.7-Sonnet,DeepSeekV3
+Steenhoeketal.(2025) GPT-3.5,GPT-4,Gemini-1.0-Pro Mixtral-MoE, Code Llama, Llama2,
+WizardCoder, DeepSeek-Coder, Star-
+Chat,StarCoder,MagiCoder,Mistral
+Xiaetal.(2025) GPT-4o none
+Yuetal.(2025) Claude-3.5-Sonnet none
+19ItmentionsthatitcanbeusedinmodelsthatrunonOllamaviaRESTAPIs.
+Amongthesolutionsanalyzed,thosethatemployGenerativeAImodelstrainedoninten-
+sive programming data stand out, as shown in Table 11. Although these models are not
+exclusive to SE, they were developed with a strong focus on source-code–related tasks, such
+ascodegeneration,completion,review,andexplanation.Thisspecializationrepresentsasub-
+stantialadvanceinadaptingGenerativeAItothedomain’sspecificneeds,therebyenhancing
+the effectiveness and applicability of the proposed solutions.
+19
+
+--- PAGE 20 ---
+Table 11: Code-Centric Generative AI Models Identified
+Model Study URL
+StarCoder (Xia et al. 2024; Kang https://github.com/bigcode-project/starcoder2/
+et al. 2024; Chen et al.
+2024; Steenhoek et al.
+2025;Phanetal.2024)
+Bloom (Kangetal.2024) https://huggingface.co/docs/transformers/
+modeldoc/bloom/
+Incoder (Kangetal.2024) https://sites.google.com/view/
+incoder-code-models/
+CodeGen (Kangetal.2024) https://github.com/salesforce/codegen/
+Codex (Kang et al. 2023, 2024; https://openai.com/index/introducing-codex/
+Chenetal.2024)
+CodeLlama (Steenhoek et al. 2025; https://ai.meta.com/blog/
+Phanetal.2024;Bhandari code-llama-large-language-model-coding/
+etal.2025)
+WizardCoder (Steenhoeketal.2025) https://huggingface.co/WizardLMTeam/
+WizardCoder-15B-V1.0/
+DeepSeek-Coder (Steenhoek et al. 2025; https://deepseekcoder.github.io/
+Ahmedetal.2025)
+MagiCoder (Steenhoeketal.2025) https://github.com/ise-uiuc/magicoder/
+Qwen2.5-Coder (Ahmedetal.2025) https://ollama.com/library/qwen2.5-coder/
+Codestral (Ahmedetal.2025) https://mistral.ai/news/codestral/
+CodeT5 (Bhandarietal.2025) https://github.com/salesforce/CodeT5/
+Research Question 1c
+How can these solutions be used?
+Ouranalysisshowsthattheinvestigatedsolutionsaregenerallynotmadeavailableindirectly
+executable formats, such as installers or ready-to-use packages. Instead, they are provided
+through several distinct modalities, each with specific usage requirements:
+• Complex Architectures: Solutions based on Retrieval-Augmented Generation (RAG)
+architectures require complex configurations involving the integration of various compo-
+nents,suchasvectordatabases,mechanismsforgeneratingembeddings,andacoordinated
+set of code components (Sheng et al. 2024; De Vito et al. 2023; Mansur et al. 2024; Shao
+et al. 2025; Phan et al. 2024).
+• Repository-Based Solutions: Most solutions are provided as code repositories, typi-
+cally on GitHub. While they include installation and configuration instructions, they still
+demand specialized technical knowledge for replication, including specific programming
+environments such as Python (Li et al. 2023; Xia et al. 2024, 2025; Phan et al. 2024) and
+Java (Patel et al. 2024; Kessel 2025).
+• Containerized Proposals: To simplify deployment, several proposals facilitate replica-
+tion by providing Docker images (Kang et al. 2023; Xia et al. 2024; Kang et al. 2024;
+Yu et al. 2025; Kessel 2025; Shao et al. 2025; Kikuta et al. 2025), which streamline the
+environment setup process using containers.
+• Portable Prompt Engineering Techniques: A subset of solutions offers high porta-
+bility by making prompt engineering techniques available. These typically consist of
+20
+
+--- PAGE 21 ---
+structured sets of prompts that can be adapted and applied to other contexts without
+requiring extensive supporting infrastructure (Chen et al. 2024; Kikuta et al. 2025; Yang
+et al. 2024; Phan et al. 2024).
+Research Question 1d
+What technical and operational constraints should be considered when adopting these
+solutions?
+Theanalyzedsolutionsimposeseveraltechnicalandoperationalconstraints,primarilyrelated
+to computational resources, which vary significantly depending on the model type used:
+Closed Models or Open Models. A recurring constraint for solutions that execute Open
+Modelslocallyistheneedforrobustcomputationalinfrastructure.Thisisparticularlyevident
+in the requirement for dedicated, high-performance GPUs from NVIDIA, such as the RTX
+A6000 (Xia et al. 2024), NVIDIA DGX / RTX 3080 (Bhandari et al. 2025), NVIDIA RTX
+3090(Kangetal.2024),andNVIDIAL40S(Ahmedetal.2025).Nosolutionswerefoundto
+mention the use of GPUs from other manufacturers.
+On the other hand, solutions based on Closed Models accessed via cloud APIs do not
+demand high-performance local resources. The primary constraint for this approach shifts
+fromhardwaretooperationalfactors,suchasrelianceonexternalproviders,APIavailability,
+andpotentialcostsofuse.AnalternativeapproachwasidentifiedforexecutingOpenModels
+locally with lower hardware requirements, using the Ollama platform20 (Patel et al. 2024).
+ThisplatformsupportslocalinferenceonCPUs,significantlyloweringthehardwarebarrier.
+However, this approach introduces constraints: it delivers considerably lower performance
+thanrunningondedicatedGPUsandmaystillimposelimitationsonlatencyandscalability
+for more complex tasks.
+Research Question 1e
+What are the limitations and challenges faced by the identified solutions?
+Ouranalysisrevealedseveralcross-cuttinglimitationsandchallengesthatimpacttheindus-
+trial applicability and long-term stability of the evaluated solutions. Beyond operational
+constraints, we identified critical hurdles regarding generalizability, result precision, and
+semanticvalidity.Wecategorizetheseintofundamentaltechnicallimitationsinherentinthe
+solutions and practical difficulties associated with their adoption.
+To characterize the evaluation landscape, table 12 summarizes the technical charac-
+teristics of the benchmarks employed by the primary studies, ordered chronologically. We
+identified a clear dichotomy in evaluation complexity. While earlier datasets like QuixBugs
+(Linetal.2017)andDefects4J (Justetal.2014)focusonisolated,function-leveldefects,the
+recent emergence of SWE-bench (Jimenez et al. 2024) represents a significant shift towards
+increasedindustrialrealism.Byrequiringmodelstoresolveissueswithinfullrepositorycon-
+texts, involving navigation across multiple files and dependency management, SWE-bench
+provides a more accurate proxy for the complexity of real-world software engineering tasks
+comparedtoearlierbenchmarks.However,despitetheseadvancements,ouranalysisidentified
+criticalhurdlesstemmingfromdatadependency,modelopacity,andarchitecturalconstraints,
+as detailed below.
+20https://ollama.com/
+21
+
+--- PAGE 22 ---
+Fundamental Limitations
+• Data Leakage and Limited Generalizability: A primary limitation is the reliance
+onpublicbenchmarkdatasets,whicharesusceptibletodataleakage.AccordingtoHappe
+andCito(2023)andKangetal.(2023),popularbenchmarksandsecuritywrite-upswere
+likely included in the models’ pre-training sets, which leads to overestimation of actual
+performance and creates a false sense of industrial readiness. This issue is further high-
+lighted in Xia et al. (2024), which shows that models often leverage knowledge acquired
+during training when evaluating well-known open-source systems. These dependencies
+explain why many solutions struggle with cross-project generalization when applied to
+proprietary or unseen codebases, where the model cannot rely on memorized patterns.
+Li et al. (2023) explains that this difficulty arises because LLMs are often insensitive
+to nuances, where subtle differences between similar code sequences can lead to similar
+inferences regardless of whether the code is correct or erroneous.
+• High False Positive Rates and Limited Explainability:Amajortechnicalbarrier,
+particularly in tasks such as vulnerability detection, concerns the frequent generation
+of false positives, which undermines developer trust and increases validation overhead.
+RecentempiricalevaluationsShengetal.(2024);Ahmedetal.(2025)consistentlyreport
+thatevenstate-of-the-artGenAImodelsexhibitlimitedpredictiveperformanceinrealis-
+ticsettings,withmodestprecisionandF1-scoresandatendencytoover-identifypotential
+defects. This issue is compounded by limited statement-level localization and the gener-
+ationofsyntacticallyplausibleyetlogicallyinconsistentrationales,hinderingdevelopers’
+ability to understand and act upon model outputs. Furthermore, agent-based solutions
+forend-to-endtaskresolution(Yangetal.2024;Ahmedetal.2025)remainsusceptibleto
+error propagation and execution hallucinations, ultimately imposing substantial manual
+verificationeffortandlimitingsuitabilityforindustrial-gradequalityandsecurityaudits.
+• Contextual Isolation and Scale Limitations: Current solutions are often restricted
+to analyzing small, localized code segments, failing to scale to the complexity of indus-
+trialsystems.AsidentifiedbyKangetal.(2023),thesetoolsstruggletotrackcorrelations
+between different parts of the code, especially when a defect depends on helper func-
+tions or configurations located in separate files. This isolation means the model is often
+“blind” to the broader system context, leading to syntactically correct results that are
+logicallyinvalidforthespecificproject.Furthermore,asnotedinXiaetal.(2024),many
+approachesdependonnear-perfecttechnicaldocumentation;inreal-worldlegacysystems
+wheresuchdocumentationismissingoroutdated,themodelsstruggletounderstandthe
+code’s intended behavior, resulting in solutions that fail to address system-wide quality
+issues.
+Challenges for Adoption
+• High Barriers to Entry: As detailed in RQ1d, a major challenge for adopting Open
+Models is the requirement for a robust local infrastructure, often including specialized
+andcostlyhigh-performanceGPUs.Thisrepresentsasignificantfinancialandoperational
+barrier; for instance, recent evaluations in our sample (e.g., Yang et al. (2024); Ahmed
+et al. (2025)) report the necessity of using high-end hardware such as NVIDIA A100 or
+H100 GPUs to achieve acceptable inference times.
+• Dependency on External Model Providers: Beyond technical hurdles, many solu-
+tions in our sample rely on closed models accessed via APIs, which creates a significant
+limitation regarding operational stability and predictability. As documented by Kang
+etal.(2024),unannouncedupdatesorchangesinmodelversions(e.g.,transitionsbetween
+22
+
+--- PAGE 23 ---
+GPT-3.5 iterations) can alter output formats and break automated post-processing
+pipelines.Similarly,evaluationsinChenetal.(2024)andAhmedetal.(2025)showthat
+theeffectivenessofthesetoolsisoftentiedtospecifichigh-endmodels,withperformance
+degrading significantly when using different or smaller model versions. This instability
+poses a critical risk to the reproducibility of quality audits, as organizations lack control
+over the model’s lifecycle and the consistency of results over time.
+• Complex Implementation and Lack of Usable Formats: The solutions are gen-
+erally not provided in ready-to-use formats. As described in RQ1c, they are typically
+distributedascoderepositoriesorcomplexarchitectures(e.g.,RAG)thatdemandspecial-
+izedtechnicalexpertiseforsetupandreplication.Thislackof”out-of-the-box”usabilityis
+evident in studies like Jimenez et al. (2024), where specialized containerization (Docker)
+andenvironmentconfigurationsarerequired,creatingasignificantchallengeforadoption
+by industry practitioners who require seamless integration into existing pipelines.
+• Absence of Formal Support and Maintenance: Industrial-grade quality assurance
+requireslong-termreliability.However,ouranalysis(RQ1gandRQ1i)revealsthatnearly
+allidentifiedsolutionslackformalsupportchannels,activecommunities,ormaintenance
+plans.Mosttoolsremainstaticprototypesasoftheirpublicationdate,posingasignificant
+risk for organizations that require constant security updates and stable support for their
+internal auditing tools.
+Table 12: Benchmarks datasets used by the evaluated solutions
+Dataset Authors Languages Technical Details
+[1]Defects4J (Justetal.2014) Java 835real-worldbugsfrom17projects,
+includingbothfailingandpassingtest
+casesforeachdefect.
+[2]QuixBugs (Linetal.2017) Python, 40programsfromthe”Quixey
+Java Challenge”translatedintobothPython
+andJava.Eachcontainsaone-line
+defect,alongwithpassingandfailing
+testcases.
+[3]Big-Vul (Fanetal.2020) C/C++ 264,919functions(11,823vulnerable)
+and3,754CVEsextractedfrom348
+projects.
+[4]SVEN (HeandVechev2023) C/C++, 1,606programs(803pairs)ofsecurity
+Python fixescovering9criticalCWEsfrom
+MITRETop-25.
+[5]SWE-bench (Jimenezetal.2024) Python 2,294softwareengineeringproblems
+drawnfromrealGitHubissuesand
+correspondingpullrequestsacross12
+popularPythonrepositories.
+[6]Codeforces Community/Competitive Multilang Acompetitiveprogrammingbenchmark
+(https://codeforces.com/) consistingofproblemswith
+human-submittedcorrectandbuggy
+solutions,categorizedbydifficultylevels
+URLs for datasets: [1] SVEN:https://github.com/eth-sri/sven; [2] Big-Vul:kaggle.com/datasets/
+kaggler10240/msr-data; [3] Defects4J:https://github.com/rjust/defects4j; [4] QuixBugs:https:
+//github.com/jkoppel/QuixBugs;[5]SWE-bench:https://github.com/SWE-bench/SWE-bench;[6]Code-
+forces:https://codeforces.com/problemset.
+23
+
+--- PAGE 24 ---
+Research Question 1f
+What is the maturity level of these solutions?
+The analysis reveals that the vast majority of the identified solutions remain in the early
+stagesoftechnologicalmaturity,primarilyasprototypesdevelopedandtestedinacademicor
+controlled settings. While most solutions fit this description, a few initiatives show progress
+toward practical adoption. For instance, the solution in (Patel et al. 2024) underwent pilot
+testingandwasvalidatedacrossthreecompanies.Anotherstudy(Ahmedetal.2025)madeits
+solutionpubliclyavailableontheHuggingFaceplatform,allowingforinitialdissemination21
+and third-party experimentation. Despite these promising exceptions, the overall landscape
+is characterized by low technological maturity, with a general lack of solid evidence for the
+feasibility,scalability,androbustnessofthesesolutionsinindustrialproductionenvironments.
+Research Question 1g
+Is there technical documentation, support, or an active community that facilitates its
+use in academic and industrial contexts?
+No clear support mechanisms, active community involvement, or long-term continuity plans
+were identified for the majority of the analyzed solutions. In general, the available technical
+documentation is limited and static, typically prepared by the developers solely at publica-
+tion.WhilemanysolutionsareavailableonplatformslikeGitHub,thereislittleevidenceof
+initiatives to engage with users or communities outside the original academic environment.
+Thislackofengagementhinderstheadoption,evolution,andindependentevaluationofthese
+solutions in industrial contexts.
+A single notable exception was identified, where the developers of one solution (Kessel
+2025) provided complementary information and updates through a Github.io22 page.
+This free service allows developers to publish user-friendly websites directly from their
+GitHub repositories, representing a significant step towards better documentation and user
+engagement. However, this appears to be an isolated case rather than a common practice.
+Research Question 1h
+What types of users or roles are supported by these solutions?
+The analyzed solutions were found to target two distinct, highly technical user profiles, a
+focus that is a direct consequence of the tools’ primary emphasis on source-code-level tasks
+rather than on systemic or architectural quality aspects. The main roles supported are:
+• TestingandQAProfessionals:Themajorityofthesolutionsareaimedatprofessionals
+in the testing and Quality Assurance (QA) areas (Li et al. 2023; De Vito et al. 2023;
+Kangetal.2023;Xiaetal.2024;Kangetal.2024;Pateletal.2024;Mansuretal.2024;
+Chenetal.2024;Yuetal.2025;Kessel2025;Index.dev2024;Yangetal.2024;Xiaetal.
+2025;Phanetal.2024).Thesetoolsaredesignedtoreducemanualeffortintestcreation,
+increase test coverage, and accelerate verification and validation cycles.
+• Application Security (AppSec) Specialists: A second group of solutions is specif-
+ically targeted at security specialists. These tools focus on the automated identification
+21Thesolutionhadreceived215downloadsinthe30daysprecedingthestudy’sconduct.
+22https://github.io/
+24
+
+--- PAGE 25 ---
+and, in some cases, exploitation of security vulnerabilities directly within source code
+snippets (Sheng et al. 2024; Steenhoek et al. 2025; Ahmed et al. 2025; Shao et al. 2025;
+SEDaily 2024; Happe and Cito 2023; Bhandari et al. 2025).
+Notably, we found a scarcity of solutions aimed at roles concerned with more systemic and
+preventivequalityareas,suchasSoftwareArchitects (foridentifyingdesignflaws)orQuality
+Managers and Reliability Engineers (for overseeing formal processes like FMEA or FTA).
+This highlights that the current tool ecosystem is tailored for practitioners directly involved
+in code implementation and verification, rather than for those in more strategic or design-
+focused engineering roles.
+Research Question 1i
+What type of technical support is offered?
+Asignificantchallengefortheadoptionoftheanalyzedsolutionsisthegenerallackofformal
+technical support. For the most part, support is limited to static technical documentation
+provided within the code repositories. These materials, which typically cover basic installa-
+tion, configuration, and usage guidelines, are often prepared only at publication and appear
+to lack ongoing maintenance. We observed a notable absence of standard industry sup-
+port mechanisms such as dedicated forums, active technical communities, or formal support
+channels.
+Despite this general lack, a few solutions demonstrated some level of openness to
+user interaction, albeit through informal channels. We identified one solution that pub-
+lished a contact link on its GitHub.io site (Kessel 2025), another that provided a direct
+email address (Phan et al. 2024), and a third that offered a Discord23 channel for com-
+munication (Happe and Cito 2023). While these initiatives indicate a willingness among
+some developers to engage with users, they do not constitute the robust, reliable support
+infrastructure typically required for production adoption.
+Research Question 1j
+Is there collaboration with industry to validate the proposed solutions through case
+studies or experiments?
+Ouranalysisrevealsanear-totalabsenceofdirectcollaborationbetweenacademicresearchers
+andindustryinthedevelopmentandvalidationoftheproposedsolutions.Thevastmajority
+of solutions were developed exclusively in controlled settings, with no reported institutional
+partnerships or empirical validation in real-world industrial settings.
+Twocaseswarrantspecificmentionastheyapproach,butdonotfullyrepresent,industrial
+collaboration. The only substantial exception identified was the solution presented in (Patel
+et al. 2024), which was validated through a case study across three companies, demonstrat-
+ing clear industry engagement. Another study (De Vito et al. 2023) involved an evaluation
+undertaken by recruited professionals. However, the study provided no evidence of an insti-
+tutional link between these participants and the industrial sector, which prevents this case
+from being characterized as a formal industry collaboration.
+Therefore, aside from one clear exception, the landscape is predominantly composed
+of solutions developed and validated in isolation from the environments in which they are
+intended to be used.
+23https://discord.com/
+25
+
+--- PAGE 26 ---
+5 DISCUSSION
+5.1 Synthesis of Findings and Answer to RQ1
+Ourdetailedanalysisacrossthetensub-questions(RQ1a-RQ1j)revealsacohesivepictureof
+thecurrentlandscape.Whileagrowingnumberofsolutionsarebecomingpubliclyaccessible,
+primarilythroughGitHubrepositories(RQ1a),theylargelyexistasacademicprototypeswith
+low technological maturity (RQ1f). These solutions employ a mix of powerful proprietary
+models,suchasGPT-4,andopen-sourcealternatives,suchasLlama(RQ1b),butsignificant
+barriers hinder their practical adoption. Open-source models often require substantial local
+infrastructure,includinghigh-performanceGPUs(RQ1d),whilebothtypesdemandcomplex
+configurations and specialized knowledge to be used effectively (RQ1c).
+A critical and recurring theme is the profound lack of industrial validation. The vast
+majority of solutions are evaluated using synthetic or benchmark datasets, which limits the
+generalizabilityoftheirresultstoreal-worldindustrialproblems.Thisgapisexacerbatedby
+areliabilitygap,characterizedbypoorcross-projectpredictionandpotentialdataleakagein
+existing benchmarks (RQ1e), as well as a near-total absence of collaboration with industry
+partners (RQ1j), and a scarcity of robust technical documentation, community support, or
+formalmaintenanceplans(RQ1g,RQ1i).Consequently,whilethesetoolsareprimarilyaimed
+at technical users such as testers and security specialists (RQ1h), they are not yet available
+inaready-to-useformatforindustrialcontexts.Thissynthesisleadstoaconsolidatedanswer
+to our main research question:
+RQ1: What is the current state of industrial readiness and availability of
+GenerativeAI-basedacademicandcommercialsolutionstosupportsoftware
+quality activities in Software Engineering?
+TheavailableGenerativeAI-basedsolutionsforsoftwarequalityconstituteanemerg-
+ingbutimmatureecosystem.Thelandscapeisdominatedbyacademicallydeveloped
+prototypes that, while conceptually promising, lack the technical maturity, indus-
+trial validation, and support infrastructure necessary for practical adoption. These
+are complemented by a smaller number of more mature commercial solutions that
+often lack public technical documentation, limiting their analysis. Overall, the field
+is in an early, experimental stage, with a significant gap between academic research
+andindustryneeds,drivenbystructuraltechnicallimitationsinmodelprecisionand
+contextual awareness.
+Toprovideaclearoverviewofthecurrentstate,Table13summarizestheprimarybenefits
+and limitations of the solutions analyzed in this assessment.
+26
+
+--- PAGE 27 ---
+Table 13: Key Benefits and Limitations of the Identified Generative AI Solutions for
+Software Quality. The two columns represent independent thematic summaries and are
+not directly correlated line by line.
+Key Benefits Systemic Limitations
+Automationofcomplexqualitytasks. ImmaturityofSolutions:Mostareacademicpro-
+Potentialtoreducemanualeffortandaccelerate totypes, lacking robust support and are not
+verificationcycles. production-ready.
+Leverages state-of-the-art LLMs for nuanced Barriers to Adoption: Solutions require signif-
+analysis. icant hardware and specialized expertise, and
+reliance on proprietary APIs introduces risks
+Ability to identify non-obvious issues through
+(cost,privacy,lock-in).
+large-scalepatternanalysis.
+Lack of Industrial Grounding: Validation is
+Increasing accessibility of research artifacts
+predominantly on non-representative synthetic
+throughpublicrepositories.
+data, with a near-total absence of industry col-
+laboration.
+IntrinsicTechnicalRisks:Issuessuchashalluci-
+nations, lack of explainability, and data leakage
+in benchmarks limit trust in critical environ-
+ments.
+5.2 Situating the Findings: An Immature but Promising Field
+Our findings, while focused on a specific niche of software quality, strongly corroborate and
+provide concrete evidence for the broader perception that the application of Generative AI
+in Software Engineering remains in its early, experimental stages. Specifically, our empirical
+resultsregardingthegeneralizationgapandlackofexplainabilityalignwithrecenttheoretical
+concerns raised by Zhou et al. (2025) and Siavvas et al. (2024) regarding the limitations
+of LLMs for critical tasks. Broadly state-of-the-art works such as Zhang et al. (2024) and
+Schmid et al. (2025) have noted the conceptual nature of many LLM applications in SE.
+Ourstudyamplifiesthisbydetailingthisimmaturityspecificallywithinthequalitydomain:
+weprovidetangibleevidenceofalandscapedominatedbyacademicprototypes(RQ1f)that
+arevalidatedalmostexclusivelyonsyntheticorbenchmarkdatasets(RQ1e),reinforcingthe
+significant gap between academic research and practical adoption. The scarcity of industrial
+validation identified in our study (RQ1j) is a critical issue that warrants deeper discussion.
+We posit several interconnected causes for this phenomenon:
+• The “Last Mile” Problem in Academic Research: A significant barrier to the
+industrialimpactofacademicresearchiswhatcanbedescribedasthe“lastmileprob-
+lem”. This concept, drawn from other fields, symbolizes the inefficiencies in the final
+stage of delivering a product or service to the end-user (Li et al. 2025). In our context,
+it represents the gap between a functional academic prototype and a robust, usable
+tool ready for industrial adoption. Our findings indicate that this gap manifests in two
+criticaldimensions.Ontheoperational front,weidentifiedalackoflogisticalreadiness,
+evidenced by the scarcity of documentation, user support, and easy-to-use installers.
+Simultaneously, on the technical front, many solutions exhibit characteristics that can
+limit their actual practicality. As evidenced by Kang et al. (2024) and Li et al. (2023),
+performanceonpublicbenchmarksisofteninflatedbydataleakage;consequently,these
+prototypesdemonstratepoorcross-projectprediction,failingtogeneralizewhenapplied
+27
+
+--- PAGE 28 ---
+to proprietary source code that was not known during training. Furthermore, the pre-
+vailing black-box nature of these models prevents users from understanding why a
+specificfragmentwasflaggedorhowtoremediatetheidentifiedissue(Shengetal.2024).
+Consequently, bridging the “last mile” requires a holistic effort, improving engineering
+usability while simultaneously solving the algorithmic hurdles of generalizability and
+explainability.
+• The “Strategic Adoption Dilemma” for Industry: Companies face a significant
+dilemma when deciding how to adopt and validate these solutions. On the one hand,
+usingpowerful,Closed Models (RQ1b)raisesconcernsaboutdataprivacyandsecurity,
+as well as unpredictable costs. This approach introduces a substantial risk of vendor
+lock-in, a well-documented challenge in cloud computing where organizations become
+dependent on a single provider’s proprietary technology, making future migration diffi-
+cult and costly (Opara-Martins et al. 2016). This risk is particularly acute with LLM
+APIs,whichoftenlackthepredictableupdatecyclesandformalservice-levelagreements
+of traditional enterprise software.
+On the other hand, using Open Models requires substantial upfront investment in spe-
+cializedhardware(RQ1d).OurfindingthatonlyNVIDIAGPUswerementioneddirectly
+reflects this challenge; the maturity of NVIDIA’s CUDA software platform has cre-
+ated a powerful ecosystem lock-in, making alternatives from other vendors practically
+unviableformostresearchersseekingstabilityandperformance(Cusumano2023;Man-
+ganelli 2025). Compounding this dilemma, both approaches carry the inherent risk of
+relyingonmodelstrainedonvast,uncurateddatasetsthatmayintroducebiasesorsecu-
+rityflaws.Thiscomplexweboftrade-offssignificantlyslowsdownlarge-scaleindustrial
+experimentation and validation.
+• Scarcity of Realistic Public Data: A fundamental challenge in empirical software
+engineering is that high-quality industrial data, such as comprehensive defect reports
+or real-world security vulnerabilities, is often proprietary and highly sensitive. This
+scarcity forces many researchers to rely on publicly available benchmarks (as shown in
+Table 12) or to use synthetic data, which are artificially generated datasets designed
+to emulate original data without revealing sensitive observations (Wang et al. 2025).
+While these approaches are helpful for controlled experimentation, they may not accu-
+rately reflect the complexity and scale of industrial software systems. This creates a
+problematic feedback loop in which academic solutions are not trained on or validated
+with industrial-grade data, further widening the gap between research and practice.
+Furthermore,ouranalysisofthegreyliteraturerevealedastrong“academicecho,”witha
+highconcentrationofpreprintsfromrepositorieslikearXiv24.Thelimitedpresenceofindus-
+trial white papers, technical blogs, or open-source projects from industry actors reinforces
+theperceptionthatwidespread,practicaladoptionisstillinitsnascentstages,withmuchof
+the current knowledge being generated and disseminated by academic actors.
+6 THREATS TO VALIDITY
+Inthissection,wediscussthepotentialthreatstothevalidityofthisstudythatmaycompro-
+misethereliabilityandapplicabilityoftheresultsobtained.Toensuretherobustnessofthe
+findings, it is essential to identify, discuss, and, whenever possible, minimize these impacts
+24https://arxiv.org/
+28
+
+--- PAGE 29 ---
+(Verdecchia et al. 2023). Furthermore, ensuring the validity of the results is crucial to guar-
+anteetheirapplicabilitytothetargetpopulation(Wohlinetal.2000;Travassosetal.2002).
+In this study, we analyzed four main categories of threats that could contribute to future
+replicationattemptsoftheRMLR:internalvalidity,externalvalidity,constructvalidity,and
+conclusion validity (Shull et al. 2008). We present the strategies adopted to minimize their
+impactsandhighlightedpossiblelimitationsthatshouldbeconsideredwheninterpretingthe
+results.
+6.1 Internal Validity
+• Threats:The”rapid”natureoftheRMLRimpliedthatnoin-depthassessmentofthe
+methodologicalqualityoftheincludedstudieswasconducted.However,itisacommon
+practiceintheexecutionofRRs,whichaimtodeliverresultsinashortertimeframe,even
+if this implies simplifying traditional steps. As a consequence, technologies developed
+andevaluatedwithlowermethodologicalrigormayhavebeenincludedandtreatedwith
+thesameweightasthosewithmorerobustmethodologies.Furthermore,theinclusionof
+grey literature introduces sources that have not undergone peer review, whose content
+may reflect commercial bias or opinions unsupported by solid empirical evidence.
+• Mitigations: To mitigate these effects, we acknowledge these limitations as inherent
+to the RMLR approach. Our primary mitigation strategy was to design the research
+questions themselves to act as a proxy for quality assessment. Specifically, subques-
+tions regarding maturity (RQ1f), support (RQ1g), and industrial collaboration (RQ1j)
+allowed us to indirectly assess the practical relevance and robustness of each solution’s
+evidence. For the grey literature, we adopted a source diversification strategy, consult-
+ingmultiplechannels(Google,GitHub,andPapersWithCode)toexpandcoverageand
+minimize platform-specific biases.
+6.2 External Validity
+• Threats: Threats to external validity concern the generalizability of our findings. The
+scope of our search was deliberately limited, which introduces four main considera-
+tions.First,thesearchinthescientificliteraturewasrestrictedtotheScopusdatabase.
+Second, the grey literature analysis considered only the first 100 results from each
+queried platform, potentially excluding relevant sources ranked lower by the search
+engine. Third, the study included only articles published in English after December
+2021, which excludes solutions published in other languages or earlier periods. Finally,
+a temporal threat exists due to the rapid evolution of Generative AI, suggesting that
+new tools or versions may have emerged between our data collection (April-May 2025)
+and publication.
+• Mitigations:Theselimitationsweredeliberatescopingdecisions,necessarytoconduct
+a“rapid”assessmentfocusedonthemostrecentandaccessiblesolutions.Thisapproach
+was justified in the Methodology section, where we emphasized that the objective was
+nottobeexhaustivebuttoprovideastructuredoverviewofcurrentpractice.Regarding
+the temporal threat, we argue that the critical findings of this assessment, specifically
+the”LastMileProblem”andthelackofindustrialreadiness,aresystemiccharacteristics
+of the field rather than transient features of specific tools. Therefore, the structural
+diagnostic presented here remains a valid and necessary baseline for understanding the
+persistent gap between academic prototypes and industrial needs.
+29
+
+--- PAGE 30 ---
+6.3 Construct Validity
+• Threats: The main threat in this category is related to the operationalization of the
+search strings. The concept of ”software quality” is broad and multifaceted, making it
+challenging to ensure that all its dimensions are considered when formulating queries.
+Furthermore, other terms used, such as those related to Generative AI technologies,
+the types of expected solutions, or the application context, may also be ambiguous or
+inconsistently used across sources, especially in the grey literature. Additionally, the
+need to shorten the search string for Google, imposed by the search engine’s technical
+limitations, may have compromised the consistency and scope of data collection across
+the different sources.
+• Mitigations: To mitigate these threats, we employed a diversified strategy. First, we
+usedthePICOCapproachtosystematicallystructureanddecomposeourresearchques-
+tionintospecific,searchableterms.Thisprocess,whichincludedtheuseofwildcards(*)
+inScopus,helpedcaptureterminologicalvariations.Second,thestringswereiteratively
+refinedthroughiterativerefinementthroughpilotsearchesandcollaborativediscussions
+among the authors. Finally, to mitigate the risk of losing sources from the simplified
+Googlequery,ouriterativeapproachincludedacomplementarysearchstep.Duringthe
+analysis,wealsoassessedtherelevanthyperlinksonthepagesinitiallyretrieved,allow-
+ing us to expand coverage beyond the query’s direct results. While the reduction of
+the search string for Google remains a limitation, we argue that this combination of a
+structuredapproach(PICOC)andanexploratoryapproach(linkassessment)provided
+a robust and transparent data-collection process.
+6.4 Conclusion Validity
+• Threats: Researcher bias in the selection and classification of studies is an inherent
+threat to any review, especially when it involves subjective judgments. The interpreta-
+tion of inclusion and exclusion criteria, as well as the categorization of findings, may
+vary among team members, potentially affecting the consistency of the results.
+• Mitigations: To mitigate this threat, we implemented a rigorous, multi-stage review
+protocol throughout the screening process. For the Scopus literature, each stage (title,
+abstract, and full text) involved independent evaluations by at least 2 authors. Dis-
+agreements were systematically resolved either through a predefined consensus rule, a
+third-party mediator, or a final consensus meeting, as detailed in Section 3.3. For the
+grey literature, the sources were initially distributed among three authors for indepen-
+dent readings. This was followed by a cross-review stage, in which a second author
+reassessedeachsource,ensuringthateachitemunderwentadualreviewbeforediscrep-
+ancieswerediscussedinaconsensusmeeting.Thisstructured,multi-reviewerapproach,
+supported by tools like JabRef for managing scientific literature, was designed to
+ensure greater consistency and reliability in the final selection of publications, thereby
+strengthening the validity of our conclusions.
+7 CONCLUSION
+This study aimed to assess the industrial readiness and availability of Generative AI-based
+solutions currently available to support quality-related activities in Software Engineering.
+Our findings reveal a field in its early stages, characterized by a vibrant academic interest
+that has yet to translate into a mature ecosystem of industry-ready tools. The landscape is
+markedbyasignificantgapbetweenthestateoftheartinacademicresearchandthestateof
+30
+
+--- PAGE 31 ---
+practice in industry, primarily due to a lack of industrial validation, high adoption barriers,
+and structural technical limitations regarding model precision and generalizability.
+7.1 Implications of this Work
+Theresultsofthisstudycarrysignificantimplicationsforbothresearchersandpractitioners.
+For researchers, our findings highlight a critical need to bridge the “last mile” gap between
+algorithmic prototypes and usable solutions. Future work should prioritize industrial collab-
+orations, address the reliability gap through improved explainability and context-awareness,
+and validate on real-world data rather than relying solely on synthetic benchmarks, and
+createwell-documented,reproducibleartifacts.For practitioners,thisworkservesasaprag-
+maticguidetothecurrentlandscape,underscoringthatGenerativeAIshouldbeadoptedas
+an assistive technology that augments human expertise, not as a fully autonomous replace-
+ment.Practitionersmustcarefullyconsiderthe“strategicadoptiondilemma,”balancingthe
+costs and risks of proprietary models against the infrastructure and expertise demands of
+open-source alternatives.
+7.2 Limitations of this Study
+Whileweemployedarigorousmethodology,thisstudyhasinherentlimitationsthatshouldbe
+considered.First,ourassessmentreliesonthereportedevidence,documentation,andrepos-
+itorydataoftheidentifiedsolutions;wedidnotperformahands-onexecutionorbenchmark
+testing of the tools themselves. Second, by focusing on publicly documented solutions, our
+search may have missed proprietary, in-house tools used silently within specific companies.
+Additionally, while the use of Scopus as the primary academic database provided a broad
+baseline,itispossiblethatsomespecifictool-relatedpapersindexedinotherdatabaseswere
+not captured, a risk we mitigated by triangulating with extensive grey literature searches.
+Finally,regardingtherapidevolutionofGenerativeAI,weacknowledgethatindividualtool
+versions may have changed since our data collection. However, as discussed in Section 5,
+we contend that the identified structural challenges, such as the “Last Mile Problem”, are
+systemic and persist independently of short-term model updates.
+7.3 A Roadmap for Future Research
+Based on the gaps and opportunities identified, we propose a clear roadmap to advance the
+field towards higher quality standards:
+1. IndustrialCaseStudiesandBenchmarks:Thereisanurgentneedforin-depthcase
+studies evaluating academic prototypes in real-world industrial settings. Furthermore,
+althoughchallengingduetoconfidentialityconstraintsandthelimitedpublicavailability
+of proprietary systems, the community would greatly benefit from the development
+of standardized benchmarks grounded in realistic industrial scenarios. Possible paths
+forward include anonymized datasets, curated subsets of proprietary systems under
+controlled collaborationagreements, orsystematicallyconstructedbenchmarksderived
+from representative open-source repositories (e.g., SWE-bench (Jimenez et al. 2024)).
+Such initiatives would enhance the ecological validity, fairness, and reproducibility of
+evaluations while strengthening the bridge between academic research and industrial
+practice.
+2. Quality Guidelines and Standardization: Future research must move beyond ad-
+hoc experimentation to establish quality models for GenAI-based SE solutions. This
+31
+
+--- PAGE 32 ---
+includesdefiningspecificstandardsforrobustness,explainability,andintegrationreadi-
+ness.Furthermore,thereisacriticalneedforsystematiccriteriatoguidemodelselection,
+helpingpractitionersevaluatethetrade-offsbetweenclosedandopenarchitecturesbased
+on specific industrial constraints.
+3. ExpandingtheScopeAcrosstheSDLCandISO25010:Asourmappingrevealed
+a heavy concentration of solutions in the Coding and Testing phases, future research
+mustexpandtoearlierstagesoftheSDLC.Thereisasignificantopportunitytoexplore
+GenAI solutions in Requirements engineering and Design architecture. Furthermore,
+the field must move beyond isolated code-level fixes (primarily targeting Security and
+Reliability) to address the full spectrum of systemic quality attributes defined by the
+ISO/IEC 25010 standard, such as usability, performance efficiency, and portability.
+4. Addressing the “Last Mile” Problem: Research is needed on the software
+engineering challenges of transforming GenAI prototypes into robust, industry-ready
+tools. This requires a dual approach: (i) addressing operational usability through
+IDE integration, human-computer interaction for AI assistants, and seamless CI/CD
+deployment; and (ii) solving fundamental reliability hurdles, specifically by enhanc-
+ing cross-project generalization and providing transparent, actionable rationales for
+AI-generated outputs.
+In conclusion, closer, more structured collaboration between academia and industry will
+beessentialtorealizethepotentialofGenerativeAIanddeliverreliable,scalable,andeffective
+solutions that can be integrated into the daily operations of software quality assurance.
+Acknowledgements. We want to thank the research team for their dedication and
+collaborative efforts throughout the development of this study. Prof. Travassos is a CNPq
+Researcher and CNE FAPERJ.
+Author contribution. A.G., P.A.G., and C.H.B. led the execution and writing of this
+study. R.M.M. and G.H.T. supervised, reviewed the text, and collaborated on the study’s
+feasibility. S.R. and R.F. assisted with the text review.
+Funding. Not applicable.
+Data availability. We provide an archive of our artifacts in the Zenodo database under
+accession number 17096048. This repository includes the search strings, the list of includ-
+ed/excluded studies, the raw inter-rater agreement datasets (confusion matrices), and the
+scripts used for the Kappa calculations. Available at: https://zenodo.org/records/17096048
+Declarations
+Competing interests. The authors declare no competing interests.
+Ethics approval and consent to participate. Not applicable.
+Consentforpublication. Alltheparticipantswereinformedandfreelysignedaconsent
+form to participate in the research.
+32
+
+--- PAGE 33 ---
+References
+Ahmed, M.B.U., Harzevili, N.S., Shin, J., Pham, H.V., Wang, S.: SecVulEval: Bench-
+marking LLMs for Real-World C/C++ Vulnerability Detection. Preprint at https:
+//arxiv.org/abs/2505.19828 (2025)
+Ahmad, Z., Kuo, M.M.Y.: Improving story points estimation using ensemble machine
+learning. Software Quality Journal 33(1), 35 (2025) https://doi.org/10.1007/
+s11219-025-09731-6
+Alagarsamy, S., Tantithamthavorn, C., Takerngsaksiri, W., Arora, C., Aleti, A.:
+Enhancinglargelanguagemodelsfortext-to-testcasegeneration.JournalofSystems
+and Software 230, 112531 (2025)
+Baldassarre,M.T.,Caivano,D.,Dimauro,G.,Romano,S.,Scanniello,G.:Oninternet-
+of-things devices in ambient assisted living solutions. In: International Conference
+on Information Systems Development (2021)
+Bhandari, G., Gavric, N., Shalaginov, A.: Generating vulnerability security fixes with
+code language models. Information and Software Technology 185, 107786 (2025)
+https://doi.org/10.1016/j.infsof.2025.107786
+Banh,L.,Holldack,F.,Strobel,G.:Copilotingthefuture:Howgenerativeaitransforms
+software engineering. Information and Software Technology 183, 107751 (2025)
+https://doi.org/10.1016/j.infsof.2025.107751
+Bazzan, T., Olojo, B., Majda, P., Kelly, T., Yilmaz, M., Marks, G., Clarke, P.:
+Analysing the role of generative AI in software engineering - results from an
+MLR. In: Systems, Software and Services Process Improvement. EuroSPI 2024, pp.
+163–180 (2024). https://doi.org/10.1007/978-3-031-71139-8 11
+Cruzes, D.S., Dyba, T.: Recommended steps for thematic synthesis in software engi-
+neering. In: 2011 International Symposium on Empirical Software Engineering and
+Measurement, pp. 275–284. IEEE, Banff, Canada (2011). https://doi.org/10.1109/
+ESEM.2011.36
+Chen,X.,Lin,M.,Sch¨arli,N.,Zhou,D.:Teachinglargelanguagemodelstoself-debug.
+In:12thInternationalConferenceonLearningRepresentations(ICLR2024)(2024)
+Cartaxo, B., Pinto, G., Soares, S.: The role of rapid reviews in supporting decision-
+making in software engineering practice. In: Proceedings of the 22nd International
+Conference on Evaluation and Assessment in Software Engineering 2018 (EASE
+’18), pp. 24–34. Association for Computing Machinery (ACM), Christchurch, New
+Zealand (2018). https://doi.org/10.1145/3210459.3210462
+Cusumano, M.: Nvidia at the center of the generative ai ecosystem—for now.
+Communications of the ACM 67(1), 33–35 (2023)
+33
+
+--- PAGE 34 ---
+De Vito, G., Lambiase, S., Palomba, F., Ferrucci, F.: Meet C4SE: Your new col-
+laborator for software engineering tasks. In: 2023 49th Euromicro Conference on
+Software Engineering and Advanced Applications (SEAA), pp. 235–238. IEEE,
+Durres, Albania (2023). https://doi.org/10.1109/SEAA60479.2023.00044
+Fan,J.,Li,Y.,Wang,S.,Nguyen,T.N.:Ac/c++codevulnerabilitydatasetwithcode
+changes and cve summaries. In: Proceedings of the 17th International Conference
+on Mining Software Repositories (MSR ’20), pp. 508–512. ACM, ??? (2020). https:
+//doi.org/10.1145/3379597.3387501
+Fakhoury, S., Naik, A., Sakkas, G., Chakraborty, S., Lahiri, S.: Llm-based test-driven
+interactivecodegeneration:Userstudyandempiricalevaluation.IEEETransactions
+on Software Engineering 50, 2254–2268 (2024)
+Garousi, V., Felderer, M., M¨antyl¨a, M.V.: The need for multivocal literature reviews
+in software engineering: complementing systematic literature reviews with grey lit-
+erature. In: Proceedings of the 20th International Conference on Evaluation and
+Assessment in Software Engineering (EASE ’16), p. 26. Association for Comput-
+ing Machinery (ACM), Limerick, Ireland (2016). https://doi.org/10.1145/2915970.
+2916008
+Garousi, V., Felderer, M., M¨antyl¨a, M.V., Rainer, A.: Benefitting from the grey lit-
+erature in software engineering research. In: Felderer, M., Travassos, G.H. (eds.)
+Contemporary Empirical Methods in Software Engineering, pp. 385–413. Springer,
+Cham (2020). https://doi.org/10.1007/978-3-030-32489-6 14
+Garousi, V., Joy, N., Jafarov, Z., Kele¸s, A.B., De˘girmenci, S., O¨zdemir, E., Zarring-
+halami, R.: AI-powered software testing tools: A systematic review and empirical
+assessmentoftheirfeaturesandlimitations.Preprintathttps://arxiv.org/abs/2409.
+00411 (2025)
+Google: Google Programmable Search Engine. https://programmablesearchengine.
+google.com/about/ (2025)
+Happe, A., Cito, J.: Getting pwn’d by AI: Penetration testing with large language
+models.In:Proceedingsofthe31stACMJointEuropeanSoftwareEngineeringCon-
+ference and Symposium on the Foundations of Software Engineering (ESEC/FSE
+2023),pp.2082–2086.AssociationforComputingMachinery(ACM),SanFrancisco,
+CA, USA (2023). https://doi.org/10.1145/3611643.3613083
+Hamel,C.,Michaud,A.,Thuku,M.,Skidmore,B.,Stevens,A.,Nussbaumer-Streit,B.,
+Garritty,C.:Definingrapidreviews:asystematicscopingreviewandthematicanal-
+ysis of definitions and defining characteristics of rapid reviews. Journal of Clinical
+Epidemiology 129, 74–85 (2021) https://doi.org/10.1016/j.jclinepi.2020.09.041
+He,J.,Vechev,M.:Largelanguagemodelsforcode:Securityhardeningandadversarial
+testing. In: ACM CCS (2023). https://arxiv.org/abs/2302.05319
+34
+
+--- PAGE 35 ---
+Hou, X., Zhao, Y., Liu, Y., Yang, Z., Wang, K., Li, L., Luo, X., Lo, D., Grundy, J.,
+Wang, H.: Large language models for software engineering: A systematic literature
+review. arXiv preprint (2023) arXiv:2308.10620
+Hou, X., Zhao, Y., Liu, Y., Yang, Z., Wang, K., Li, L., Luo, X., Lo, D., Grundy, J.,
+Wang, H.: Large language models for software engineering: A systematic literature
+review. ACM Trans. Softw. Eng. Methodol. 33(8), 220 (2024) https://doi.org/10.
+1145/3695988
+Index.dev: How GenAI Transforms Software Development in 11 Ways. https://www.
+index.dev/blog/11-generative-ai-use-cases-software-development (2024)
+ISO/IEC: Systems and software engineering – systems and software quality require-
+ments and evaluation (SQuaRE) – system and software quality models. Standard
+ISO/IEC 25010:2011, International Organization for Standardization (2011)
+Just,R.,Jalali,D.,Ernst,M.D.:Defects4j:Adatabaseofexistingfaultstoenablecon-
+trolled testing studies for java programs. In: Proceedings of the 2014 International
+Symposium on Software Testing and Analysis (ISSTA ’14), pp. 437–440. ACM, ???
+(2014). https://doi.org/10.1145/2610384.2628055
+Jimenez, C.E., Yang, J., Wettig, A., Yao, S., Pei, K., Press, O., Narasimhan,
+K.: SWE-bench: Can language models resolve real-world GitHub issues?
+In: International Conference on Learning Representations (ICLR) (2024).
+https://openreview.net/forum?id=VT9ovN-cfF
+Kessel, M.: Test-driven Software Experimentation with LASSO: an LLM Prompt
+Benchmarking Example. Preprint at https://arxiv.org/abs/2410.08911 (2025)
+Kitchenham, B.: Procedures for performing systematic reviews. Technical Report
+TR/SE-0401 and NICTA Technical Report 0400011T.1, Software Engineering
+Group, Department of Computer Science, Keele University and Empirical Software
+Engineering, National ICT Australia Ltd., Keele, UK and NSW, Australia (July
+2004). Joint Technical Report
+Kikuta, D., Ikeuchi, H., Tajiri, K.: ChaosEater: Fully Automating Chaos Engineering
+withLargeLanguageModels.Preprintathttps://arxiv.org/abs/2501.11107(2025)
+Kalouptsoglou, I., Siavvas, M., Ampatzoglou, A., Kehagias, D., Chatzigeorgiou, A.:
+Transfer learning for software vulnerability prediction using transformer models.
+Journal of Systems and Software 227, 112448 (2025)
+Kalouptsoglou, I., Siavvas, M., Ampatzoglou, A., Kehagias, D., Chatzigeorgiou,
+A.: Locvul: Line-level vulnerability localization based on a sequence-to-sequence
+approach. Information and Software Technology 189, 107940 (2026)
+35
+
+--- PAGE 36 ---
+Kang,S.,Yoon,J.,Askarbekkyzy,N.,Yoo,S.:Evaluatingdiverselargelanguagemod-
+els for automatic and general bug reproduction. IEEE Trans. Softw. Eng. 50(10),
+2677–2694 (2024) https://doi.org/10.1109/TSE.2024.3450837
+Kang, S., Yoon, J., Yoo, S.: Large language models are few-shot testers: Exploring
+LLM-basedgeneralbugreproduction.In:Proceedingsofthe45thInternationalCon-
+ferenceonSoftwareEngineering(ICSE’23),pp.2312–2323.IEEEPress,Melbourne,
+Victoria, Australia (2023). https://doi.org/10.1109/ICSE48619.2023.00194
+Landis, J.R., Koch, G.G.: The measurement of observer agreement for categorical
+data. Biometrics 33(1), 159–174 (1977) https://doi.org/10.2307/2529310
+Lin, D., Koppel, J., Chen, A., Solar-Lezama, A.: Quixbugs: A multi-lingual program
+repair benchmark set based on the quixey challenge. In: Proceedings of the 2017
+ACM SIGPLAN International Conference on Systems, Programming, Languages,
+and Applications: Software for Humanity (SPLASH Companion ’17), pp. 55–56.
+ACM, ??? (2017). https://doi.org/10.1145/3135932.3135941
+Li, H., Wei, D., Moffitt, K.C., Vasarhelyi, M.A.: Addressing the last mile problem in
+open government data: Using AIS technologies to enhance governmental financial
+reporting. Journal of Emerging Technologies in Accounting (2025). Forthcoming
+Li, T.-O., Zong, W., Wang, Y., Tian, H., Wang, Y., Cheung, S.-C., Kramer, J.:
+Nuances are the key: Unlocking chatgpt to find failure-inducing tests with differen-
+tial prompting. In: 2023 38th IEEE/ACM International Conference on Automated
+SoftwareEngineering(ASE),pp.14–26(2023).https://doi.org/10.1109/ASE56229.
+2023.00089
+Manganelli, A.: Foundation models and generative ai applications: what competitive
+concerns? Available at SSRN 5242028 (2025)
+Mansur,E.,Chen,J.,Raza,M.A.,Wardat,M.:RAGFix:EnhancingLLMcoderepair
+using RAG and Stack Overflow posts. In: 2024 IEEE International Conference on
+Big Data (BigData), pp. 7491–7496. IEEE, Washington, D.C., USA (2024). https:
+//doi.org/10.1109/BigData62323.2024.10825785
+Opara-Martins, J., Sahandi, R., Tian, F.: Critical analysis of vendor lock-in and its
+impact on cloud computing migration: a business perspective. Journal of Cloud
+Computing: Advances, Systems and Applications 5(4) (2016) https://doi.org/10.
+1186/s13677-016-0054-z
+Pena, C., Cartaxo, B., Steinmacher, I., Badampudi, D., Silva, D., Ferreira, W.,
+Almeida,A.,Kamei,F.K.,Soares,S.:Comparingtheefficacyofrapidreviewwitha
+systematic review in the software engineering field. Journal of Software: Evolution
+and Process 37 (2024) https://doi.org/10.1002/smr.2748
+Pizard, S., Lezama, J., Garc´ıa, R., Vallespir, D., Kitchenham, B.: Using rapid
+36
+
+--- PAGE 37 ---
+reviews to support software engineering practice: a systematic review and a
+replication study. Empirical Softw. Engg. 30(1) (2024) https://doi.org/10.1007/
+s10664-024-10545-6
+Phan, H.N., Nguyen, P.X., Bui, N.D.: Hyperagent: Generalist software engineering
+agents to solve coding tasks at scale. arXiv preprint arXiv:2406.11912 (2024)
+Patel,S.,Patil,K.,Chumchu,P.:BHRAMARI:Bugdrivenhighlyreusableautomated
+model for automated test bed generation and integration. Software Impacts 21,
+100687 (2024) https://doi.org/10.1016/j.simpa.2024.100687
+Petticrew, M., Roberts, H.: Systematic Reviews in the Social Sciences: A Practical
+Guide. Blackwell Publishing, Malden (2006)
+Qin, Y., Wang, S., Lou, Y., Dong, J., Wang, K., Li, X.: Soapfl: A standard operat-
+ing procedure for llm-based method-level fault localization. IEEE Transactions on
+Software Engineering 51(4), 1173–1187 (2025)
+Rafi, S., Akbar, M.A., Khan, A.A.: Assessing software product quality in devops: An
+iso 25010:2023 perspective. In: Proceedings of the 2025 Evaluation and Assessment
+inSoftwareEngineering(EASECompanion’25).ACM,NewYork,NY,USA(2025).
+https://doi.org/10.1145/3727967.3756847
+Rocha, S., Feitosa, R., Galeno, L., Travassos, G.H.: A metaprotocol for a family
+of rapid multivocal reviews of generative ai in the software industry. In: XXXIX
+Simp´osio Brasileiro de Engenharia de Software, pp. 804–810 (2025). https://doi.
+org/10.5753/sbes.2025.11577
+Raghi, K.R., Sudha, K., M., S.A., Joshua S., S.: Software development automation
+using generative AI. In: 2024 International Conference on Emerging Research in
+Computational Science (ICERCS), pp. 1–6. IEEE, ??? (2024). https://doi.org/10.
+1109/ICERCS63125.2024.10894980
+Russo,D.:Navigatingthecomplexityofgenerativeaiadoptioninsoftwareengineering.
+ACMTrans.Softw.Eng.Methodol.33,50(2024)https://doi.org/10.1145/3652154
+SEDaily: Weaving Generative AI into DevSecOps. https://softwareengineeringdaily.
+com/2024/04/18/gitlab-weaving-generative-ai-devsecops/ (2024)
+Schmid, L., Hey, T., Armbruster, M., Corallo, S., Fuchß, D., Keim, J., Liu, H.,
+Koziolek, A.: Software Architecture Meets LLMs: A Systematic Literature Review.
+Preprint at https://arxiv.org/abs/2505.16697 (2025)
+Siavvas,M.,Kalouptsoglou,I.,Gelenbe,E.,Kehagias,D.,Tzovaras,D.:Transforming
+thefieldofvulnerabilityprediction:Arelargelanguagemodelsthekey?In:Proceed-
+ings of the 32nd International Symposium on Modeling, Analysis, and Simulation
+of Computer and Telecommunication Systems (MASCOTS 2024) (2024)
+37
+
+--- PAGE 38 ---
+Steenhoek,B.,Rahman,M.M.,Roy,M.K.,Alam,M.S.,Tong,H.,Das,S.,Barr,E.T.,
+Le, W.: To Err is Machine: Vulnerability Detection Challenges LLM Reasoning.
+Preprint at https://arxiv.org/abs/2403.17218 (2025)
+Shull, F., Singer, J., Sjøberg, D.I.K. (eds.): Guide to Advanced Empirical
+Software Engineering. Springer, London, UK (2008). https://doi.org/10.1007/
+978-1-84800-044-5
+Sheng,Z.,Wu,F.,Zuo,X.,Li,C.,Qiao,Y.,Lei,H.:ResearchontheLLM-drivenvul-
+nerabilitydetectionsystemusingLProtector.In:2024IEEE4thInternationalCon-
+ferenceonDataScienceandComputerApplication(ICDSCA),pp.192–196.IEEE,
+Guilin, China (2024). https://doi.org/10.1109/ICDSCA63855.2024.10859408
+Shao,M.,Xi,H.,Rani,N.,Udeshi,M.,Putrevu,V.S.C.,Milner,K.,Dolan-Gavitt,B.,
+Shukla, S.K., Krishnamurthy, P., Khorrami, F., Karri, R., Shafique, M.: CRAKEN:
+Cybersecurity LLM Agent with Knowledge-Based Execution. Preprint at https:
+//arxiv.org/abs/2505.17107 (2025)
+Travassos, G.H., Gurov, D., Amaral, E.A.G.d.: Introdu¸c˜ao `a engenharia de soft-
+ware experimental. Relat´orio T´ecnico RT–ES–590/02, Programa de Engenharia
+de Sistemas e Computa¸c˜ao, COPPE/UFRJ, Rio de Janeiro, Brazil (2002). https:
+//pesc.coppe.ufrj.br/index.php/pt-BR/publicacoes-pesquisa/details/15/589
+Tang,Y.,Liu,Z.,Zhou,Z.,Luo,X.:Chatgptvssbst:Acomparativeassessmentofunit
+test suite generation. IEEE Transactions on Software Engineering 50, 1340–1359
+(2024)
+Travassos,G.H.,Rocha,S.,Feitosa,R.,Assis,F.,Gon¸calves,P.,Gheventer,A.,Galeno,
+L.,Sasse,A.,Guimar˜aes,J.C.,Brito,C.,Wieland,J.P.:Lessonslearnedfromtheuse
+ofgenerativeaiinengineeringandqualityassuranceofawebsystemforhealthcare.
+In:ProceedingsoftheXXIIIBrazilianSymposiumonSoftwareQuality(SBQS’25).
+SBC, S˜ao Jos´e dos Campos, SP, Brazil (2025)
+Terragni, V., Vella, A., Roop, P., Blincoe, K.: The future of AI-driven software engi-
+neering. ACM Trans. Softw. Eng. Methodol. 34(5), 120 (2025) https://doi.org/10.
+1145/3715003
+Verdecchia, R., Engstr¨om, E., Lago, P., Runeson, P., Song, Q.: Threats to validity
+in software engineering research: A critical reflection. Information and Software
+Technology 164, 107329 (2023) https://doi.org/10.1016/j.infsof.2023.107329
+Washizaki,H.(ed.):GuidetotheSoftwareEngineeringBodyofKnowledge(SWEBOK
+Guide), Version 4.0. IEEE Computer Society, Waseda University, Japan (2024).
+https://www.swebok.org
+Wang, P., Loignon, A.C., Shrestha, S., Banks, G.C., Oswald, F.L.: Advancing orga-
+nizational science through synthetic data: A path to enhanced data sharing and
+38
+
+--- PAGE 39 ---
+collaboration. Journal of Business and Psychology 40, 771–797 (2025) https://doi.
+org/10.1007/s10869-024-09997-w . Published online: 06 December 2024
+Wohlin, C., Runeson, P., H¨ost, M., Ohlsson, M.C., Regnell, B., Wessl´en, A.: Experi-
+mentation in Software Engineering: an Introduction. Kluwer Academic Publishers,
+USA (2000)
+Xia,C.S.,Deng,Y.,Dunn,S.,Zhang,L.:DemystifyingLLM-basedsoftwareengineer-
+ing agents. Proc. ACM Softw. Eng. 2(FSE), 037 (2025) https://doi.org/10.1145/
+3715754
+Xu, H., Liu, H., Wu, Y., Kang, X., Chen, X., Liu, Y.: Exploring the potential and
+limitations of large language models for novice program fault localization. Journal
+of Systems and Software 234, 112731 (2026)
+Xia, C.S., Paltenghi, M., Le Tian, J., Pradel, M., Zhang, L.: Fuzz4All: Univer-
+sal fuzzing with large language models. In: Proceedings of the IEEE/ACM 46th
+International Conference on Software Engineering, p. 126. Association for Comput-
+ing Machinery (ACM), Lisbon, Portugal (2024). https://doi.org/10.1145/3597503.
+3639121
+Yang, J.: Thematic Coding in Qualitative Research: A Prac-
+tical Guide for Real Insights. https://www.usercall.co/post/
+thematic-coding-in-qualitative-research-a-practical-guide-for-real-insights (2025)
+Yang, J., Jimenez, C.E., Wettig, A., Lieret, K., Yao, S., Narasimhan, K.R., Press, O.:
+SWE-agent: Agent-computer interfaces enable automated software engineering. In:
+The Thirty-eighth Annual Conference on Neural Information Processing Systems
+(2024). Preprint at https://arxiv.org/abs/2405.15793
+Yu, Z., Zhang, H., Zhao, Y., Huang, H., Yao, M., Ding, K., Zhao, J.: OrcaLoca: An
+LLM Agent Framework for Software Issue Localization. Preprint at https://arxiv.
+org/abs/2502.00350 (2025)
+Zhang, Z., Chen, C., Liu, B., Liao, C., Gong, Z., Yu, H., Li, J., Wang, R.: Unifying
+the Perspectives of NLP and Software Engineering: A Survey on Language Models
+for Code. Preprint at https://arxiv.org/abs/2311.07989 (2024)
+Zhou, X., Cao, S., Sun, X., Lo, D.: Large language model for vulnerability detection
+and repair: Literature review and the road ahead. ACM Transactions on Software
+Engineering and Methodology (2025). Forthcoming
+39

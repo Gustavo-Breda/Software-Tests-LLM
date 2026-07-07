@@ -1,0 +1,93 @@
+{
+  "story_id": "US-02",
+  "expected_cases": [
+    {
+      "id": "EXP-02-01",
+      "titulo": "Cadastro bem-sucedido com dados válidos no mínimo aceito",
+      "criterios_cobertos": ["CA-02.1"],
+      "tipo": "positivo",
+      "must_cover": "Cadastro com nome de 20 caracteres, e-mail em formato válido inédito e senha 'abc12345' (mínimo aceito: 8 chars com letra e número) retorna 201, exibe mensagem de sucesso e redireciona o usuário para /login.",
+      "matched_generated_case_ids": []
+    },
+    {
+      "id": "EXP-02-02",
+      "titulo": "Cadastro aceita nome no limite inferior de 3 caracteres",
+      "criterios_cobertos": ["CA-02.1"],
+      "tipo": "borda",
+      "must_cover": "Cadastro com nome de exatamente 3 caracteres (limite inferior válido) retorna 201.",
+      "matched_generated_case_ids": []
+    },
+    {
+      "id": "EXP-02-03",
+      "titulo": "Cadastro aceita nome no limite superior de 80 caracteres",
+      "criterios_cobertos": ["CA-02.1"],
+      "tipo": "borda",
+      "must_cover": "Cadastro com nome de exatamente 80 caracteres (limite superior válido) retorna 201.",
+      "matched_generated_case_ids": []
+    },
+    {
+      "id": "EXP-02-04",
+      "titulo": "Cadastro com e-mail já existente é rejeitado",
+      "criterios_cobertos": ["CA-02.2"],
+      "tipo": "negativo",
+      "must_cover": "Cadastro com e-mail que já consta no banco retorna 409 com mensagem literal 'E-mail já cadastrado.'",
+      "matched_generated_case_ids": []
+    },
+    {
+      "id": "EXP-02-05",
+      "titulo": "Registro duplicado não altera o usuário existente",
+      "criterios_cobertos": ["CA-02.2"],
+      "tipo": "borda",
+      "must_cover": "Após uma tentativa de cadastro com e-mail duplicado, o usuário previamente cadastrado permanece inalterado (nome, password_hash e created_at intactos).",
+      "matched_generated_case_ids": []
+    },
+    {
+      "id": "EXP-02-06",
+      "titulo": "Nome com 2 caracteres é rejeitado",
+      "criterios_cobertos": ["CA-02.3"],
+      "tipo": "negativo",
+      "must_cover": "Cadastro com nome de exatamente 2 caracteres (limite inferior menos 1) retorna 422 e o cadastro não é criado.",
+      "matched_generated_case_ids": []
+    },
+    {
+      "id": "EXP-02-07",
+      "titulo": "Nome com 81 caracteres é rejeitado",
+      "criterios_cobertos": ["CA-02.3"],
+      "tipo": "negativo",
+      "must_cover": "Cadastro com nome de exatamente 81 caracteres (limite superior mais 1) retorna 422 e o cadastro não é criado.",
+      "matched_generated_case_ids": []
+    },
+    {
+      "id": "EXP-02-08",
+      "titulo": "Senha com 7 caracteres é rejeitada",
+      "criterios_cobertos": ["CA-02.3"],
+      "tipo": "negativo",
+      "must_cover": "Cadastro com senha 'abc1234' (7 caracteres, abaixo do mínimo de 8) retorna 422 e o cadastro não é criado.",
+      "matched_generated_case_ids": []
+    },
+    {
+      "id": "EXP-02-09",
+      "titulo": "Senha sem letra é rejeitada",
+      "criterios_cobertos": ["CA-02.3"],
+      "tipo": "negativo",
+      "must_cover": "Cadastro com senha '12345678' (8 caracteres, apenas dígitos, sem letra) retorna 422 e o cadastro não é criado.",
+      "matched_generated_case_ids": []
+    },
+    {
+      "id": "EXP-02-10",
+      "titulo": "Senha sem número é rejeitada",
+      "criterios_cobertos": ["CA-02.3"],
+      "tipo": "negativo",
+      "must_cover": "Cadastro com senha 'abcdefgh' (8 caracteres, apenas letras, sem número) retorna 422 e o cadastro não é criado.",
+      "matched_generated_case_ids": []
+    },
+    {
+      "id": "EXP-02-11",
+      "titulo": "E-mail em formato inválido é rejeitado no cadastro",
+      "criterios_cobertos": ["CA-02.3"],
+      "tipo": "negativo",
+      "must_cover": "Cadastro com e-mail em formato inválido (ex.: 'email_sem_arroba') retorna 422 e o cadastro não é criado.",
+      "matched_generated_case_ids": []
+    }
+  ]
+}

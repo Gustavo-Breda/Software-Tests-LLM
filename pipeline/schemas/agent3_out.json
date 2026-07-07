@@ -1,0 +1,41 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://software-tests-llm.local/schemas/agent3_out.json",
+  "title": "Agent 3 Selenium PyTest Codegen Output",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["arquivos", "pendencias_de_automacao"],
+  "properties": {
+    "arquivos": {
+      "type": "object",
+      "additionalProperties": {
+        "type": "string",
+        "minLength": 1
+      },
+      "required": ["conftest.py", "pages.py"],
+      "properties": {
+        "conftest.py": {
+          "type": "string",
+          "minLength": 1
+        },
+        "pages.py": {
+          "type": "string",
+          "minLength": 1
+        }
+      },
+      "patternProperties": {
+        "^test_[a-zA-Z0-9_]+\\.py$": {
+          "type": "string",
+          "minLength": 1
+        }
+      }
+    },
+    "pendencias_de_automacao": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "minLength": 1
+      }
+    }
+  }
+}

@@ -1,0 +1,19 @@
+{
+  "story_id": "US-04",
+  "stage": "agent3",
+  "error": {
+    "type": "RawAgentResponseError",
+    "message": "Agent 3 semantic validation failed: missing test function for TC-04-01."
+  },
+  "provider": "ollama",
+  "model": "llama3.1:8b",
+  "metadata": {
+    "latency_seconds": 8.99393220397178,
+    "prompt_tokens": 7120,
+    "completion_tokens": 297,
+    "raw": {
+      "done_reason": "stop"
+    }
+  },
+  "raw_response": "{\n  \"arquivos\": {\n    \"conftest.py\": \"from selenium import webdriver\\nfrom selenium.webdriver.common.by import By\\nfrom selenium.webdriver.support.ui import WebDriverWait\\nfrom selenium.webdriver.support import expected_conditions as EC\\nimport pytest\\n\\n@pytest.fixture\\ndef driver():\\n    return webdriver.Chrome()\\n\\n@pytest.fixture\\ndef login_data():\\n    return {'email': 'alice@example.com', 'password': 'Senha123'}\",\n    \"pages.py\": \"class LoginPage:\\n    def __init__(self, driver):\\n        self.driver = driver\\n\\n    def enter_email(self, email):\\n        self.driver.find_element(By.ID, 'login-email').send_keys(email)\\n\\n    def enter_password(self, password):\\n        self.driver.find_element(By.ID, 'login-password').send_keys(password)\\n\\n    def submit_login(self):\\n        self.driver.find_element(By.ID, 'login-submit').click()\\n\",\n    \"test_us_04.py\": \"import pytest\\nfrom pages import LoginPage\\nfrom conftest import driver, login_data\\n\\n@pytest.mark.parametrize('email', ['alice@example.com', 'bob@example.com'])\\ndef test_login(email):\\n    login_page = LoginPage(driver)\\n    login_page.enter_email(email)\\n    login_page.enter_password(login_data['password'])\\n    login_page.submit_login()\\n\"\n  },\n  \"pendencias_de_automacao\": []\n}"
+}

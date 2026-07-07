@@ -1,0 +1,64 @@
+{
+  "status_geral": "REPROVADO",
+  "pontuacao": {
+    "cobertura": 7,
+    "fidelidade_ao_requisito": 6,
+    "clareza": 8,
+    "automatizabilidade": 9
+  },
+  "casos_aprovados": [
+    "TC-03-01",
+    "TC-03-02",
+    "TC-03-03",
+    "TC-03-04",
+    "TC-03-05",
+    "TC-03-06"
+  ],
+  "casos_reprovados": [],
+  "problemas": [
+    {
+      "caso_de_teste": "TC-03-02",
+      "tipo": "omissao",
+      "descricao": "O caso não cobre a validação de campos obrigatórios vazios ou em branco após strip, o que é coberto no CA-03.2.",
+      "evidencia_na_historia": "CA-03.2: Campos obrigatórios vazios ou em branco (após strip), título menor que 5 ou maior que 100, descrição menor que 10 ou maior que 500, e prioridade fora do enum retornam 422 e a solicitação não é criada.",
+      "acao_recomendada": "Adicionar validação de campos obrigatórios vazios ou em branco após strip."
+    },
+    {
+      "caso_de_teste": "TC-03-03",
+      "tipo": "omissao",
+      "descricao": "O caso não cobre a validação de campos obrigatórios vazios ou em branco após strip, o que é coberto no CA-03.2.",
+      "evidencia_na_historia": "CA-03.2: Campos obrigatórios vazios ou em branco (após strip), título menor que 5 ou maior que 100, descrição menor que 10 ou maior que 500, e prioridade fora do enum retornam 422 e a solicitação não é criada.",
+      "acao_recomendada": "Adicionar validação de campos obrigatórios vazios ou em branco após strip."
+    },
+    {
+      "caso_de_teste": "TC-03-04",
+      "tipo": "omissao",
+      "descricao": "O caso não cobre a validação de campos obrigatórios vazios ou em branco após strip, o que é coberto no CA-03.2.",
+      "evidencia_na_historia": "CA-03.2: Campos obrigatórios vazios ou em branco (após strip), título menor que 5 ou maior que 100, descrição menor que 10 ou maior que 500, e prioridade fora do enum retornam 422 e a solicitação não é criada.",
+      "acao_recomendada": "Adicionar validação de campos obrigatórios vazios ou em branco após strip."
+    },
+    {
+      "caso_de_teste": "TC-03-05",
+      "tipo": "omissao",
+      "descricao": "O caso não cobre a validação de campos obrigatórios vazios ou em branco após strip, o que é coberto no CA-03.2.",
+      "evidencia_na_historia": "CA-03.2: Campos obrigatórios vazios ou em branco (após strip), título menor que 5 ou maior que 100, descrição menor que 10 ou maior que 500, e prioridade fora do enum retornam 422 e a solicitação não é criada.",
+      "acao_recomendada": "Adicionar validação de campos obrigatórios vazios ou em branco após strip."
+    },
+    {
+      "caso_de_teste": "TC-03-06",
+      "tipo": "omissao",
+      "descricao": "O caso não cobre a validação de campos obrigatórios vazios ou em branco após strip, o que é coberto no CA-03.2.",
+      "evidencia_na_historia": "CA-03.2: Campos obrigatórios vazios ou em branco (após strip), título menor que 5 ou maior que 100, descrição menor que 10 ou maior que 500, e prioridade fora do enum retornam 422 e a solicitação não é criada.",
+      "acao_recomendada": "Adicionar validação de campos obrigatórios vazios ou em branco após strip."
+    }
+  ],
+  "cenarios_omitidos_sugeridos": [
+    {
+      "descricao": "Validar a criação de solicitação sem estar autenticado (sem header Authorization Bearer ou com token inválido).",
+      "criterio_relacionado": "CA-03.3",
+      "justificativa": "Esse cenário é necessário para cobrir a regra de segurança de autenticação.",
+      "tipo_sugerido": "borda"
+    }
+  ],
+  "decisao": "REPROVADO"
+}

@@ -1,0 +1,147 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://software-tests-llm.local/schemas/agent2_out.json",
+  "title": "Agent 2 Judge Output",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "status_geral",
+    "pontuacao",
+    "casos_aprovados",
+    "casos_reprovados",
+    "problemas",
+    "cenarios_omitidos_sugeridos",
+    "decisao"
+  ],
+  "properties": {
+    "status_geral": {
+      "type": "string",
+      "enum": ["APROVADO", "REPROVADO"]
+    },
+    "pontuacao": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "cobertura",
+        "fidelidade_ao_requisito",
+        "clareza",
+        "automatizabilidade"
+      ],
+      "properties": {
+        "cobertura": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 10
+        },
+        "fidelidade_ao_requisito": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 10
+        },
+        "clareza": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 10
+        },
+        "automatizabilidade": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 10
+        }
+      }
+    },
+    "casos_aprovados": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "pattern": "^TC-[0-9]{2}-[0-9]{2}$"
+      },
+      "uniqueItems": true
+    },
+    "casos_reprovados": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "pattern": "^TC-[0-9]{2}-[0-9]{2}$"
+      },
+      "uniqueItems": true
+    },
+    "problemas": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "caso_de_teste",
+          "tipo",
+          "descricao",
+          "evidencia_na_historia",
+          "acao_recomendada"
+        ],
+        "properties": {
+          "caso_de_teste": {
+            "type": "string",
+            "pattern": "^(TC-[0-9]{2}-[0-9]{2}|GERAL)$"
+          },
+          "tipo": {
+            "type": "string",
+            "enum": [
+              "omissao",
+              "fato_incorreto",
+              "ambiguidade",
+              "inconsistencia",
+              "baixa_automatizabilidade"
+            ]
+          },
+          "descricao": {
+            "type": "string",
+            "minLength": 1
+          },
+          "evidencia_na_historia": {
+            "type": "string",
+            "minLength": 1
+          },
+          "acao_recomendada": {
+            "type": "string",
+            "minLength": 1
+          }
+        }
+      }
+    },
+    "cenarios_omitidos_sugeridos": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "descricao",
+          "criterio_relacionado",
+          "justificativa",
+          "tipo_sugerido"
+        ],
+        "properties": {
+          "descricao": {
+            "type": "string",
+            "minLength": 1
+          },
+          "criterio_relacionado": {
+            "type": "string",
+            "pattern": "^CA-[0-9]{2}\\.[0-9]+$"
+          },
+          "justificativa": {
+            "type": "string",
+            "minLength": 1
+          },
+          "tipo_sugerido": {
+            "type": "string",
+            "enum": ["positivo", "negativo", "borda"]
+          }
+        }
+      }
+    },
+    "decisao": {
+      "type": "string",
+      "enum": ["APROVADO", "REPROVADO"]
+    }
+  }
+}

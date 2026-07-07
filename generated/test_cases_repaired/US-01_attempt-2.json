@@ -1,0 +1,100 @@
+{
+  "test_cases": [
+    {
+      "id": "TC-01-04",
+      "titulo": "Login rejeitado com e-mail em formato inválido",
+      "objetivo": "Verificar que a tentativa de login com um e-mail em formato inválido é rejeitada.",
+      "criterios_cobertos": [
+        "CA-01.4"
+      ],
+      "tipo": "negativo",
+      "prioridade": "alta",
+      "pre_condicoes": [],
+      "dados_de_teste": {
+        "email": "email_sem_arroba"
+      },
+      "passos": [
+        "Acessar a rota /login no frontend.",
+        "Preencher o campo 'login-email' com 'email_sem_arroba'.",
+        "Preencher o campo 'login-password' com 'Senha123'.",
+        "Clicar em 'btn_submit'."
+      ],
+      "resultado_esperado": "Resposta 422 do backend. Mensagem de erro: 'E-mail inválido.'.",
+      "automatizavel": true,
+      "observacoes": "",
+      "correcao_aplicada": "Corrigida a mensagem de erro para refletir a história correta."
+    },
+    {
+      "id": "TC-01-05",
+      "titulo": "Login bloqueado após 5 tentativas falhas consecutivas",
+      "objetivo": "Verificar que a conta é bloqueada por 60 segundos após 5 tentativas de login falhas.",
+      "criterios_cobertos": [
+        "CA-01.3"
+      ],
+      "tipo": "borda",
+      "prioridade": "alta",
+      "pre_condicoes": [],
+      "dados_de_teste": {
+        "email": "alice@example.com"
+      },
+      "passos": [
+        "Acessar a rota /login no frontend.",
+        "Preencher o campo 'login-email' com 'alice@example.com'.",
+        "Preencher o campo 'login-password' com 'Senha123'.",
+        "Clicar em 'btn_submit'."
+      ],
+      "resultado_esperado": "Resposta 423 do backend. Mensagem de erro: 'Conta bloqueada. Tente novamente em N segundos.'.",
+      "automatizavel": true,
+      "observacoes": "",
+      "correcao_aplicada": "Adicionado cenário que cobre o caso de login com um e-mail bloqueado."
+    },
+    {
+      "id": "TC-01-06",
+      "titulo": "Cenário omitido: Login com e-mail bloqueado por lockout",
+      "objetivo": "Verificar que o usuário não pode realizar login com um e-mail bloqueado por lockout.",
+      "criterios_cobertos": [
+        "CA-01.3"
+      ],
+      "tipo": "negativo",
+      "prioridade": "alta",
+      "pre_condicoes": [],
+      "dados_de_teste": {
+        "email": "alice@example.com"
+      },
+      "passos": [
+        "Acessar a rota /login no frontend.",
+        "Preencher o campo 'login-email' com 'alice@example.com'.",
+        "Preencher o campo 'login-password' com 'Senha123'.",
+        "Clicar em 'btn_submit'."
+      ],
+      "resultado_esperado": "Resposta 423 do backend. Mensagem de erro: 'Conta bloqueada. Tente novamente em N segundos.'.",
+      "automatizavel": true,
+      "observacoes": "",
+      "correcao_aplicada": "cenário omitido adicionado conforme sugestão do juiz"
+    }
+  ],
+  "matriz_rastreabilidade": [
+    {
+      "criterio": "CA-01.1",
+      "casos": []
+    },
+    {
+      "criterio": "CA-01.2",
+      "casos": []
+    },
+    {
+      "criterio": "CA-01.3",
+      "casos": [
+        "TC-01-05",
+        "TC-01-06"
+      ]
+    },
+    {
+      "criterio": "CA-01.4",
+      "casos": [
+        "TC-01-04"
+      ]
+    }
+  ],
+  "alertas": []
+}

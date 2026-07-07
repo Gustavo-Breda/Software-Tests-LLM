@@ -45,6 +45,11 @@ def test_me_without_token_returns_401(client):
     assert r.status_code == 401
 
 
+def test_login_invalid_email_format_returns_422(client):
+    r = client.post("/api/auth/login", json={"email": "not-an-email", "password": "Senha123"})
+    assert r.status_code == 422
+
+
 ############################### US-02 — Register ###############################
 
 def test_register_happy_path(client):

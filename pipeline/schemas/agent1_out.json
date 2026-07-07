@@ -1,0 +1,122 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://software-tests-llm.local/schemas/agent1_out.json",
+  "title": "Agent 1 Test Case Generation Output",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["test_cases", "matriz_rastreabilidade", "alertas"],
+  "properties": {
+    "test_cases": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "id",
+          "titulo",
+          "objetivo",
+          "criterios_cobertos",
+          "tipo",
+          "prioridade",
+          "pre_condicoes",
+          "dados_de_teste",
+          "passos",
+          "resultado_esperado",
+          "automatizavel",
+          "observacoes"
+        ],
+        "properties": {
+          "id": {
+            "type": "string",
+            "pattern": "^TC-[0-9]{2}-[0-9]{2}$"
+          },
+          "titulo": {
+            "type": "string",
+            "minLength": 1
+          },
+          "objetivo": {
+            "type": "string",
+            "minLength": 1
+          },
+          "criterios_cobertos": {
+            "type": "array",
+            "minItems": 1,
+            "items": {
+              "type": "string",
+              "pattern": "^CA-[0-9]{2}\\.[0-9]+$"
+            }
+          },
+          "tipo": {
+            "type": "string",
+            "enum": ["positivo", "negativo", "borda"]
+          },
+          "prioridade": {
+            "type": "string",
+            "enum": ["alta", "media", "baixa"]
+          },
+          "pre_condicoes": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "minLength": 1
+            }
+          },
+          "dados_de_teste": {
+            "type": "object"
+          },
+          "passos": {
+            "type": "array",
+            "minItems": 1,
+            "items": {
+              "type": "string",
+              "minLength": 1
+            }
+          },
+          "resultado_esperado": {
+            "type": "string",
+            "minLength": 1
+          },
+          "automatizavel": {
+            "type": "boolean"
+          },
+          "observacoes": {
+            "type": "string"
+          },
+          "correcao_aplicada": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "matriz_rastreabilidade": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["criterio", "casos"],
+        "properties": {
+          "criterio": {
+            "type": "string",
+            "pattern": "^CA-[0-9]{2}\\.[0-9]+$"
+          },
+          "casos": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "pattern": "^TC-[0-9]{2}-[0-9]{2}$"
+            }
+          }
+        }
+      }
+    },
+    "alertas": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "minLength": 1
+      }
+    }
+  }
+}

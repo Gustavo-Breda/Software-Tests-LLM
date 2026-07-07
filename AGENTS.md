@@ -4,7 +4,7 @@ Guidance for AI coding agents (Claude Code, Cursor, Copilot, etc.) working in
 this repository. Humans: see [`README.md`](./README.md) for the project overview
 and [`docs/PLAN.md`](./docs/PLAN.md) for the full roadmap and data contracts.
 
-> **Repo stage:** Phases 1 and 2 complete. Phase 3 (Agents 0 & 1) is next.
+> **Repo stage:** Phases 1–3 complete. Phase 4 (Agent 2 — judge + repair loop) is next.
 > Always verify a path exists before editing or running it.
 
 ---
@@ -68,13 +68,15 @@ Follow this order every session:
 | Docker stack (`ollama`, `pipeline`, `backend`, `frontend`) | ✅ Phase 0 done |
 | LLM client layer (`pipeline/llm/`) | ✅ Phase 0 done |
 | Settings & env loader (`pipeline/settings.py`) | ✅ Phase 0 done |
-| Workflow runner stub (`pipeline/workflow/runner.py`) | ✅ Phase 0 done |
+| Workflow runner (`pipeline/workflow/runner.py`) | ✅ Phase 5 done (`PIPELINE_PHASE=phase4|phase5`) |
 | PoC backend — FastAPI (`app/backend/`) | ✅ Phase 1 done (FastAPI + SQLite + pytest) |
 | PoC frontend — React (`app/frontend/`) | ✅ Phase 1 done (React + Vite + data-testid) |
-| Pipeline agents 0–3, Summarizer | ❌ Phase 3–5 |
+| Agents 0–2 quality gate + generation + judge/repair | ✅ Phase 4 done (schemas + JSON validation + runner integration) |
+| Agent 3 codegen | ✅ Phase 5 done (Selenium/PyTest codegen + validation) |
+| Summarizer | ❌ Phase 6 |
 | Context builder, glossary, ui_map | ✅ Phase 2 done |
-| Prompts (`pipeline/prompts/`), schemas (`pipeline/schemas/`) | ❌ Phase 3+ |
-| Evaluation harness (`evaluation/`) | ❌ Phase 7 |
+| Prompts (`pipeline/prompts/`), schemas (`pipeline/schemas/`) | 🚧 Agents 0–3 done; Summarizer pending |
+| Evaluation harness (`evaluation/`) | 🚧 Phase 7 harness done; human oracle files pending |
 
 ---
 
@@ -82,7 +84,7 @@ Follow this order every session:
 
 ```
 pipeline/              # the QA assistant pipeline (Python)
-  agents/              # agent0–3 + summarizer (Phase 3–5, not yet scaffolded)
+  agents/              # agent0–3 implemented; summarizer pending
   context/             # context builder split into focused modules (Phase 2 done)
     models.py          #   UserStory, ContextSection, ContextBlob
     builder.py         #   ContextBuilder + REQUIRED_SECTIONS
@@ -98,17 +100,17 @@ pipeline/              # the QA assistant pipeline (Python)
     claude.py          # Anthropic Claude client
     gemini.py          # Google Gemini client (thinking-model support)
     ollama_client.py   # Ollama client (OpenAI-compatible local models)
-  prompts/             # one .txt per agent — Phase 3+, not yet created
-  schemas/             # JSON schemas per agent I/O — Phase 3+
+  prompts/             # one .txt per agent
+  schemas/             # JSON schemas per agent I/O
   workflow/
     runner.py          # entry point; reads LLM_PROVIDER/LLM_MODEL from env
   settings.py          # configuration loader (reads .env)
 app/
   backend/             # FastAPI PoC app (Phase 1 — stub)
   frontend/            # React PoC app (Phase 1 — scaffold)
-data/                  # user_stories/ (inputs), golden/ (oracle) — not yet
-generated/             # pipeline outputs (test_cases/, scripts/, reports/) — not yet
-evaluation/            # metrics.py + results/ — Phase 7
+data/                  # user_stories/ (inputs), golden/ oracle contract
+generated/             # pipeline outputs (test_cases/, scripts/, reports/)
+evaluation/            # metrics.py + results/ — Phase 7 harness
 docker/                # Dockerfiles: pipeline, backend, frontend, ollama
 docker-compose.yml     # services: ollama, pipeline, backend, frontend, selenium
 .env.example           # all env vars with empty values — the only committed template
@@ -144,8 +146,13 @@ The full stack runs in Docker. No host Python/Node needed.
 # Build & start the full stack
 docker compose up -d --build
 
-# Run the pipeline (reads LLM_PROVIDER/LLM_MODEL from .env)
+# Run through Phase 4 (default): Agent 0, Agent 1, Agent 2 + repair loop
 docker compose run --rm pipeline python -m pipeline.workflow.runner
+
+# Run through Phase 5: also generate Selenium/PyTest scripts
+docker compose run --rm \
+  -e PIPELINE_PHASE=phase5 \
+  pipeline python -m pipeline.workflow.runner
 
 # Override provider inline without editing .env
 docker compose run --rm \

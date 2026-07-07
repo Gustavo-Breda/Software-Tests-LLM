@@ -1,0 +1,32 @@
+{
+  "status_geral": "REPROVADO",
+  "pontuacao": {
+    "cobertura": 8,
+    "fidelidade_ao_requisito": 9,
+    "clareza": 7,
+    "automatizabilidade": 6
+  },
+  "casos_aprovados": [
+    "TC-01-01",
+    "TC-01-02"
+  ],
+  "casos_reprovados": [],
+  "problemas": [
+    {
+      "caso_de_teste": "TC-01-03",
+      "tipo": "fato_incorreto",
+      "descricao": "O caso assume que a senha incorreta é rejeitada com 401, mas a história diz que a mensagem de erro deve ser genérica.",
+      "evidencia_na_historia": "A história diz: 'Com e-mail inexistente ou senha incorreta, o login retorna 401 com a mensagem genérica \"E-mail ou senha inválidos.\" — a mesma mensagem para os dois casos, sem revelar se o e-mail existe.'",
+      "acao_recomendada": "Revisar a história para garantir que a mensagem de erro seja genérica."
+    }
+  ],
+  "cenarios_omitidos_sugeridos": [
+    {
+      "descricao": "Cenário em que o usuário tenta realizar login com um e-mail bloqueado por lockout.",
+      "criterio_relacionado": "CA-01.3",
+      "justificativa": "Essa é uma situação importante para garantir a segurança do sistema.",
+      "tipo_sugerido": "negativo"
+    }
+  ],
+  "decisao": "REPROVADO"
+}

@@ -18,7 +18,9 @@ def get_client(identifier: str, settings: Settings | None = None) -> LLMClient:
 
     if provider == "ollama":
         return OllamaClient(
-            model=model or (settings.ollama_models[0] if settings.ollama_models else "llama3"),
+            model=model or (
+                settings.ollama_pull_models[0] if settings.ollama_pull_models else "llama3"
+            ),
             base_url=settings.ollama_base_url,
         )
     if provider == "gemini":
@@ -37,7 +39,7 @@ def get_client(identifier: str, settings: Settings | None = None) -> LLMClient:
 
 def list_available_clients(settings: Settings | None = None) -> list[str]:
     settings = settings or get_settings()
-    available: list[str] = [f"ollama:{m}" for m in settings.ollama_models]
+    available: list[str] = [f"ollama:{m}" for m in settings.ollama_pull_models]
     if settings.google_api_key:
         available.append(f"gemini:{settings.gemini_model}")
     if settings.anthropic_api_key:

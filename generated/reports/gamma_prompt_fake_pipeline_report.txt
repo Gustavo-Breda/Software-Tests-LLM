@@ -1,0 +1,146 @@
+Crie uma apresentacao em portugues-BR, visual academico-profissional, limpa e objetiva, baseada em um experimento ficticio mas plausivel de execucao end-to-end de um pipeline GenAI para geracao de casos de teste e scripts Selenium/PyTest. O publico e banca/professor de TCC ou projeto de engenharia de software. Nao use tom publicitario. Destaque contexto do problema, motivacao, proposta tecnica, aplicacao utilizada como alvo dos testes, limites, metricas e comparacao com oraculo humano.
+
+Estruture em 13 slides:
+
+Slide 1 — Titulo
+Titulo: "Relatorio Fake de Execucao End-to-End do Pipeline de Testes com LLM"
+Subtitulo: "Exemplo completo de geracao, verificacao, automacao e avaliacao contra oraculo humano"
+Rodape pequeno: "Baseado nas US-01 a US-05 do projeto"
+
+Slide 2 — Contexto do problema
+Explique problema de forma academica:
+- elaboracao manual de casos de teste e custosa, lenta e sujeita a omissoes
+- requisitos em linguagem natural trazem ambiguidades e lacunas
+- geracao automatica com LLM parece promissora, mas ainda sofre com omissao e alucinacao
+Mensagem-chave: desafio nao e apenas gerar texto, e gerar artefatos verificaveis e alinhados ao sistema real.
+
+Slide 3 — Por que este trabalho esta sendo feito
+Explique motivacao:
+- reduzir esforco mecanico do analista de QA
+- acelerar criacao de baseline de testes
+- manter humano no loop para revisao critica
+- avaliar se pipeline multiagente entrega valor maior do que uma geracao simples
+Mensagem-chave: objetivo nao e substituir o analista, e deslocar o esforco para revisao e decisao.
+
+Slide 4 — O que estamos propondo
+Apresente proposta:
+- pipeline com agentes especializados
+- quality gate antes da geracao
+- geracao estruturada de casos
+- judge com repair loop
+- codegen Selenium/PyTest
+- comparacao final com oraculo humano
+Mensagem-chave: proposta combina geracao, verificacao e rastreabilidade.
+
+Slide 5 — Aplicacao utilizada no experimento
+Apresente brevemente a aplicacao alvo dos testes:
+- PoC web app com frontend React e backend FastAPI
+- dominio: autenticacao e solicitacoes de servico
+- uso de `data-testid` para estabilizar automacao
+- historias cobertas: login, cadastro, criacao, filtros e cancelamento
+Mensagem-chave: a aplicacao foi construida para permitir avaliacao controlada do pipeline.
+
+Slide 6 — Telas da aplicacao
+Monte um slide orientado a imagens, prevendo prints de 3 ou 4 telas.
+Sugestao de telas:
+- tela de login
+- tela de cadastro
+- tela de listagem de solicitacoes com filtros
+- tela/modal de cancelamento
+Para cada print, colocar uma legenda curta explicando o que a tela permite validar.
+Mensagem-chave: mostrar visualmente o sistema que serviu de alvo para os testes gerados.
+
+Slide 7 — O que os prints devem destacar
+Slide curto, de apoio visual, explicando o que observar nas capturas:
+- campos interativos com `data-testid`
+- mensagens de erro e sucesso visiveis
+- filtros combinaveis
+- dialog de confirmacao de cancelamento
+- estados relevantes para os criterios de aceitacao
+Se fizer sentido visualmente, transformar em checklist lateral ao lado de um print maior.
+
+Slide 8 — Objetivo do experimento
+Explique que o relatorio simula um fluxo completo:
+- Agent 0 valida qualidade da historia
+- Agent 1 gera casos
+- Agent 2 revisa e dispara repair loop
+- Agent 3 gera scripts Selenium/PyTest
+- Execucao classifica falhas
+- Resultado final e comparado com o oraculo em data/golden
+Mensagem-chave: objetivo nao e mostrar 100% de acerto, e sim um cenario realista com acertos, omissoes e erros residuais.
+
+Slide 9 — Fluxo resumido do pipeline
+Monte um diagrama horizontal simples:
+User Story -> Agent 0 -> Context Builder -> Agent 1 -> Agent 2 -> Repair Loop -> Agent 3 -> Execucao -> Summarizer -> Relatorio
+Adicione uma legenda curta:
+- sem validacao nada avanca
+- humano revisa, nao escreve do zero
+
+Slide 10 — Exemplo de repair loop
+Mostrar 3 mini-casos:
+- US-01: caso de lockout reprovado por nao verificar Retry-After; corrigido e aprovado
+- US-03: caso de titulo curto usava dado invalido; corrigido para 4 caracteres e aprovado
+- US-05: cancelamento reprovado por nao verificar cancelled_at; corrigido e aprovado
+Mensagem-chave: Agent 2 melhora qualidade, mas nao elimina todos os problemas.
+
+Slide 11 — Comparacao com oraculo humano
+Inserir tabela com colunas:
+US | Casos gerados | Casos corretos | Casos esperados | Esperados cobertos | Omitidos | Casos espurios/incorretos
+Linhas:
+US-01 | 5 | 5 | 8 | 5 | 3 | 0
+US-02 | 7 | 6 | 11 | 7 | 4 | 1
+US-03 | 6 | 5 | 16 | 6 | 10 | 1
+US-04 | 5 | 4 | 8 | 6 | 2 | 1
+US-05 | 6 | 6 | 8 | 8 | 0 | 0
+Total | 29 | 26 | 51 | 32 | 19 | 3
+Explique que um mesmo caso gerado pode cobrir mais de um caso esperado do oraculo.
+
+Slide 12 — Metricas principais
+Apresente cards ou tabela com:
+- Precision: 0.8966
+- Recall: 0.6275
+- F1: 0.7382
+- Omission rate: 0.3725
+- Incorrect-fact rate: 0.1034
+- Acceptance-criteria coverage: 1.0000
+- Script collect rate: 1.0000
+- Judge precision: 0.8000
+- Judge recall: 0.7273
+- Razao esforco manual/pipeline: 2.5
+Destaque visual:
+- Precision alta
+- Recall medio
+- Cobertura de criterio 100% nao implica cobertura total de cenarios
+
+Slide 13 — Dificuldades, trabalhos futuros e conclusao
+Mostrar 3 bullets claros:
+- TC-02-07: exigiu caractere especial na senha sem base no requisito
+- TC-03-06: esperou 403 para JWT expirado, mas o comportamento correto era 401
+- TC-04-05: inventou regra de paginacao inexistente
+Depois 3 bullets de execucao:
+- 26 scripts passaram
+- 1 falha de teste
+- 1 falha de seletor
+- 1 falha de sistema
+Mensagem-chave: pipeline melhora produtividade, mas ainda precisa de revisao humana e oraculo.
+Ainda neste slide, incluir trabalhos futuros:
+- ampliar recall cobrindo mais casos de borda e combinacoes negativas
+- melhorar judge para detectar mais `IncorrectFact`
+- conectar fase 6 real com summarizer implementado
+- enriquecer contexto com mais exemplos aprovados e evidencias da UI/API
+- comparar pipeline completo contra baseline de prompt unico
+Fechar com conclusao:
+- Pipeline agrega valor real e reduz esforco manual
+- Judge + repair loop corrigem parte importante dos erros do Agent 1
+- Omissao continua sendo principal gargalo
+- Comparacao com oraculo humano e essencial para avaliar qualidade de verdade
+Ultima linha em destaque:
+"Resultado esperado para apresentacao: viabilidade demonstrada, sem vender perfeicao."
+
+Direcao visual:
+- fundo claro
+- tipografia sobria
+- graficos simples
+- sem excesso de animacoes
+- usar azul escuro, cinza, verde discreto para acertos, laranja/vermelho discreto para falhas
+- evitar visual de pitch comercial

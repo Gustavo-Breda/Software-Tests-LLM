@@ -201,27 +201,29 @@ exist before scripts can run). Each phase lists deliverables and a done-check.
 - [x] Implement `context_builder.py` to assemble glossary, approved examples, screen map, and selectors into prompt context (RAG-style injection).
 - [x] **Done when:** Context Builder produces a complete context blob for each story.
 
-### [ ] Phase 3 — Agents 0 & 1
-- [ ] Implement Agent 0 (quality gate) and Agent 1 (test-case generation) with the prompts in Section 7; enforce JSON-only outputs validated against schemas.
-- [ ] **Done when:** the 5 stories pass Agent 0 (or produce actionable clarifications) and Agent 1 emits valid structured test cases with a traceability matrix.
+### [x] Phase 3 — Agents 0 & 1
+- [x] Implement Agent 0 (quality gate) and Agent 1 (test-case generation) with the prompts in Section 7; enforce JSON-only outputs validated against schemas.
+- [x] **Done when:** the 5 stories pass Agent 0 (or produce actionable clarifications) and Agent 1 emits valid structured test cases with a traceability matrix.
 
-### [ ] Phase 4 — Agent 2 (judge) + repair loop
-- [ ] Implement Agent 2 (LLM-as-a-Judge) scoring coverage, fidelity, clarity, automatability; route rejected cases back through Agent 1 (repair prompt) with bounded retries `N`.
-- [ ] **Done when:** rejected cases are repaired and re-judged; loop terminates within `N`.
+### [x] Phase 4 — Agent 2 (judge) + repair loop
+- [x] Implement Agent 2 (LLM-as-a-Judge) scoring coverage, fidelity, clarity, automatability; route rejected cases back through Agent 1 (repair prompt) with bounded retries `N`.
+- [x] **Done when:** rejected cases are repaired and re-judged; loop terminates within `N`.
 
-### [ ] Phase 5 — Agent 3 (codegen)
-- [ ] Implement Agent 3: generate `conftest.py`, `pages.py`, `test_*.py` using Page Object Model, `data-testid` selectors, `WebDriverWait` (no `time.sleep`). Record unresolved selectors in `pendencias_de_automacao`.
-- [ ] **Done when:** generated scripts import and collect under PyTest without syntax errors.
+### [x] Phase 5 — Agent 3 (codegen)
+- [x] Implement Agent 3: generate `conftest.py`, `pages.py`, `test_*.py` using Page Object Model, `data-testid` selectors, `WebDriverWait` (no `time.sleep`). Record unresolved selectors in `pendencias_de_automacao`.
+- [x] Add `PIPELINE_PHASE=phase5` runner mode to execute codegen after Agent 2 approval.
+- [x] Validate generated files for JSON schema, Python syntax, forbidden `time.sleep`, documented selectors, and one `test_*` function per automatizable case.
+- [x] **Done when:** generated scripts import and collect under PyTest without syntax errors.
 
 ### [ ] Phase 6 — Summarizer & execution
 - [ ] Run generated scripts against the PoC; feed PyTest output + Selenium logs + error evidence into the Summarization Agent.
 - [ ] **Done when:** a coverage/execution report classifies each failure cause and maps coverage per acceptance criterion.
 
 ### [ ] Phase 7 — Evaluation
-- [ ] Build the human oracle (gabarito) for the 5 stories.
-- [ ] Implement `evaluation/metrics.py` and compute all Section 8 metrics.
-- [ ] Record perceived-effort timings (pipeline review vs. manual authoring).
-- [ ] **Done when:** a metrics table is produced and reproducible.
+- [ ] Build the human oracle (gabarito) for the 5 stories using the contract in `data/golden/README.md`.
+- [x] Implement `evaluation/metrics.py` for precision, recall, F1, omission rate, incorrect-fact rate, acceptance-criteria coverage, script collect rate, judge precision/recall, and perceived-effort ratio.
+- [ ] Record perceived-effort timings (pipeline review vs. manual authoring) in `data/golden/effort_timings.json`.
+- [ ] **Done when:** a metrics table is produced and reproducible from complete human-reviewed golden files.
 
 ### [ ] Phase 8 — Final report (AV2)
 - [ ] Consolidate results, compare with Silva et al., document limitations.
@@ -250,13 +252,19 @@ iterate. **Outputs are strict JSON, no prose outside the JSON.**
 
 Key contracts (fields summarized; mirror the report exactly in `schemas/`):
 
-- **Agent 0 →** `{ status, derivavel, observacao_formato, problemas[], recomendacao }`
+- **Agent 0 →** `{ status, derivavel, justificativa_derivabilidade,
+  observacao_formato, problemas[]{ criterio_id, tipo, descricao, impacto_em_testes,
+  pergunta_para_o_product_owner }, recomendacao }`
 - **Agent 1 →** `{ test_cases[]{ id, titulo, objetivo, criterios_cobertos[], tipo,
   prioridade, pre_condicoes[], dados_de_teste{}, passos[], resultado_esperado,
-  automatizavel, observacoes }, matriz_rastreabilidade[], alertas[] }`
-- **Agent 2 →** `{ status_geral, pontuacao{cobertura, fidelidade_ao_requisito,
-  clareza, automatizabilidade}, casos_aprovados[], casos_reprovados[],
-  problemas[], cenarios_omitidos_sugeridos[], decisao }`
+  automatizavel, observacoes }, matriz_rastreabilidade[]{ criterio, casos[] },
+  alertas[] }`
+- **Agent 2 →** `{ status_geral, pontuacao{cobertura:0..10,
+  fidelidade_ao_requisito:0..10, clareza:0..10, automatizabilidade:0..10},
+  casos_aprovados[], casos_reprovados[],
+  problemas[]{ caso_de_teste, tipo, descricao, evidencia_na_historia,
+  acao_recomendada }, cenarios_omitidos_sugeridos[]{ descricao,
+  criterio_relacionado, justificativa, tipo_sugerido }, decisao }`
 - **Repair →** Agent 1 contract + `correcao_aplicada` per case.
 - **Agent 3 →** `{ arquivos{ "conftest.py", "pages.py", "test_*.py" },
   pendencias_de_automacao[] }`
@@ -289,8 +297,8 @@ methodology) for direct comparison.
 - Acceptance-criteria coverage — % of criteria with ≥1 approved associated case.
 
 **Automation quality**
-- Executable-scripts rate — % running without syntax/selector errors.
-- Functional success rate — % passing when the feature is correct in the system.
+- Executable-scripts rate — % collecting under PyTest without syntax/selector errors.
+- Functional success rate — % passing when the feature is correct in the system (**not calculated while Phase 6 is skipped**).
 
 **Pipeline-component efficacy**
 - Judge precision — % of judge-reported problems confirmed by human review.

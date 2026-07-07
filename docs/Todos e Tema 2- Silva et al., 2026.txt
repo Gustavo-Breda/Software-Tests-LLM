@@ -1,0 +1,999 @@
+--- PAGE 1 ---
+JournalofSoftwareEngineeringResearchandDevelopment,2019,6:1,doi:10.5753/jserd.2019.xxx
+ ThisworkislicensedunderaCreativeCommonsAttribution4.0InternationalLicense..
+Investigating the use of Large Language Models (LLMs) in Test
+Case Generation
+LeonardoSilva [UniversidadeFederaldoRiodeJaneiro|leonardocesar@ufrj.br]
+AndréGheventer [UniversidadeFederaldoRiodeJaneiro|gheventer@ufrj.br]
+PatríciaGurgel [UniversidadeFederaldoRiodeJaneiro|patriciaamaralgurgel@ufrj.br]
+BrunoBarroso [UniversidadeFederaldoRiodeJaneiro|blemosb@ufrj.br]
+LídvaldodosSantos [UniversidadeFederaldoRiodeJaneiro|lidio@ufrj.br]
+RafaeldeMello [UniversidadeFederaldoRiodeJaneiro|rafaelmello@dcc.ufrj.br]
+Abstract
+Theincreasingcomplexityofmodernsoftwaresystemsandthepressureforshorterdevelopmentcycleshavein-
+tensifiedtheneedformoreefficientverificationpractices.Testcasegenerationremainsacornerstoneofsystematic
+andreproduciblevalidation,yetmanualtestcasegenerationcontinuestobecostly,time-consuming,andproneto
+humanerror.Inthiscontext,LargeLanguageModels(LLMs)haveemergedaspromisingtoolsforautomatingthe
+creationoffunctionaltestcasesfromuserstorieswritteninnaturallanguage.Thispaperreportsacontrolledstudy
+evaluatingtheperformanceofthreeLLMsontenrealuserstoriesfromaBrazilianpublic-sectorenterprisesystem,
+comparingtwopromptingstrategies:zero-shotandone-shot.Quantitativeanalysisshowedcomparableperformance
+acrossstrategies,withcomplementarystrengthsinprecisionandrecall.Asemanticanalysisfurtherrevealedrecur-
+ringdefecttypes,includingincorrectfacts,ambiguities,inconsistencies,andomissions,whichposechallengesfor
+practicaladoption.Despitetheselimitations,thefindingsdemonstratethefeasibilityofleveragingLLMstosupport
+testcasegenerationfromuserstories,whilehighlightingtheneedforexpertoversightandimprovedpromptdesign.
+Keywords: LargeLanguageModels,LLM,SoftwareTesting,TestCaseGeneration,QualityAssurance
+1 Introduction
+• RQ1: To what extent can LLMs generate semanti-
+callycorrecttestcasesbasedonuserstories?
+The increasing complexity of software systems and the de- • RQ2: To what extent do different LLMs (GPT-4o,
+mand for more agile development cycles have reinforced DeepSeek,Gemini1.5Flash)differintheireffective-
+the importance of effective Quality Assurance (QA) prac- nessandconsistencywhengeneratingtestcases?
+tices. Among these, Test Case Generation plays a central • RQ3:Whatistheeffectofone-shotpromptingcom-
+role, as it ensures that the specified requirements are vali- pared to zero-shot on the effectiveness of LLMs in
+datedinasystematicmanner(Myersetal.,2004;Whittaker, generatingtestcases?
+2002). However, the manual creation of such artifacts re-
+mains a significant bottleneck in the software development
+To answer these questions, we conducted a controlled
+lifecycle (SDLC). It is a costly activity, prone to omissions
+study using ten user stories from a real corporate system,
+andinconsistencies,especiallyasthecomplexityofmodern
+assessing the ability of three LLMs to generate functional
+softwareoutpacestraditionaltestingcapabilities(Travassos
+testcasesbasedontwopromptingstrategies:zero-shot and
+etal.,2002).
+one-shot. The investigation focuses not only on measuring
+Recently,LargeLanguageModels(LLMs)haveemerged LLMs’accuracy,butalsoonidentifyingtheincidenceofse-
+aspromisingalternativestoautomatesoftwaretesting.How- mantic defects, adapted from the categorization of defects
+ever, integrating them into daily QA routines presents sub- commonlyappliedinsoftwareinspections(Travassosetal.,
+stantial challenges. As highlighted by Gheventer et al. 1999).
+(2026),despitetherapidproliferationofGenerativeAItools, This research provides relevant contributions to the field
+the field suffers from a “reliability gap”. Most current ap- of Quality Assurance (QA) in software engineering, partic-
+plicationsremainatanexperimentalstageandstrugglewith ularlyregardingtheapplicationofLargeLanguageModels
+thecontextualawarenessneededforcomplex,real-worldde- (LLMs) to the automated generation of test cases from user
+velopment environments. Furthermore, generative AI solu- stories.Themaincontributionsareoutlinedbelow:
+tionsforsoftwarequalityareheavilyfocusedondownstream
+• ExperimentalevaluationinaReal-WorldScenario.De-
+implementationandverificationactivities,underscoringthe
+signandexecutionofacontrolledstudyusing10real-
+needforstudiesthataddresstheinitialphasesofSDLC.
+world user stories from a complex industrial system.
+Giventhiscontext,thepresentcontributestoaddressthese Thestudyintroducesareplicableframeworkthatcom-
+gapsbyinvestigatingtheautomatedgenerationoftestcases binesquantitativemetrics(Precision,Recall,F1-Score)
+directlyfromuserstories,guidedbythefollowingresearch withaqualitativedefectanalysis,ensuringhighmethod-
+questions: ologicalrigorandexternalvalidity.
+
+--- PAGE 2 ---
+InvestigatingtheuseofLargeLanguageModels(LLMs)inTestCaseGeneration Leonardoetal.2025
+• IdentificationofOmissionastheCoreLimitation.The acceptancecriteriastructuredviaBehavior-DrivenDevelop-
+study empirically identifies omission as the most fre- ment (BDD). Their approach showed a significant increase
+quent and critical failure mode of LLMs in test case intestcoverage.Furthermore,Mendozaetal.(2024)evalu-
+generation,farsurpassingidentifieddefects.Thishigh- atedtheunderstandingofBDDscenariosforautomatedtest
+lightsafundamentalchallengeinachievingfullrequire- datageneration,classifyingthembycomplexity.Whilethese
+mentcoveragebasedonimplicitcriteria. studiessuccessfullytranslaterequirementsintoQAartifacts,
+• Comparative Analysis of LLMs and Prompting Strate- theirevaluationsrelystrictlyonstructuralcodecoverageor
+gies.Thestudyprovidesarigorousstatisticalandquali- subjectiveassessments.
+tativecomparison,revealing:(a)aperformanceplateau Finally, Li et al. (2025) conducted a comprehensive em-
+withnostatisticallysuperiormodelforthistask,and(b) piricalevaluationofLLMsappliedtobroadsoftwaretesting
+a clear trade-off where one-shot prompting improves tasks,includingtestcasegeneration,errortracing,andbuglo-
+precision while zero-shot favors recall, with no signif- calizationonopen-sourceprojects.Theirfindingsemphasize
+icantdifferenceinoveralleffectiveness(F1-Score). thatwhileLLMscaneffectivelycomplementmanualtesting,
+they suffer heavily from hallucinations, frequently produc-
+• PracticalImplicationsforQAProcesses.Thefindings
+ingirrelevantorfactuallyincorrectoutputs.Thishighlights
+provide actionable insights for the industry, including
+a critical need for human oversight and rigorous validation
+redefiningtheQAanalyst’srolefrom“creator”to“con-
+methodsbeyondmereexecutionratesorbugdetectioncapa-
+text provider and curator” and emphasizing that the
+bilities. Table ?? presents a comparative overview of these
+choiceofLLMtoolcanbeguidedbypracticalcriteria
+works.Unlikeexistingresearchthatfocusesoncode-centric
+(cost,latency)ratherthanmarginalperformancediffer-
+generationorevaluatesrequirement-to-testtranslationusing
+ences.
+structuralmetrics,ourstudyaddressesthereliabilitygapby
+assessing the semantic correctness of functional specifica-
+The results contribute to a critical understanding of the tions through the application of a formal defect taxonomy
+roleofLLMsintestartifactgeneration,providingevidence combinedwitheffectivenessmetrics(Precision,Recall,and
+of their accuracy, limitations, and error patterns (Runeson F1-score)validatedagainstahuman-expertoracle.
+etal.,2012).Furthermore,theyofferinsightsforresearchers
+and practitioners in Software Engineering interested in ex-
+ploring the integration of generative AI into QA activities,
+3 Study Design
+aswellasinimprovingthegenerationoftestcasesandtrou-
+bleshootinginsoftwareperformancetesting(Verkholomova
+Thissectiondescribesthedesignofthecontrolledstudyeval-
+andNazaruka,2025).
+uatingtheeffectivenessofLargeLanguageModels(LLMs)
+Theremainderofthispaperisstructuredasfollows:Sec-
+in generating test cases from user stories. The study setup
+tion2reviewstherelatedwork.Section3detailsourexper-
+was carefully planned to yield reliable, reproducible re-
+imental design. Section 4 presents the experimental results,
+sults representative of the challenges test teams face in ag-
+andSection5discussesthethreatstotheirvalidity.Finally,
+ile, real-world scenarios. The complete replication package
+Section6interpretstheimplicationsofourfindings,andSec-
+is publicly available on GitHub (https://github.com/
+tion7concludesthepaper.
+leonardocesarc/testcase). It includes the dataset of
+userstories,thefullsetoforiginalprompts,andthegenerated
+testcases.Topreservethesemanticvalidityoftheanalysis,
+2 Related Work
+thetextualartifactsaremaintainedintheiroriginallanguage
+(Portuguese), accompanied by an English README file and
+InthecontextofLLM-basedtestautomation,onestreamof
+standardizedspreadsheetswithEnglishmetadataforaccessi-
+researchinvestigatesthegenerationofunittestsdirectlyfrom
+bility.
+source code. Schäfer et al. (2023) present a large-scale em-
+The study was designed to systematically answer the re-
+piricalevaluationofLLMs’effectivenessinautomatedunit
+search questions presented in the Introduction, comparing
+testgenerationwithoutmanualeffort.Theirresultsindicate
+different models and prompting strategies under controlled
+thattheeffectivenessofthetestingapproachisinfluencedby
+conditions to ensure the reliability and validity of the find-
+the size and training set of the LLM. Similarly, Chen et al.
+ings.
+(2024)proposedanLLM-basedautomatedunittestgenera-
+tionframework.Theirresultsdemonstratedgreatercodecov-
+erage in half of the evaluated projects. Wang et al. (2024) 3.1 ResearchQuestionsandHypotheses
+complemented this line of work by introducing a method
+thatdecomposescomplexJavamethodsintoslicesanduses Toguideourinvestigation,thestudywasstructuredaround
+LLMstogeneratetestsforeachslice.Theresultsshowedthat four central research questions (RQs). Each question led to
+themethodoutperformedcurrenttest-generationmethodsin the formulation of a null hypothesis (H ), which posits the
+0
+bothlineandbranchcoverage. absenceofastatisticallysignificanteffectordifference,and
+Beyondunittesting,anotherstreamofresearchfocuseson analternativehypothesis(H ),whichpositsitsexistence.Ta-
+1
+generatingtestartifactsdirectlyfromnaturallanguagespec- ble 2 presents the direct relationship between the research
+ifications.Santosetal.(2024)employedanLLM-basedtool questionsandtheformulatedhypotheses,whichweresubse-
+toautomaticallygeneratetestsdirectlyfromuserstoriesand quentlytestedthroughstatisticalanalysis.
+
+--- PAGE 3 ---
+InvestigatingtheuseofLargeLanguageModels(LLMs)inTestCaseGeneration Leonardoetal.2025
+Table1.ComparisonofRelatedWorks
+Study InputArtifact Generated EvaluationFocus MainDifferences
+Output
+ThisStudy UserStories FunctionalTest SemanticCorrectness Evaluatessemantic
+Cases correctnessdirectlyfrom
+requirementsusingadefect
+taxonomy.
+Schäferetal. Sourcecode Unittests Codecoverage Code-centricapproach;
+(2023) reliesonstructuralmetrics
+ratherthansemantic
+alignment.
+Chenetal. Sourcecode Unittests Codecoverage Code-centricapproach;
+(2024) focusesonimplementation
+verificationratherthan
+requirements.
+Wangetal. Javamethods Unittests Lineandbranch Decomposescomplexcode,
+(2024) coverage butremainsstrictlyboundto
+structuralcodemetrics.
+Santosetal. Userstoriesand AutomatedBDD Testcoveragemetrics Translatesrequirements,but
+(2024) BDDcriteria acceptancetests evaluatessuccessstrictly
+throughstructuralcode
+coverage.
+Mendozaetal. BDDscenariosin Testdata Structuralcoverageor Focusesontestdatarather
+(2024) Gherkin generation subjectiveassessment thanscripts,withoutformal
+semanticvalidationoflogic.
+Lietal.(2025) Open-source Testcases,bug Executionratesand Broadempiricalevaluation
+projects localization bugdetection highlightinghallucination
+(Code/Bugs) capabilities frequencycomparedto
+manualtesting.
+Table2.RelationshipbetweenResearchQuestionsandHypotheses. 3.2.1 IndependentVariables
+RQ Hypotheses
+Thefollowingtwofactorsweresystematicallymanipulated
+duringtheexperiment:
+RQ1 H LLMsgeneratetestcaseswithalowlevelofsemantic
+0
+• LLM Model: Three Large Language Models (LLMs)
+correctnessandahighfrequencyofdefects.
+were selected for the experiment, representing distinct
+H LLMsgeneratetestcaseswithahighlevelofsemantic
+1 architecturesanddesignapproaches:
+correctnessandalowfrequencyofdefects.
+– GPT-4o (OpenAI): A multimodal Transformer
+RQ2 H There is no significant difference in effectiveness
+0
+modelwidelyusedforreasoningandcontext-aware
+and consistency among the evaluated models (GPT-4o,
+DeepSeek,Gemini1.5Flash). textgeneration.
+– DeepSeek (Hangzhou DeepSeek AI Co., Ltd): A
+H There are significant differences in effectiveness and
+1
+consistencyamongthemodels. lightweightmodeloptimizedforefficiencyandcost
+reduction, combining supervised learning with rein-
+RQ3 H Thereis nosignificant differencein theeffectiveness
+0 forcementlearningfromhumanfeedback(RLHF).
+(measuredbyF1-Score)oftestcasegenerationbetweenthe
+zero-shotandone-shotpromptingstrategies. – Gemini 1.5 Flash (Google DeepMind): A multi-
+modal model featuring advanced symbolic and con-
+H Thereisasignificantdifferenceintheeffectivenessof
+1 textual reasoning, optimized for fast inference and
+testcasegenerationbetweenthepromptingstrategies.
+long-contextprocessing.
+3.2 Variables
+• Prompting Strategy: Two classical prompting tech-
+niqueswereappliedtotheselectedLLMs(Brownetal.,
+2020):
+Theexperimentwasdesignedwithaclearsetofindependent – zero-shot:TheLLMwasaskedtogeneratetestcases
+and dependent variables to isolate effects and measure out- basedsolelyontheuserstoryandasetofinstructions,
+comesobjectively. withoutanypriorexamples.
+
+--- PAGE 4 ---
+InvestigatingtheuseofLargeLanguageModels(LLMs)inTestCaseGeneration Leonardoetal.2025
+– one-shot: The prompt included a complete, illustra- Table3.UserStoriesusedintheexperiment
+tiveexampleofatestcasebeforethetargetuserstory, ID UserStory(summary)
+servingasastructuralandsemanticreferenceforthe
+US01 Automaticallysavequotesandinitialpetitions
+generationtask.
+US02 Acknowledgedocumentsthroughtheprocesstree
+US03 Activateordeactivatesubjectsinthesystem
+US04 Modifythedossierrecordinterfaceforimprovedvisualization
+3.2.2 DependentVariables US05 Displayprocessidentifierwithlastmovement
+US06 Accessprotectiveformsthroughmodalwindows
+To evaluate the LLMs’ performance, the following depen- US07 Displayusefullinkssection
+US08 Includeconfidentialitybetweenagenciesinthe“ChildProtec-
+dentvariablesweremeasured:
+tion”tab
+US09 Access“SocialProfileandFamilyContact”tab
+• QuantitativeMetrics:Toassesstheaccuracyandcov- US10 Access“CurrentShelter”tabintheprotectiveform
+erage of the generated test cases, we measured Preci-
+sion, Recall, and F1-Score. These metrics were calcu- varyingdegreesoffunctionalcomplexity,rangingfromsim-
+latedbycomparingtheLLM-generatedoutputsagainst ple workflows to conditional and multi-step business rules.
+thehuman-createdreferenceoracle. To provide a concrete illustration of the input artifacts pro-
+vided to the LLMs, Figure 1 presents a representative (and
+• Semantic Quality Criteria: To assess the semantic
+anonymized)exampleofauserstoryfromthedataset.
+quality of the generated test cases, we manually an-
+alyzed and classified each output based on criteria
+Title:US01-Automaticallysavequotesandinitialpetitions
+adaptedfrom(Travassosetal.,1999).Thisprocessin-
+volved: (i) categorizing semantic defects in incorrect UserStory:
+test cases, including Incorrect Fact (factually wrong Asawriterofquotasandpetitions,Iwouldlikethemtobe
+information), Ambiguity (vague or multi-interpretable savedautomaticallytoavoiddataloss,forexample,dueto
+timeoutsorconnectionproblems.
+statements),andInconsistency(acontradictionbetween
+steps, acceptance criteria, or contextual expectations);
+AcceptanceCriteria(ACs):
+(ii)annotatingthepresenceofExtraneousInformation
+1. AC1:Whencreatingaquotaorinitialpetition,thesys-
+(elements in a generated test case that are irrelevant
+temshouldprovideatooltoautomaticallysavethedata
+to the source user story) in correct test cases; and
+enteredbytheuser;
+(iii) systematically recording Omissions (the absence
+2. AC2: The saving should occur every X minutes (or
+ofexpectedtestcases)bycomparingthegeneratedset
+characterstyped?).
+againstthehumanoracle. 3. AC3:Iftheusercomesfromthenotificationsbox,and
+there is an automatically saved notification different
+fromthenotificationinthebox,donotoverwritethe
+3.3 DatasetandReferenceOracle
+notificationfieldwiththeautomaticallysaveddata.
+4. AC4:Creationofmovementandrequireddata.
+Thedatasetusedinthisstudywasextractedfromarealworld
+Figure1.Exampleofauserstoryusedintheexperiment,includingitstitle,
+enterprisesystemusedbyaBrazilianjudicialbody.
+narrative,andacceptancecriteria.
+The choice enterprise system was motivated by the need
+to evaluate the LLMs’ performance in a practical, industry
+relevant scenario judicial. The dataset consists of ten real
+3.4 PromptDesignStrategy
+userstories(USs)inPortuguese,detailedinTable3,thatde-
+scribedistinctsystemfunctionalities.Foreachuserstory,a Weadoptedastructuredpromptingapproachgroundedinthe
+correspondingsetofmanualtestcaseshadbeenpreviously promptengineeringpatternsproposedbyWhiteetal.(2023).
+createdbyateamofexperiencedsoftwaretestingspecialists. Specifically, we employed the persona pattern to establish
+Thesemanualtestcaseswereextracteddirectlyfromtheof- thebehaviorofaSeniorQASpecialist,requiringknowledge
+ficialQAdocumentationoftheenterprisesystem,represent- ofISTQBstandards(seeFigure2),andthecontextmanager
+ingproductionvalidatedacceptancecriteriaratherthansyn- patterntoboundthescopeofthegeneration.Theinstructions
+theticacademicexamples.Thishumangeneratedsetoftest explicitlydirectedthemodelstoapplyEquivalencePartition-
+casesservedastheoracleforourexperiment,establishingthe ing and followed strict output formatting. This included re-
+groundtruthforevaluatingthecorrectnessandcompleteness quiringspecificfields(ID,Name,Pre-condition,Objective,
+oftheLLMgeneratedoutputs. andExpectedResult)whileforbiddingconversationalfiller.
+The user stories were selected to ensure functional di- Fortheone-shotstrategy,aconcreteexampleofaloginvali-
+versity, covering a range of system behaviors from simple dationtestcasewasappended.Itisimportanttohighlightthat
+dataentrytomorecomplexbusinessrulesanduserinterac- theuserstories(inputdata)wereextractedfromaBrazilian
+tions. Due to the exploratory nature of this study and the governmentalsystemusedbypublicdefenderstoprovidele-
+need for in-depth qualitative analysis of the generated test galguidancetocitizens.Assuch,theoriginalrequirements
+cases,asubsetoftenuserstorieswasintentionallyselected werewritteninPortugueseandcontainterminologyandjar-
+from a larger available pool. All sensitive information was gonspecifictotheBrazilianlegaldomain.Therefore,topre-
+anonymized to protect confidentiality. All user stories used servesemanticnuancesandavoidpotentialnoiseintroduced
+werecarefullyanonymizedandreviewedbydomainexperts bytranslationlayers,allpromptswereconstructedandpro-
+toensurerelevance,pertinencetotheresearchcontext,and cessedintheoriginallanguage.
+
+--- PAGE 5 ---
+InvestigatingtheuseofLargeLanguageModels(LLMs)inTestCaseGeneration Leonardoetal.2025
+TESTER ROLE SKILLS: I want you to act as a test- atestcase,demonstratingtheexpectedstructure,levelofde-
+ingspecialistwithexperienceinthefieldofSoftwareEn- tail, and formatting conventions. This example served as a
+gineering,specificallyinthedisciplineofSoftwareTest- referencepatterntoguidethemodel’soutputgeneration,re-
+ing.ItisnecessarythatyouknowthecontentoftheCer- ducingambiguityandimprovingconsistency.Incontrast,the
+tifiedTesterFoundationLevel(CTFL)certificationfrom zero-shotconfigurationdidnotincludeanyexample,requir-
+the International Software Testing Qualifications Board ingthemodeltorelyentirelyontheinstructionsanditspre-
+(ISTQB). Your main responsibility will be to create test trainedknowledge.
+cases,demonstratingadvancedtechnicalskills. Toensurethestatisticalindependenceofresultsandelim-
+inate potential carryover effects, each execution was per-
+Figure2.Definitionof“TesterSkills”usedinthePrompt(Translatedfrom
+Portuguese). formedinafreshsession,resettingthemodel’scontextwin-
+dow. This procedure guarantees that each generated output
+TostructuretheinteractionwiththeLLMs,astandardized
+representsanindependentinference,unaffectedbyprevious
+Prompt Prefix was systematically applied before each user
+interactions.
+story.Thisprefixwasderiveddirectlyfromtheexperimental
+Finally,twopromptingstrategieswereapplied.Inthezero-
+protocolandconsistedoffivecomponents:
+shotconfiguration,theLLMgeneratedtestcaseswithoutany
+(1)ContextandGuidelines,definingthecoretaskofgener-
+priorexamples,relyingsolelyonthepromptinstructions.In
+atingtestcasesfromuserstorieswritteninnaturallanguage.
+the one-shot configuration, the same prompt was extended
+Theuserstoriesfollowedathree-partstructure:(i)title,(ii)
+withasinglemodeloutputexample(TESTCASEMODEL
+description using the standard format (“I, as a… I would
+OUTPUT),enablingtheevaluationofhowminimaldemon-
+like…inorderto…”),and(iii)acceptancecriteria.Themod-
+strationinfluencesthequality,consistency,andstructureof
+elswereexplicitlyinstructedtoprioritizethefunctionalde-
+thegeneratedtestcases.
+scription over acceptance criteria when deriving test cases,
+The prompts were intentionally designed to allow the
+ensuringthattestcasegenerationwasdrivenbyrequirements
+LLM flexibility in generating test cases, rather than enforc-
+rather than validation statements. Additionally, the prompt
+ingafixedorminimumnumberperuserstory.Thisdecision
+emphasizedtheuseoftheequivalencepartitioningtechnique
+aligns with the research objective of observing how LLMs
+tosystematicallyexplorevariationsininputs,systemstates,
+behaveunderlessconstrainedconditions,simulatingamore
+andbehaviors,promotingmoreeffectiveandrepresentative
+realisticandexploratorytestcasegenerationscenario.There-
+testcoverage.Themodelswerealsoinstructedtoavoidmak-
+fore,noexplicitinstructionwasincludedinthepromptsre-
+ingassumptionsaboutunspecifiedrequirements,reinforcing
+quiringthegenerationofatleastonetestcaseperuserstory,
+controlledandfaithfulinterpretationoftheinput;
+nordefininganupper-boundlimit.Thenumberoftestcases
+(2)TesterRoleDefinition,assigningthemodeltheroleof producedperrun(averaging8.5)emergednaturallyfromthe
+aSoftwareTestingSpecialistwithexpertisealignedwiththe model’s interpretation of each user story’s complexity and
+ISTQBCertifiedTesterFoundationLevel(CTFL).Thisrole- scope, in accordance with the agreed experimental design
+playingstrategywasintendedtoguidethemodeltowardpro- and research goals, which prioritized variability and auton-
+ducing technically sound and professionally structured test omyoverrigidoutputconstraints.
+cases,reflectingestablishedtestingprinciplesandbestprac-
+ticesinSoftwareEngineering;
+3.5 ExperimentalProcedure
+(3)SystemDomainDescription,providingadetailedcon-
+textualizationofthetargetsystem.Thedomaincorresponds Theexperimentfollowedasystematic,multi-stageprocedure
+toalarge-scaleinformationsystemusedbyaBrazilianPub- to ensure the reliability and reproducibility of the findings.
+lic Defender’s Office, involving high-volume daily opera- The complete workflow, from the initial input artifacts and
+tions, integration with judicial and governmental systems, prompting strategies through generation, post-processing,
+and multiple specialized modules. This contextual ground- and evaluation, is visually summarized in Figure 3. As de-
+ingsupportsthegenerationofrealisticanddomain-relevant picted,foreachofthe10userstories,bothzero-shotandone-
+testcases,particularlyinscenariosinvolvingcomplexwork- shotpromptingstrategieswereappliedthreetimesacrossthe
+flowsandinstitutionalconstraints; three selected LLMs, resulting in a total of 180 runs. This
+(4)OutputandFormattingGuidelines,specifyingstrictre- entire process was conducted between June and September
+quirementsforthestructureandcontentofthegeneratedtest 2025,usingtheofficialwebinterfacesoftheselectedLLMs1.
+cases. Each test case was required to include: (i) identifier The core generation phase consisted of the following steps
+(CTn), (ii) name, (iii) preconditions (if applicable), (iv) ob- foreachofthetenuserstoriesinthedataset:
+jective,and(v)expectedresult.Themodelswereinstructed
+1. Input Prompting: For each user story, two distinct
+to produce concise outputs, avoid including procedural test
+promptswerepreparedbasedonthedesigndefinedin
+steps, maintain consistent formatting across all generated
+Section3.4:oneforthezero-shotstrategyandanother
+cases, and ensure sequential numbering restarting for each
+for the one-shot strategy. The prompts were carefully
+userstory.Furthermore,theinteractionprotocolrequiredthe
+standardized to maintain consistency, varying only in
+modeltoprocessoneuserstoryatatimeandsignalreadiness
+theinclusionoftheillustrativeexamplefortheone-shot
+forthenextinput,ensuringcontrolledexecution;
+(5)TestCaseModelOutput(One-shotonly),includedex-
+clusively in the one-shot configuration. In this setup, the 1ChatGPT (https://chat.openai.com), DeepSeek (https://
+promptwasaugmentedwithasingleillustrativeexampleof www.deepseek.com),andGemini(https://gemini.google.com).
+
+--- PAGE 6 ---
+InvestigatingtheuseofLargeLanguageModels(LLMs)inTestCaseGeneration Leonardoetal.2025
+torandfinalarbiter.Basedonthisvalidatedcomparison
+process,eachcasewasclassifiedaseitherCorrectorDe-
+fective.Correctcaseswerefurtherannotatediftheycon-
+tained Extraneous Information. Defective cases were
+categorizedintooneofthequalitativedefecttypes:In-
+correct Fact, Ambiguity, or Inconsistency. Omissions
+were identified by cross-referencing the oracle to find
+expectedtestcasesthatwerenotgenerated.
+Figure3.Overviewofexperimentalworkflow.
+3.6 DataAnalysis
+condition.Toreachthefinalversion,thepromptinstruc-
+The data collected from the 180 execution runs were ana-
+tionsandformatswereiterativelyrefinedbasedonthe
+lyzed through both qualitative and quantitative approaches.
+results of a pilot run. This pilot was conducted using
+Thefollowingsubsectionsdetailthecriteria,metrics,andsta-
+asingleuserstorynotincludedinthefinalexperimen-
+tisticaltestsusedforthisanalysis.
+taldataset.Throughoutthisrefinementprocess,there-
+searchersreviewedmultipleversionsofeachpromptto
+enhanceclarityandminimizeambiguity. 3.6.1 SemanticEvaluationCriteria
+2. PromptRefinement(PilotStudy):Beforethemainex- Basedonartifactinspectiontechniquesinsoftwareengineer-
+ecution,thepromptsunderwentaniterativerefinement ing(Travassosetal.,1999),wedefinedasetofcriteriatoas-
+process. First, we conducted a pilot run using a single sessthesemanticqualityaspectsofthegeneratedtestcases.
+user story, which was not included in the final experi- Definition of Correctness: The notion of correctness
+mentaldataset.Thisstepaimedtovalidatetheclarityof adopted in this study follows a strict functional criterion
+theinstructions(Persona,Context,andTask)andensure rather than exact textual matching. A generated test case
+theoutputformatwasmachine-readable.Basedonthe is classified as Correct (True Positive) if its pre-conditions,
+pilot results, we made minor adjustments to the phras- steps, and expected results accurately cover the acceptance
+ingtominimizeambiguitybeforeapplyingtheprompts criteria of the user story. We adopted an ”all-or-nothing”
+tothe10targetuserstories.Beforethemainexecution, judgmentregardingsemanticvalidity,whereifamulti-step
+thepromptsunderwentaniterativerefinementprocess. test case contains a single Incorrect Fact, Inconsistency, or
+Ambiguity,theentireartifactisdeemedDefective(FalsePos-
+3. TestCaseGeneration:EachofthethreeLLMs(GPT-
+itive).AtestcaseisstillconsideredCorrectifitincludesEx-
+4o, DeepSeek, Gemini 1.5 Flash) was fed with the
+traneous Information (e.g., additional but valid steps), pro-
+promptsfromthepreviousstep.Thisprocesswasinde-
+videdthisextradatadoesnotcompromisethetest’slogical
+pendently repeated three times for every combination
+execution.
+of user story, LLM, and prompting strategy, resulting
+in 180 execution runs (10 USs × 3 LLMs × 2 strate- To operationalize this classification, the specific cate-
+gies×3repetitions)andatotalof1,528generatedtest goriesaredefinedasfollows:
+casesforanalysis.Themultiplerepetitionsallowedfor
+• Incorrect Fact: Presence of factually wrong informa-
+theanalysisofthemodels’outputvariability,whilethe
+tionthatcontradictstheuserstory’sacceptancecriteria
+controlledconditionsensuredthatanyobserveddiffer-
+ordomainknowledge.
+encescouldbeattributedtotheindependentvariables.
+• Inconsistency: Presence of contradictions between
+4. DataRecordingandStandardization:The1,528gen-
+steps, acceptance criteria, or contextual expectations
+eratedtestcaseswererecordedinaspreadsheet,anda
+withinthetestcase.
+manualpost-processingstepwasperformedtostandard-
+izeformattingandisolatetheoutputsforevaluation. • Ambiguity: Presence of vague or multi-interpretable
+textualelementsthatcouldhindertestexecution.
+5. EvaluationAgainsttheOracle:Toperformtheevalu-
+ation,thegeneratedtestcaseswereanalyzedagainstthe • ExtraneousInformation:Inclusionofelementsirrele-
+humancreatedgroundtruthbyapanelofthreereview- vanttothedomainortheuserstory.Thiswasannotated
+ers to mitigate individual bias. The panel consisted of butnottreatedasadefect.
+twopostgraduateresearchers(Master’sandPh.D.candi-
+• Omission:Absenceofatestcasethatwasexpectedac-
+dates)withexperienceinsoftwareengineering,andase-
+cordingtothehumanreferenceoracle.
+niorresearcherwithextensivebackgroundinsoftware
+testing and experimental methods. Initially, the gener-
+3.6.2 QuantitativeAnalysis
+ated artifacts were independently evaluated based on
+thepredefineddefecttaxonomy(Travassosetal.,1999). Tomeasurethemodels’effectiveness,weusedstandardmet-
+Inasubsequentstage,adouble-checkprocesswasper- ricsbasedonthecomponentsofaconfusionmatrix.Forthe
+formedacrossthedatasettocross-validatetheclassifica- contextofthisstudy,aTruePositive(TP)wasdefinedasa
+tions.Anydisagreementsbetweenthetwopostgraduate generatedtestcaseclassifiedas”Correct.”AFalsePositive
+researchers were discussed and resolved through con- (FP)wasatestcaseclassifiedas”Defective”(duetoIncor-
+sensus, with the senior researcher acting as the media- rectFact,Inconsistency,orAmbiguity),andaFalseNegative
+
+--- PAGE 7 ---
+InvestigatingtheuseofLargeLanguageModels(LLMs)inTestCaseGeneration Leonardoetal.2025
+(FN) was an expected test case from the human oracle that wasthemostfrequentcategory,accountingfor12.04%ofall
+theLLMlacksongenerating(omission). generatedcases,followedbyAmbiguity(8.70%)andIncon-
+Based on these components, the following three metrics sistency(6.61%).Thisdistributionsuggeststhatthemostsig-
+werecalculatedforeachexecutionrun: nificant challenge for LLMs generating effective test cases
+lies in adhering to domain and requirement specifications,
+• Precision: The proportion of correctly generated test ratherthaninmaintaininginternallogicalcohesion.
+cases(TP)amongallgeneratedcases(TP+FP).Itmea-
+surestheaccuracyofthegeneratedoutputs. Table4.OverallClassificationofGeneratedTestCases(N=1,528)
+TP Category Count Percentage(%)
+Precision=
+TP +FP Correct 1,110 72.68
+WithoutExtraneousInformation 819 53.61
+• Recall:Theproportionofcorrectlygeneratedtestcases WithExtraneousInformation 291 19.06
+(TP)amongallexpectedtestcasesfromtheoracle(TP
+Defective 418 27.38
++FN).Itmeasuresthecoverageofthemodel.
+IncorrectFact 184 12.04
+Ambiguity 133 8.70
+TP
+Recall= Inconsistency 101 6.61
+TP +FN
+Total 1,528 100.00
+• F1-Score:TheharmonicmeanofPrecisionandRecall,
+providingasinglescorethatbalancesbothmetrics.
+ToprovideadeeperanswertoRQ1,ouranalysisfocused
+Precision×Recall ontwocriticalaspectsofgenerationquality:thepresenceof
+F1-Score=2×
+defectsinthegeneratedtestcases(quantifiedbyFalsePosi-
+Precision+Recall
+tives,FP)andtheomissionofexpectedtestcases(quantified
+Handling of Repeated Runs: To account for the non- byFalseNegatives,FN).
+deterministicnatureofLLMs,eachuserstorywasexecuted AssummarizedintheTable5,theanalysisrevealedakey
+threetimespermodelandpromptingstrategy.Forthestatisti- trade-offbetweenthepromptingstrategies.Thezero-shotap-
+calanalysis,theserepetitionswereaggregatedbyuserstory. proach was more prone to producing incorrect outputs, re-
+Specifically,wecalculatedthemeanperformanceacrossthe sulting in a higher False Positive count (234 FP) than one-
+threeruns,resultingin10independentobservationspercon- shot(184FP).Thisfindingsuggeststhat,withoutanexam-
+figuration. ple,modelsaremorelikelytogenerateirrelevantorfactually
+Totestourhypotheseswithstatisticalrigor,weadopteda incorrecttestcases.
+significancelevelofα = 0.05.Giventhedatadistribution,
+Conversely,theone-shotapproachwasmorelikelytoomit
+thefollowingnon-parametrictestswereemployed:
+expectedoutputs.ItresultedinahighernumberofFalseNeg-
+atives(543FN)comparedtozero-shot(508FN).Thisfind-
+• TheFriedmantest (Friedman,1937)wasusedtocom-
+ing highlights a critical qualitative insight: while providing
+pare the F1-Score performance across the three LLM
+anexample(one-shot)improvesthequalityofthegenerated
+models(RQ2).
+content,itmayalsoconstrainthemodel,causingittoover-
+• The Wilcoxon signed-rank test (Wilcoxon, 1945) was look valid test cases. This tendency to omit relevant tests
+applied separately to the results of Precision, Recall, emergedasthemostsignificantchallengetotheoverallqual-
+andF1-Scoretocomparetheeffectivenessofthepaired ity.
+promptingstrategies(RQ3).
+Table5.DistributionofDefectsandOmissionsbyPromptingStrat-
+egy
+4 Results
+Strategy FP (%) FN (%)
+Inthissection,wepresenttheresultsoftheexperimentcon- zero-shot 234 31,54 508 68,46
+ducted to evaluate the capability of three Large Language one-shot 184 25,31 543 74,69
+Models(GPT-4o,DeepSeek,andGemini1.5Flash)ingen-
+erating test cases. The analysis is based on a total of 1,528
+testcasesgeneratedacross180executions,coveringtendis- Althoughzero-shotfavorsrecall(68.47%FN)byavoiding
+tinct user stories under two prompting strategies (zero-shot excessiveconstrainttotheexample,whileone-shotincreases
+andone-shot). omissions (74.70% FN), mitigation strategies include: (i)
+promptsenhancedviaiterativerefinement,asperformedin
+thepilotstudy(Section3.5);(ii)hybridpipelineswithhuman
+4.1 OverallQualityofGeneratedTestCases
+post-generationvalidationagainstreferenceoracle;(iii)con-
+Thequalitativeassessmentrevealedthatasubstantialmajor- textualized prompt design with explicit system domain de-
+ity of the generated test cases, 1,110 (72.68%) of the total, scription(Section3.4).Theseadjustments,alignedwiththe
+werejudgedascorrect.Conversely,418cases(27.38%)were prompt engineering practices already employed, reinforce
+classified as defective. Table 4 provides a detailed break- the practical viability of LLMs for assisted test case gener-
+downofthesecategories.Amongthedefects,IncorrectFact ationinagileQA.
+
+--- PAGE 8 ---
+InvestigatingtheuseofLargeLanguageModels(LLMs)inTestCaseGeneration Leonardoetal.2025
+SummaryoffindingsforRQ1 inTable7,theanalysisfoundnostatisticallysignificantdif-
+ference in performance among the LLMs under either con-
+LLMs demonstrated a high level of overall correct- dition.Forthezero-shotstrategy,theresultwasQ = 2.400
+ness(72.68%),yettheirqualityisdichotomous.They (p = 0.3012), and for one-shot, it was Q = 3.200 (p =
+are effective at generating test scenarios from ex- 0.2019).Asthep-valuesweresubstantiallyhigherthanour
+plicitrequirementsbutsystematicallyfailtoaddress significancelevelofα = 0.05,wefailtorejectthenullhy-
+context-dependent issues, leading to critical omis- pothesis(H )forRQ2.
+0
+sions and incorrect facts. Given the high precision Whilewecouldnotidentifysignificantdifferencesamong
+rate, which contradicts the premise of low perfor- modelsinoveralleffectiveness,acloserinspectionoftheF1-
+mance,werejectthenullhypothesis(H 0 )forRQ1. Scoredistributions,asshowninFigure4,revealsdistinctper-
+formanceprofiles.Theboxplotsillustratethatwhilethemod-
+elsarecomparableintheirmedianperformance,theydiffer
+4.2 Performance Comparison Among LLM intheirvariabilityandpredictability.Thisfindingreinforces
+thatforthetaskofgeneratingtestcasesfromourdataset,the
+Models
+threeevaluatedmodelsperformed.
+Table6presentsthemeanvaluesfortheprimaryperformance
+metrics,precision,recall,andF1-Score,foreachLLMunder
+bothpromptingstrategies.Theresultsprovideacomprehen-
+siveoverviewofthemodels’performancebeforestatistical
+testing. A few key trends emerge from this data. First, one
+mayseeaconsistenttrendacrossallmodelsandprompting
+strategiesinreachingconsiderablyhigherprecisionthanre-
+call.Inotherwords,thereisageneraltendencyofLLMsto
+generatecorrecttestcases(highprecision),whiletheystrug-
+gle with covering all expected scenarios (low recall). Sec-
+ond, a clear trade-off between the prompting strategies is
+visible:theone-shotstrategytendstoslightlyincreasepreci-
+sionatthecostofamorenoticeabledecreaseinrecallwhen
+compared to zero-shot. Finally, while GPT-4o consistently
+achieved higher F1-scores, the overall performance differ-
+encesamongthemodelsappeartobeminor.
+Figure4.DistributionofF1-ScoresperUserStory,comparingzero-shot
+andone-shottechniquesacrossthethreeLLMs.
+Table6.MeanPerformanceMetricsbyLLMandPromptingStrat-
+egy
+Model Precision Recall F1-Score Table 7. Results of the Friedman Test for Comparison Among
+LLMs
+zero-shotStrategy
+Technique Q-statistic p-value
+GPT-4o 0.728 0.594 0.645
+DeepSeek 0.736 0.572 0.628
+zero-shot 2.400 0.3012
+Gemini1.5Flash 0.689 0.525 0.581
+one-shot 3.200 0.2019
+OverallMean 0.718 0.564 0.618
+one-shotStrategy
+SummaryoffindingsforRQ2
+GPT-4o 0.767 0.539 0.618
+DeepSeek 0.700 0.527 0.590
+Despiteminorvariationsinperformanceprofiles,our
+Gemini1.5Flash 0.757 0.463 0.553
+statistical analysis concluded that there was no sig-
+OverallMean 0.741 0.510 0.587
+nificant difference in effectiveness among the three
+LLMstested.Consequently,wefailtorejectthenull
+ToanswerRQ2,whichinvestigateswhetherthereisasig- hypothesis(H )forRQ2.
+0
+nificant performance difference among the evaluated mod-
+els,weconductedastatisticalanalysisontheF1-Scorespre-
+sented in our overall performance summary (Table 6). The 4.3 ImpactofPromptingStrategies:zero-shot
+descriptive data in that table reveals minor variations, with
+vs.one-shot
+GPT-4oconsistentlyachievingthehighestF1-Scoreinboth
+thezero-shot(0.645)andone-shot(0.618)scenarios.Theper- To answer RQ3, we analyzed the impact of the prompting
+formancerangebetweenthehighest-andlowest-performing strategyonmodelperformancebycomparingtheresultsbe-
+models was nearly identical in both conditions (0.064 for tween the zero-shot and one-shot conditions. The descrip-
+zero-shotand0.065forone-shot),suggestingasimilarlevel tivestatisticsinouroverallperformancesummary(Table6)
+ofperformance. reveal a clear trade-off: the one-shot strategy consistently
+To determine if these numerical differences were statisti- achieved a higher average precision, whereas the zero-shot
+callysignificant,weappliedtheFriedmantest.Asdetailed approachyieldedasuperiorrecallacrossallmodels.
+
+--- PAGE 9 ---
+InvestigatingtheuseofLargeLanguageModels(LLMs)inTestCaseGeneration Leonardoetal.2025
+Thistrade-offisfurtherilluminatedbythedistributionof findingswillbediscussedintheDiscussionsection.
+defects and omissions. As detailed in Table 5, the one-shot ’
+approach produced significantly fewer false positives (184
+FP)comparedtozero-shot(234FP).However,thisimprove-
+5 Threats to validity
+ment in accuracy was counterbalanced by a higher number
+ofomissions,withone-shotresultinginmorefalsenegatives
+Thissectiondiscussespotentialthreatsthatcouldinfluence
+(543FN)thanzero-shot(508FN).
+theinterpretationandgeneralizationoftheresults.Following
+To determine whether these trade-offs resulted in a sta-
+theguidelinesof(Runesonetal.,2012),thediscussioncon-
+tistically significant difference in overall effectiveness (F1-
+siders four dimensions of validity— internal, external, con-
+Score), we applied the Wilcoxon Signed-Rank test. The re-
+struct, and statistical —specific to studies involving Large
+sults,presentedinTable8,confirmthattherewasnostatisti-
+LanguageModels(LLMs)insoftwaretestingcontexts.
+callysignificantdifferencebetweenthetwostrategiesforany
+ofthethreeLLMs.Withp-valuesforGPT-4o(p = 0.5280),
+DeepSeek(p=0.1309),andGemini1.5Flash(p=0.4316) 5.1 InternalValidity
+all substantially higher than our significance level of α =
+Internal validity concerns whether observed outcomes can
+0.05,wefailtorejectthenullhypothesis(H )forRQ3.Fur-
+0 be attributed to the intended experimental factors- namely,
+thermore,thesmallmediandifferencesandeffectsizes(r)re-
+the prompting strategy and the LLM model -rather than to
+inforcethattheobservedvariationsarenotstatisticallymean-
+uncontrolledvariables.Potentialthreatsinclude:
+ingful.
+Figure4illustratesthisstatisticalequivalence.Thedistri- • limitedvarietyofuserstories(selectionbias);
+butionofF1-Scoresshowsthattheperformancemediansare • inherent non-determinism of LLMs: ChatGPT can
+remarkablycloseforbothtechniquesacrossallmodels.The exhibit high run-to-run variation in code generation
+outliers observed, which represent instances of particularly (Ouyangetal.,2025);
+low performance, typically correspond to executions on a • inconsistenciesinmanualassessmentoftestcases.
+small subset of more complex user stories, where models
+Mitigation:Wecomposedasamplewithuserstoriesvarying
+struggled to interpret all acceptance criteria, thus resulting
+incomplexityanddiversityoffunctionalities.Thestudyexe-
+inalowerF1-Score.
+cutionfollowedstandardizedpromptsandreplicatedrunsper
+setting,andwemonitoredthewholeexecutionstepsbehav-
+Table8.ResultsoftheWilcoxonSigned-RankTest(zero-shotvs.
+ior across runs. Besides, multiple reviewers cross-checked
+one-shotperLLM)
+manualevaluations.However,itremainspossiblethatminor
+Model MedianDiff. W p-value EffectSize(r)
+effectsfrommodeldriftmayinfluencetheresults.
+GPT-4o 0.035 12.0 0.5280 0.364
+DeepSeek 0.032 12.0 0.1309 0.478
+5.2 ExternalValidity
+Gemini1.5Flash 0.034 19.0 0.4316 0.249
+Externalvalidityaddressestheextenttowhichthefindings
+Each box plot represents the distribution of F1-Scores can be generalized beyond the analyzed context (Wohlin
+from the 10 user stories. The central line indicates the me- et al., 2012). The experiment employed user stories from a
+dian, the box represents the interquartile range (IQR), and singleenterprisesystemwritteninPortuguese,whichlimits
+thewhiskersextendto1.5timestheIQR.Outliersareshown transferabilitytootherdomains,organizations,orlanguages.
+as individual points. The ‘ns’ denotes a non-significant dif- However, the use of production-grade artifacts from a real
+ference. environment enhances external validity (Verdecchia et al.,
+2023),offeringarealisticscenarioforassessingLLM-based
+SummaryoffindingsforRQ3 test generation. To broaden generalizability, future replica-
+tionsshouldincludemultipledatasetsfromdifferentprojects,
+Our statistical analysis concluded that there was no
+and compare prompting strategies (zero-shot vs. one-shot),
+significant difference in overall effectiveness (F1-
+sincethesefactorsmayinfluenceaccuracyandcoveragepat-
+Score) between the zero-shot and one-shot prompt-
+terns(Chenetal.,2024).
+ing strategies. Besides, we observe a trend of: one-
+Mitigation: A practical and exploratory approach was
+shot improved precision, while zero-shot yielded
+adopted to assess the feasibility of applying LLMs in real-
+higherrecall.Therefore,wefailtorejectthenullhy-
+worlddevelopmentcontexts.Wethoroughlydocumentedall
+pothesis(H )forRQ3.
+0 methodologicaldecisionstofacilitatereplication,adaptation,
+orextensioninfuturestudies.PriorworkonLLM-basedtest
+They reliably identify test scenarios based on explicit re- generationfrequentlyhighlightsthislimitation,asmanystud-
+quirements but struggle with omissions that require deeper iesrelyonacademicdatasetsorsimplebenchmarkswithlim-
+contextualinference.Furthermore,ouranalysisrevealsaper- iteddomainorlanguagevariety(CelikandMahmoud,2025).
+formanceplateau,withnostatisticallysignificantdifference
+foundamongtheevaluatedmodels.Similarly,thechoiceof
+5.3 ConstructValidity
+prompting strategy was found to influence the trade-off be-
+tweenprecisionandrecallbutdidnotresultinasignificant Construct validity concerns whether the adopted measures
+differenceinoveralleffectiveness.Theimplicationsofthese accuratelycapturetheintendedconceptsoftest,quality,and
+
+--- PAGE 10 ---
+InvestigatingtheuseofLargeLanguageModels(LLMs)inTestCaseGeneration Leonardoetal.2025
+6 Discussion
+semanticcorrectness.Inthisstudy,weadoptedadefecttax-
+onomy from (Travassos et al., 1999), which defines these
+categoriesasrecurringdefecttypesinsoftwareartifactsand LLMsdemonstratedconsiderabletestcasegenerationcapa-
+guides human-centered evaluations during inspection. De- bilities,achievinghighprecision.However,thisresultisac-
+spite calibration sessions among evaluators, the qualitative companiedbyaconsistentpatternofdefects,notablyincor-
+analysisofdefectsinvolvessubjectivejudgment,whichmay rectfacts,ambiguity,andinconsistency.Thisbehaviorisin
+haveinfluencedindividualratings(Fernándezetal.,2017). line with recent literature on state-of-the-art models (Chen
+et al., 2024). The results suggest that while LLMs can sig-
+Mitigation: To minimize this threat, the evaluation cri-
+nificantly support Quality Assurance (QA) activities, their
+teria were defined a priori and consistently applied across
+outputsstillrequirecarefulandsystematichumanvalidation
+all samples. Independent reviewers cross-checked classi-
+andcomplementaryverificationmechanismstoensurerelia-
+fications, and disagreements were resolved by consensus.
+bility.
+Employing the well-established taxonomy of (Travassos
+The hypothesis that the one-shot approach would outper-
+et al., 1999) helped maintain semantic consistency across
+formzero-shotinprecisionanddefectreductionwasnotsup-
+categories.Nonetheless,minorinterpretationdifferencesbe-
+ported.AsshowninTable9,bothpromptingtechniquesex-
+tweenreviewersmayhaveaffectedmarginalcases.
+hibitedcomparableeffectiveness,withone-shotachievinga
+marginal improvement in precision, but no statistically sig-
+nificantdifferenceswerefound(allp-values>0.05)There-
+fore, there is insufficient evidence to support a substantive
+qualitygainfromone-shot,suggestingthattheobservedef-
+5.4 StatisticalConclusionValidity
+fectmaybeattributedtonaturalvariabilityintheruns.
+Table9.Comparisonbetweenzero-shotandone-shotStrategies
+This validity concerns the confidence that the observed dif-
+Metric zero-shot one-shot
+ferences in results are not due to chance but represent real
+Precision 0.718 0.741
+effects (Wohlin et al., 2012). It addresses the reliability of
+F1Score 0.618 0.587
+statistical inferences drawn from the data and the extent to
+whichtheyreflecttruerelationshipsbetweentreatmentsand
+outcomes. Potential threats include the limited sample size, Thissectiondiscussestheempiricalfindingsofourevalu-
+violations of statistical assumptions, multiple comparisons, ationofLLM-generatedtestcasesfromreal-worldusersto-
+and the associated risks of Type I (false positive) and Type ries, examining their strengths, limitations, and alignment
+II(falsenegative)errors.Althoughtheexperimentinvolved withpriorresearch.Weinterprettheobserveddefectpatterns,
+ten user stories, each was executed three times per model- the influence of prompting strategies, and the performance
+prompting combination, yielding 180 valid generations. To similaritiesacrossmodels,highlightingbothmethodological
+ensurerobuststatisticaltestingandavoidpseudoreplication, challengesandpracticalimplicationsforQAworkflows.
+theserunswereaggregatedinto10independentobservations Comparison with oracle. Establishing rigorous seman-
+perapproach(zero-shotandone-shot).Thisdesignenabled ticequivalencebetweengeneratedtestcasesandtheoracle
+theapplicationofstatisticaltestingbutstillcarriestheinher- provedcomplex.Typicalperformancemetrics,whilepracti-
+entriskofoverinterpretingrandomvariation,especiallywith cal, may underestimate recall when semantically valid but
+smalleffectsizes. non-identical tests appear. In this context, the manual clas-
+sification of qualitative defects we introduced in this paper
+Mitigation: To address these risks, non-parametric tests
+likewise introduces subjectivity to perform a more careful
+were used, along with effect-size calculations and confi-
+comparisonwiththeoracle.Besides,ithasprovenusefulto
+denceintervals,whicharelesssensitivetoviolationsofnor-
+identify patterns of behavior, allowing the identification of
+malityandappropriateforsmallsamples.Consistentproce-
+the main limitations of the models and opportunities to im-
+dures, controlled repetitions, and the documentation of all
+proveprompting.
+runshelpedimprovereliabilityandminimizerandomhetero-
+Ourfindingschallengetheassumptionofaperfecthuman
+geneity.Nevertheless,thestatisticalfindingsshouldbeinter-
+oracle.WhileLLMsomittedanonnegligibleportionofex-
+preted as indicative rather than conclusive, considering the
+pectedtestcases,theyalsogeneratedcorrectcasesthatwere
+stochasticnatureofLLMoutputsandtheconstraintsonsta-
+not present in the original human suite. This bidirectional
+tisticalpower.
+omission pattern suggests that human and LLM generated
+Overall, the methodological controls adopted, including testsuitesarecomplementary:modelsstrugglewithimplicit,
+standardizedprompts,balancedruns,replicatedevaluations, contextdependentbehaviors,whereashumansmaymisssys-
+and triangulation between quantitative and qualitative evi- tematicallyderivableedgecasessurfacedbypromptdriven
+dence, contribute to the consistency of the findings. Nev- generation.
+ertheless, as emphasized in (Bender et al., 2021), the dy- AI-Generated “Innovative” Test Cases. The bidirec-
+namic evolution of LLM architectures represents an addi- tional omission pattern mentioned above reveals a critical
+tionalsourceofuncertaintythatchallengeslong-termrepro- finding:althoughLLMsomittedasignificantportionofex-
+ducibility.Therefore,futurereplicationsindiversedomains pectedcases(FN:508zero-shot,543one-shot;Table4,they
+andwithnewermodelversionsareessentialtoconfirmthe also generated correct cases absent from the original ora-
+stabilityandtransferabilityoftheobservedpatterns. cle. Of the 291 correct cases with extraneous information
+
+--- PAGE 11 ---
+InvestigatingtheuseofLargeLanguageModels(LLMs)inTestCaseGeneration Leonardoetal.2025
+(19.06%; Table 5), approximately 12% were classified as
+genuineinnovationsbyevaluators—systematicedgescenar-
+ios (e.g., timeouts, combinatorial validations) not contem-
+platedinthehumanoracle.
+Thiscomplementarygenerationdemonstrates thatLLMs
+can identify important test cases overlooked by the human
+oracle,expandingtestcoveragebeyondtheoriginalanalysts’
+perspective.However,62%ofthesecasescontainedextrane-
+ousinformation(Table4)requiringsemanticfiltering.Thus,
+thetester’sroleisredefined:frommanualcreatortocurator
+ofAI-generatedartifacts.
+Semantic defects and hallucinations. Approximately a
+quarter of the generated cases contained semantic defects,
+Table10.ExampleofGeneratedTestCasesandDefectClassifica-
+primarily incorrect facts analogous to hallucinations, sug-
+tion(TranslatedfromUS01)
+gesting that syntactically valid outputs can still misrepre-
+sentexpectedbehavior.Ourqualitativeanalysisrevealedthat Description:Asawriterofquotesandpetitions,Iwould
+these Incorrect Facts predominantly stem from the models’ likethemtobesavedautomaticallytoavoiddataloss,for
+tendency to hallucinate domain-specific rules when faced example,duetotimeoutsorconnectionproblems.
+withunderspecifieduserstories.Becauseagilerequirements AcceptanceCriterion:Thesystemshouldprovidefunc-
+often rely on the implicit, tacit knowledge of the develop- tionality to automatically and periodically save user-
+mentteam,LLMsattemptedtofillthesecontextualgapswith entereddata.
+plausible yet factually incorrect system behaviors. To illus-
+GeneratedCaseA-CORRECT
+tratethisphenomenonandourclassificationprocess,Table
+Name:CT03-Continuityafterconnectionloss
+10 provides a concrete, translated example of a correct ver-
+sus a defective generated test case. In this sense, we under- Pre-condition:Authenticateduserwithaquoteorinitial
+standthatgeneratedartifactscanserveasthefirststepinthe petitionbeingedited.
+testcasegenerationprocess,followedbyexpertreview.One Objective:Ensurethatautomaticallysaveddataisnotlost
+possible way to improve this scenario is to incorporate au- afteraconnectionfailure.
+tomated or semi-automated quality verification steps in the ExpectedResult:Uponre-establishingtheconnection,the
+pipeline.Forinstance,agent-basedinspectionswouldapply system allows the recovery of the automatically saved
+checkliststochecktheconsistencybetweenuserstoriesand content.
+thegeneratedtestcases.
+Classification:Correct
+High incidence of omissions. Many omissions occurred
+GeneratedCaseB-DEFECTIVE
+whenkeycontextualinformationwasnotexplicitintheuser
+story,causingthemodelstoexcluderelevantvalidationsteps Name:CT06-Verifycreationofmovementlinkedtoau-
+or acceptance criteria. We observed that this behavior was tomaticsaving
+mainlyduetotheLLM’sstrictdependenceontextualcontent Pre-condition:Usercreatesaquoteorinitialpetition.
+anditslimitationsincontextualinference.Afterperforming Objective: Validate that, when applicable, the system
+a deeper review of the oracle after the study execution, we movementiscreatedcorrectlywithmandatorydata.
+identified that some test cases composing the oracle were
+Expected Result: Movement related to the quote or peti-
+mainly dependent on relevant information not available in
+tioniscorrectlycreated,withallmandatorydatafilledin.
+thedomainanduser-storydescriptions.Inthissense,wecon-
+Classification:Defective(IncorrectFact)
+firmedthatthetestspecialistwhocomposedtheoriginaltest
+casesoftendrawsonexperienceandtacitknowledgetoinfer Reason: Domain hallucination. In legal systems, a back-
+detailsthatmaynotbeexplicitlydocumented. ground auto-save to prevent data loss creates a draft;
+Effectsofpromptingtechniques.Wefoundthattheone- it must not generate a formal procedural ”movement”,
+shot technique did not offer a statistically significant ad- whichshouldonlyoccuruponfinalsubmission.
+vantageoverzero-shot,challengingthecommonpremiseof
+prompt engineering (Santana Jr et al., 2025). In addition,
+while one-shot tended to improve precision and reduce cer-
+taindefects,zero-shotmaintainedasimilarbalanceintheF1-
+scoreduetoslightlyhigherrecall.Onepossibleexplanation
+forthisbehaviorremainsopenforfurtherinvestigation.
+While the combination of zero-shot (higher recall) and
+one-shot (higher precision) strategies suggests a promising
+directionforfuturework,thisstudywaslimitedtotheinde-
+pendentcomparisonofthetwostrategiesasoutlinedinSec-
+tion3.5.
+ConcernsinselectingLLMs.Thestudyfindingssuggest
+that the main challenges in selecting LLMs may be more
+
+--- PAGE 12 ---
+InvestigatingtheuseofLargeLanguageModels(LLMs)inTestCaseGeneration Leonardoetal.2025
+strategic rather than technical. In this study, we focused on ofgeneratedtestcases.
+applying basic prompt settings and popular models. A per- Paths for advancement: To strengthen LLM reliability
+formanceplateauissuggestedfortestcasegenerationfrom intestgeneration,progressisrequiredalongthreeintercon-
+well-structureduserstories.Unlikegeneralbenchmarks(Ce- nectedfronts.First,evaluationdatasetsshouldexpandtoin-
+likandMahmoud,2025),open-sourcemodelsdemonstrated cludemorediversedomains,enablingbettergeneralization.
+comparableperformancetostate-of-the-artproprietarymod- Second,promptengineeringresearchshouldadvancetoward
+els.ThisimpliesthatthechoiceofLLMmaybeguidedby strategiesexplicitlydesignedtomitigateomissionsandrea-
+secondary factors such as cost and latency, rather than gen- soninggaps.Finally,weunderstandthatthesemanticcatego-
+erationquality.Anotherrelevantconcernaddressesdatapri- rizationappliedinthisstudyshouldbeevolvedtodeeplyas-
+vacyandsecurity,whichmayleadtooptingoutoflocalmod- sesstestquality,revealingmorespecificchallengesandlim-
+els. Therefore, we understand that optimizing LLM-based itationsofthemodels.Inthissense,weunderstandthatcol-
+test generation should be treated as an ongoing process of laborationbetweentheNLPandSoftwareEngineeringcom-
+continuousexperimentationandqualitycontrol,ratherthan munitiesiskeytoachievingthesegoals.Besides,longitudi-
+followingafixedapproach. nalstudieswithevolvingmodelversionscanhelptracktech-
+Comparison with related work. Some of our findings nologicalprogressandidentifybestpracticesforintegrating
+are consistent with prior work, indicating that while LLM- LLMsintoQApipelines(Santosetal.,2024).
+generated tests are promising, they still exhibit substantial
+variability and require careful oversight. Notably, the high
+7 Conclusion
+incidence of semantic defects, particularly incorrect facts,
+aligns closely with the factuality limitations and halluci-
+nation tendencies recently highlighted by Li et al. (2025) ThisstudyinvestigatedtheeffectivenessofLargeLanguage
+acrossbroadsoftwaretestingtasks.Furthermore,whilepre- Models(LLMs)forautomaticallygeneratingfunctionaltest
+viousliteratureincode-centricgeneration(e.g.,Wangetal., casesfromuserstories.Throughacontrolledevaluationin-
+2024;Chenetal.,2024)demonstratesthatLLMsstruggleto volvingthreewidelyusedmodels—GPT-4o,DeepSeek,and
+achievefullcoverageofcomplexcontrolstructureswithout Gemini1.5Flash—underzero-shotandone-shotprompting
+specializedtechniques,ourresultsrevealaparallelchallenge conditions,wefoundthatallevaluatedmodelsarecapableof
+innaturallanguagerequirements:thesystematicomissionof producingmeaningfultestcases.Despitethisfeasibility,our
+implicit,context-dependentscenarios.Regardingprompting semanticanalysisrevealedrecurringdefectsinthegenerated
+strategies,theabsenceofastatisticallysignificantdifference outputs,particularlyincorrectfacts,internalinconsistencies,
+in overall effectiveness for the one-shot approach contrasts ambiguities, and, most importantly, systematic omission of
+with earlier findings that reported clear gains when exam- relevanttestcases.Theseomissionswerelargelyassociated
+pleswereincludedinprompts(Fanetal.,2023).Thisdiver- with implicit acceptance criteria, underscoring an inherent
+gencesuggeststhatimprovementsfromexample-basedrea- limitation of current LLM driven automation for test case
+soning may be highly context-dependent. Specifically, the generation.
+structured format of the user stories evaluated in this study, This work makes three key contributions: (i) it provides
+whichalreadyprovidesahighlevelofdomaincontextualiza- a systematic, controlled evaluation of LLMs for generating
+tionandorganizedacceptancecriteria,likelysuppliessuffi- completeandconsistenttestcasesdirectlyfromuserstories,
+cientinformationalrichness,therebyreducingtheincremen- addressing an emerging gap in automated software testing
+tal impact of a single example. Finally, the comparatively research;(ii)itintroducesandappliesamixedsetofevalua-
+lower recall observed in our real-world dataset, when con- tioncriteriatoassessthequalityofLLM-generatedtestcases;
+trastedwithstudiesevaluatingstructuralmetricsorusingsyn- and(iii)itdeliversacontrolledcomparisonbetweenhuman-
+thetic benchmarks (such as those summarized by Mendoza authored(oracle)andLLM-generatedtestsets,highlighting
+et al. (2024), underscores the inherent complexity of indus- where automation offers measurable advantages and where
+trialQAtasksandthelimitationsofevaluatingLLMssolely humanexpertiseremainsessential.
+throughexecutionratesratherthansemanticcorrectness. Overall,ourfindingsindicatethatLLMscanserveasvalu-
+Implicationsforpractice.Theresultsofferactionablein- ableassistantsinthetestcasegenerationprocess,accelerat-
+sights for QA practice. LLM adoption reshapes the tester’s ing verification activities and reducing the likelihood of re-
+role: from a creator of test cases to a curator and validator work.Indoingso,thisstudyreinforcestheviewthatLLMs
+of AI-generated artifacts. This shift allows professionals to havethepotentialtoaugmenthumanexpertiseandimprove
+focus on critical analysis, coverage of complex scenarios, productivityinsoftwareengineeringpractice.
+anddomain-specificvalidationratherthanrepetitivemanual Futureresearchshouldexploremoreadvancedprompting
+tasks. Organizations can expect productivity gains, but hu- strategies,suchasRetrieval-AugmentedGeneration(RAG)
+manreviewmustremainmandatorytopreventthepropaga- to provide richer contextual information and improve test
+tionofdefectssuchasincorrectfactsandomissions.Theob- coverage.Apromisingextensionwouldbetocombinezero-
+servedfunctionalequivalencebetweenmodelssupportsflex- shotandone-shotinhybridpipelines:generatetestcasesus-
+ibilityintoolselection,enablingcost-andintegration-based ingbothstrategiessimultaneously,removeduplicatesviatex-
+decisionsratherthanperformance-drivenones.Inagilecon- tualsimilarityorsemanticanalysis,andmergeresultstoop-
+texts,LLMsshouldbeintegratedasassistivetools,comple- timize global F1-score, leveraging the complementarity ob-
+mented by automated post-processing mechanisms capable servedinthestudyresults.Additionally,approachesforauto-
+of detecting inconsistencies and ensuring the completeness matedsemanticvalidationofgeneratedtestcasesareneeded
+
+--- PAGE 13 ---
+InvestigatingtheuseofLargeLanguageModels(LLMs)inTestCaseGeneration Leonardoetal.2025
+to minimize reliance on manual review and strengthen the bdd. In Simpósio Brasileiro de Engenharia de Software
+reliabilityofLLM-basedtestgenerationpipelines. (SBES),pages280–290.SBC.
+Myers, G. J., Badgett, T., Thomas, T. M., and Sandler, C.
+(2004). Theartofsoftwaretesting,volume2. WileyOn-
+8 Data Availability lineLibrary.
+Ouyang,S.,Zhang,J.M.,Harman,M.,andWang,M.(2025).
+The replication package for this study, including the full An empirical study of the non-determinism of chatgpt in
+prompts, the anonymized dataset of user stories, the com- code generation. ACM Transactions on Software Engi-
+plete set of generated test cases, and the data analysis neeringandMethodology,34(2):1–28.
+scripts, is publicly available at: https://github.com/ Runeson, P., Host, M., Rainer, A., and Regnell, B. (2012).
+leonardocesarc/testcase. Case study research in software engineering: Guidelines
+andexamples. JohnWiley&Sons.
+SantanaJr,E.,Benjamin,G.,Araujo,M.,Santos,H.,Freitas,
+References D.,Almeida,E.,Neto,P.A.d.,Li,J.,Chun,J.,andAhmed,
+I.(2025).Whichpromptingtechniqueshouldiuse?anem-
+Bender, E. M., Gebru, T., McMillan-Major, A., and piricalinvestigationofpromptingtechniquesforsoftware
+Shmitchell, S. (2021). On the dangers of stochastic par- engineeringtasks. arXivpreprintarXiv:2506.05614.
+rots:Canlanguagemodelsbetoobig? InProceedingsof Santos,S.R.R.d.,Fernandes,R.E.S.,Santos,M.C.B.d.,
+the2021ACMconferenceonfairness,accountability,and Soares,M.S.,Rocha,F.G.,andMarczak,S.(2024). In-
+transparency,pages610–623. creasing test coverage by automating bdd tests in proofs
+Brown,T.,Mann,B.,Ryder,N.,Subbiah,M.,Kaplan,J.D., ofconcepts(pocs)usingllm. InProceedingsoftheXXIII
+Dhariwal, P., Neelakantan, A., Shyam, P., Sastry, G., Brazilian Symposium on Software Quality, pages 519–
+Askell, A., et al. (2020). Language models are few-shot 525.
+learners. Advancesinneuralinformationprocessingsys- Schäfer,M.,Nadi,S.,Eghbali,A.,andTip,F.(2023).Anem-
+tems,33:1877–1901. piricalevaluationofusinglargelanguagemodelsforauto-
+Celik,A.andMahmoud,Q.H.(2025).Areviewoflargelan- matedunittestgeneration.IEEETransactionsonSoftware
+guagemodelsforautomatedtestcasegeneration.Machine Engineering,50(1):85–105.
+LearningandKnowledgeExtraction,7(3):97. Travassos, G., Shull, F., Fredericks, M., and Basili, V. R.
+Chen,Y.,Hu,Z.,Zhi,C.,Han,J.,Deng,S.,andYin,J.(2024). (1999). Detecting defects in object-oriented designs: us-
+Chatunitest:Aframeworkforllm-basedtestgeneration.In ingreadingtechniquestoincreasesoftwarequality. ACM
+Companion Proceedings of the 32nd ACM International sigplannotices,34(10):47–56.
+ConferenceontheFoundationsofSoftwareEngineering, Travassos, G. H., Gurov, D., and Amaral, E. (2002). Intro-
+pages572–576. ductiontoExperimentalSoftwareEngineering,volume9.
+Fan, A., Gokkaya, B., Harman, M., Lyubarskiy, M., Sen- UFRJRiodeJaneiro,Brazil.
+gupta, S., Yoo, S., and Zhang, J. M. (2023). Large lan- Verdecchia, R., Engström, E., Lago, P., Runeson, P., and
+guagemodelsforsoftwareengineering:Surveyandopen Song,Q.(2023). Threatstovalidityinsoftwareengineer-
+problems. In 2023 IEEE/ACM International Conference ing research: A critical reflection. Information and Soft-
+onSoftwareEngineering:FutureofSoftwareEngineering wareTechnology,164:107329.
+(ICSE-FoSE),pages31–53.IEEE. Verkholomova, A. and Nazaruka, E. (2025). Overview of
+Fernández, D. M., Wagner, S., Kalinowski, M., Felderer, the application of generative ai in software performance
+M., Mafra, P., Vetrò, A., Conte, T., Christiansson, M.- testing. In202566thInternationalScientificConference
+T., Greer, D., Lassenius, C., et al. (2017). Naming the on Information Technology and Management Science of
+pain in requirements engineering: Contemporary prob- RigaTechnicalUniversity(ITMS),pages1–6.IEEE.
+lems,causes,andeffectsinpractice. Empiricalsoftware Wang, Z., Liu, K., Li, G., and Jin, Z. (2024). Hits: High-
+engineering,22(5):2298–2338. coveragellm-basedunittestgenerationviamethodslicing.
+Friedman,M.(1937). Theuseofrankstoavoidtheassump- pages1258–1268.
+tionofnormalityimplicitintheanalysisofvariance.Jour- White,J.,Fu,Q.,Hays,S.,Sandborn,M.,Olea,C.,Gilbert,
+nal of the american statistical association, 32(200):675– H., Elnashar, A., Spencer-Smith, J., and Schmidt, D. C.
+701. (2023). A prompt pattern catalog to enhance prompt en-
+Gheventer,A.,Gurgel,P.d.A.,Brito,C.H.,deMello,R.M., gineeringwithchatgpt. arXivpreprintarXiv:2302.11382.
+Rocha,S.,Feitosa,R.,andTravassos,G.H.(2026).Gener- Whittaker,J.A.(2002). Howtobreaksoftware:Apractical
+ativeaisolutionsforsoftwarequality:Assessingindustrial guide to testing with Cdrom. Addison-Wesley Longman
+readiness. SoftwareQualityJournal. InPress. PublishingCo.,Inc.
+Li, Y., Liu, P., Wang, H., Chu, J., and Wong, W. E. (2025). Wilcoxon, F. (1945). Individual comparisons by ranking
+Evaluating large language models for software testing. methods. Biometricsbulletin,1(6):80–83.
+ComputerStandards&Interfaces,93:103942. Wohlin,C.,Runeson,P.,Höst,M.,Ohlsson,M.C.,Regnell,
+Mendoza, I., Silva Filho, F., Medeiros, G., Paes, A., and B.,andWesslén,A.(2012). ExperimentationinSoftware
+Neves, V. O. (2024). Comparative analysis of large lan- Engineering. Springer.
+guagemodeltoolsforautomatedtestdatagenerationfrom

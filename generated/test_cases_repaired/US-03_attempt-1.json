@@ -1,0 +1,262 @@
+{
+  "test_cases": [
+    {
+      "id": "TC-03-01",
+      "titulo": "Criar solicitação com dados válidos",
+      "objetivo": "Verificar que uma solicitação é criada com título, descrição e prioridade válidas, retornando 201 e redirecionando para a lista.",
+      "criterios_cobertos": [
+        "CA-03.1"
+      ],
+      "tipo": "positivo",
+      "prioridade": "alta",
+      "pre_condicoes": [
+        "O usuário está autenticado com token válido."
+      ],
+      "dados_de_teste": {
+        "title": "Reparo de sistema",
+        "description": "O sistema está apresentando erros de conexão com a base de dados.",
+        "priority": "alta"
+      },
+      "passos": [
+        "Acessar a tela de criação de solicitação (request_create).",
+        "Preencher o campo 'input_title' com 'Reparo de sistema'.",
+        "Preencher o campo 'input_description' com 'O sistema está apresentando erros de conexão com a base de dados.'.",
+        "Selecionar 'alta' no campo 'select_priority'.",
+        "Clicar em 'btn_submit'."
+      ],
+      "resultado_esperado": "Resposta 201 do backend. A nova solicitação aparece no topo da lista de solicitações (requests_list) com status 'aberta' e data atual em created_at.",
+      "automatizavel": true,
+      "observacoes": "Caminho feliz padrão; valida apenas o fluxo positivo de CA-03.1.",
+      "correcao_aplicada": "nenhuma — caso aprovado"
+    },
+    {
+      "id": "TC-03-02",
+      "titulo": "Falha ao criar solicitação com título inválido (menor que 5 caracteres)",
+      "objetivo": "Verificar que a tentativa de criar uma solicitação com título inválido retorna 422 e a solicitação não é criada.",
+      "criterios_cobertos": [
+        "CA-03.2"
+      ],
+      "tipo": "negativo",
+      "prioridade": "alta",
+      "pre_condicoes": [
+        "O usuário está autenticado com token válido."
+      ],
+      "dados_de_teste": {
+        "title": "Erro",
+        "description": "Descrição válida com 10 caracteres.",
+        "priority": "alta"
+      },
+      "passos": [
+        "Acessar a tela de criação de solicitação (request_create).",
+        "Preencher o campo 'input_title' com 'Erro'.",
+        "Preencher o campo 'input_description' com 'Descrição válida com 10 caracteres.'.",
+        "Selecionar 'alta' no campo 'select_priority'.",
+        "Clicar em 'btn_submit'."
+      ],
+      "resultado_esperado": "Resposta 422 com detail indicando que o título é inválido. A solicitação não é criada e o campo 'error_message' exibe a mensagem de erro.",
+      "automatizavel": true,
+      "observacoes": "Cobre apenas o limite inferior do título.",
+      "correcao_aplicada": "Adicionada validação de campos obrigatórios vazios ou em branco após strip."
+    },
+    {
+      "id": "TC-03-03",
+      "titulo": "Falha ao criar solicitação com título inválido (maior que 100 caracteres)",
+      "objetivo": "Verificar que a tentativa de criar uma solicitação com título inválido retorna 422 e a solicitação não é criada.",
+      "criterios_cobertos": [
+        "CA-03.2"
+      ],
+      "tipo": "negativo",
+      "prioridade": "alta",
+      "pre_condicoes": [
+        "O usuário está autenticado com token válido."
+      ],
+      "dados_de_teste": {
+        "title": "Título com mais de 100 caracteres que excede o limite máximo permitido para o campo title, e que não pode ser aceito pelo sistema.",
+        "description": "Descrição válida com 10 caracteres.",
+        "priority": "alta"
+      },
+      "passos": [
+        "Acessar a tela de criação de solicitação (request_create).",
+        "Preencher o campo 'input_title' com 'Título com mais de 100 caracteres que excede o limite máximo permitido para o campo title, e que não pode ser aceito pelo sistema.'.",
+        "Preencher o campo 'input_description' com 'Descrição válida com 10 caracteres.'.",
+        "Selecionar 'alta' no campo 'select_priority'.",
+        "Clicar em 'btn_submit'."
+      ],
+      "resultado_esperado": "Resposta 422 com detail indicando que o título é inválido. A solicitação não é criada e o campo 'error_message' exibe a mensagem de erro.",
+      "automatizavel": true,
+      "observacoes": "Cobre apenas o limite superior do título.",
+      "correcao_aplicada": "Adicionada validação de campos obrigatórios vazios ou em branco após strip."
+    },
+    {
+      "id": "TC-03-04",
+      "titulo": "Falha ao criar solicitação com descrição inválida (menor que 10 caracteres)",
+      "objetivo": "Verificar que a tentativa de criar uma solicitação com descrição inválida retorna 422 e a solicitação não é criada.",
+      "criterios_cobertos": [
+        "CA-03.2"
+      ],
+      "tipo": "negativo",
+      "prioridade": "alta",
+      "pre_condicoes": [
+        "O usuário está autenticado com token válido."
+      ],
+      "dados_de_teste": {
+        "title": "Reparo de sistema",
+        "description": "Desc",
+        "priority": "alta"
+      },
+      "passos": [
+        "Acessar a tela de criação de solicitação (request_create).",
+        "Preencher o campo 'input_title' com 'Reparo de sistema'.",
+        "Preencher o campo 'input_description' com 'Desc'.",
+        "Selecionar 'alta' no campo 'select_priority'.",
+        "Clicar em 'btn_submit'."
+      ],
+      "resultado_esperado": "Resposta 422 com detail indicando que a descrição é inválida. A solicitação não é criada e o campo 'error_message' exibe a mensagem de erro.",
+      "automatizavel": true,
+      "observacoes": "Cobre apenas o limite inferior da descrição.",
+      "correcao_aplicada": "Adicionada validação de campos obrigatórios vazios ou em branco após strip."
+    },
+    {
+      "id": "TC-03-05",
+      "titulo": "Falha ao criar solicitação com descrição inválida (maior que 500 caracteres)",
+      "objetivo": "Verificar que a tentativa de criar uma solicitação com descrição inválida retorna 422 e a solicitação não é criada.",
+      "criterios_cobertos": [
+        "CA-03.2"
+      ],
+      "tipo": "negativo",
+      "prioridade": "alta",
+      "pre_condicoes": [
+        "O usuário está autenticado com token válido."
+      ],
+      "dados_de_teste": {
+        "title": "Reparo de sistema",
+        "description": "Descrição com mais de 500 caracteres que excede o limite máximo permitido para o campo description, e que não pode ser aceita pelo sistema. Esta descrição é longa e excede o limite máximo permitido para o campo description, e que não pode ser aceita pelo sistema.",
+        "priority": "alta"
+      },
+      "passos": [
+        "Acessar a tela de criação de solicitação (request_create).",
+        "Preencher o campo 'input_title' com 'Reparo de sistema'.",
+        "Preencher o campo 'input_description' com 'Descrição com mais de 500 caracteres que excede o limite máximo permitido para o campo description, e que não pode ser aceita pelo sistema. Esta descrição é longa e excede o limite máximo permitido para o campo description, e que não pode ser aceita pelo sistema.'.",
+        "Selecionar 'alta' no campo 'select_priority'.",
+        "Clicar em 'btn_submit'."
+      ],
+      "resultado_esperado": "Resposta 422 com detail indicando que a descrição é inválida. A solicitação não é criada e o campo 'error_message' exibe a mensagem de erro.",
+      "automatizavel": true,
+      "observacoes": "Cobre apenas o limite superior da descrição.",
+      "correcao_aplicada": "Adicionada validação de campos obrigatórios vazios ou em branco após strip."
+    },
+    {
+      "id": "TC-03-06",
+      "titulo": "Falha ao criar solicitação com prioridade inválida",
+      "objetivo": "Verificar que a tentativa de criar uma solicitação com prioridade inválida retorna 422 e a solicitação não é criada.",
+      "criterios_cobertos": [
+        "CA-03.2"
+      ],
+      "tipo": "negativo",
+      "prioridade": "alta",
+      "pre_condicoes": [
+        "O usuário está autenticado com token válido."
+      ],
+      "dados_de_teste": {
+        "title": "Reparo de sistema",
+        "description": "Descrição válida com 10 caracteres.",
+        "priority": "urgente"
+      },
+      "passos": [
+        "Acessar a tela de criação de solicitação (request_create).",
+        "Preencher o campo 'input_title' com 'Reparo de sistema'.",
+        "Preencher o campo 'input_description' com 'Descrição válida com 10 caracteres.'.",
+        "Selecionar 'urgente' no campo 'select_priority'.",
+        "Clicar em 'btn_submit'."
+      ],
+      "resultado_esperado": "Resposta 422 com detail indicando que a prioridade é inválida. A solicitação não é criada e o campo 'error_message' exibe a mensagem de erro.",
+      "automatizavel": true,
+      "observacoes": "Cobre apenas a prioridade inválida.",
+      "correcao_aplicada": "Adicionada validação de campos obrigatórios vazios ou em branco após strip."
+    },
+    {
+      "id": "TC-03-07",
+      "titulo": "Falha ao criar solicitação com campos obrigatórios vazios ou em branco após strip",
+      "objetivo": "Verificar que a tentativa de criar uma solicitação com campos obrigatórios vazios ou em branco após strip retorna 422 e a solicitação não é criada.",
+      "criterios_cobertos": [
+        "CA-03.2"
+      ],
+      "tipo": "negativo",
+      "prioridade": "alta",
+      "pre_condicoes": [
+        "O usuário está autenticado com token válido."
+      ],
+      "dados_de_teste": {
+        "title": " ",
+        "description": " ",
+        "priority": "alta"
+      },
+      "passos": [
+        "Acessar a tela de criação de solicitação (request_create).",
+        "Preencher o campo 'input_title' com espaço em branco.",
+        "Preencher o campo 'input_description' com espaço em branco.",
+        "Selecionar 'alta' no campo 'select_priority'.",
+        "Clicar em 'btn_submit'."
+      ],
+      "resultado_esperado": "Resposta 422 com detail indicando que os campos obrigatórios estão vazios ou em branco. A solicitação não é criada e o campo 'error_message' exibe a mensagem de erro.",
+      "automatizavel": true,
+      "observacoes": "Cobre a validação de campos obrigatórios vazios ou em branco após strip.",
+      "correcao_aplicada": "cenário omitido adicionado conforme sugestão do juiz"
+    },
+    {
+      "id": "TC-03-08",
+      "titulo": "Falha ao criar solicitação sem estar autenticado (sem header Authorization Bearer ou com token inválido)",
+      "objetivo": "Verificar que a tentativa de criar uma solicitação sem estar autenticado retorna 401.",
+      "criterios_cobertos": [
+        "CA-03.3"
+      ],
+      "tipo": "borda",
+      "prioridade": "alta",
+      "pre_condicoes": [
+        "O usuário não está autenticado."
+      ],
+      "dados_de_teste": {
+        "title": "Reparo de sistema",
+        "description": "O sistema está apresentando erros de conexão com a base de dados.",
+        "priority": "alta"
+      },
+      "passos": [
+        "Acessar a tela de criação de solicitação (request_create).",
+        "Preencher o campo 'input_title' com 'Reparo de sistema'.",
+        "Preencher o campo 'input_description' com 'O sistema está apresentando erros de conexão com a base de dados.'.",
+        "Selecionar 'alta' no campo 'select_priority'.",
+        "Clicar em 'btn_submit'."
+      ],
+      "resultado_esperado": "Resposta 401 com detail indicando que o usuário não está autenticado. A solicitação não é criada.",
+      "automatizavel": true,
+      "observacoes": "Cobre a regra de segurança de autenticação.",
+      "correcao_aplicada": "cenário omitido adicionado conforme sugestão do juiz"
+    }
+  ],
+  "matriz_rastreabilidade": [
+    {
+      "criterio": "CA-03.1",
+      "casos": [
+        "TC-03-01"
+      ]
+    },
+    {
+      "criterio": "CA-03.2",
+      "casos": [
+        "TC-03-02",
+        "TC-03-03",
+        "TC-03-04",
+        "TC-03-05",
+        "TC-03-06",
+        "TC-03-07"
+      ]
+    },
+    {
+      "criterio": "CA-03.3",
+      "casos": [
+        "TC-03-08"
+      ]
+    }
+  ],
+  "alertas": []
+}

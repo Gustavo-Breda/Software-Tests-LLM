@@ -134,8 +134,13 @@ Open http://localhost:5173 in a browser. Log in with one of the seed users:
 ### 5. Run the pipeline
 
 ```bash
-# Default provider from .env
+# Run Phase 4 (default): Agent 0, Agent 1, Agent 2 + repair loop
 docker compose run --rm pipeline python -m pipeline.workflow.runner
+
+# Run Phase 5: also generate Selenium/PyTest scripts
+docker compose run --rm \
+  -e PIPELINE_PHASE=phase5 \
+  pipeline python -m pipeline.workflow.runner
 
 # Override provider inline without editing .env
 docker compose run --rm \
@@ -143,6 +148,14 @@ docker compose run --rm \
   -e LLM_MODEL=gemini-3.1-flash \
   pipeline python -m pipeline.workflow.runner
 ```
+
+Agent 0 writes reports to `generated/reports/agent0/`.
+Agent 1 writes test cases to `generated/test_cases/`.
+Agent 2 writes judge reports to `generated/reports/agent2/` and repaired cases
+to `generated/test_cases_repaired/`.
+Agent 3 writes Selenium/PyTest scripts to `generated/scripts/<story_id>/`.
+When validation fails, the raw LLM response is saved under
+`generated/reports/raw/<agent>/<story_id>.json` for debugging.
 
 ### 6. Work with the Context Builder (Phase 2)
 
@@ -175,6 +188,8 @@ docker compose run --rm pipeline pytest generated/scripts
 ```
 
 ### 9. Compute evaluation metrics (Phase 7+)
+
+Fill the human oracle files described in `data/golden/README.md` first.
 
 ```bash
 docker compose run --rm pipeline python -m evaluation.metrics
@@ -222,7 +237,8 @@ oracle (gabarito). Metrics follow Silva et al. to allow direct comparison.
 
 - **Test-case quality:** precision, recall, F1, omission rate, incorrect-fact
   rate, acceptance-criteria coverage.
-- **Automation quality:** executable-scripts rate, functional success rate.
+- **Automation quality:** executable-scripts rate. Functional success rate stays
+  out of Phase 7 while Phase 6 is intentionally skipped.
 - **Pipeline-component efficacy:** judge precision/recall (vs. human review),
   perceived human effort (review time vs. manual authoring time).
 
@@ -236,7 +252,7 @@ oracle (gabarito). Metrics follow Silva et al. to allow direct comparison.
 ├── AGENTS.md                  # guide for coding agents working in this repo
 ├── docs/PLAN.md               # implementation plan & milestones
 ├── pipeline/                  # the QA assistant pipeline (Python)
-│   ├── agents/                # agent0–3 + summarizer stubs (Phase 3–6)
+│   ├── agents/                # agent0–1 implemented; agent2–3 + summarizer stubs
 │   ├── context/               # context builder + assets
 │   │   ├── models.py          #   UserStory, ContextSection, ContextBlob
 │   │   ├── builder.py         #   ContextBuilder + REQUIRED_SECTIONS
@@ -263,8 +279,9 @@ oracle (gabarito). Metrics follow Silva et al. to allow direct comparison.
 └── .env.example               # LLM_PROVIDER/LLM_MODEL + API keys (no secrets)
 ```
 
-> Phases 0–2 are complete. Directories marked Phase 3+ are scaffolded as stubs
-> but not yet implemented. See `docs/PLAN.md` for the full roadmap.
+> Phases 0–5 are implemented. Phase 7 has the metrics harness, but requires
+> human oracle files under `data/golden/` before it can produce final results.
+> Phase 6 is intentionally skipped for the current implementation plan.
 
 ---
 

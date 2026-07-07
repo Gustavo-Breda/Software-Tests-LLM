@@ -1,0 +1,209 @@
+--- PAGE 1 ---
+A Journey of Functional Test Evolution in the Public Sector
+Bruno Pedraça de Souza Rebeca Campos Motta Jessica Soares da Costa
+UFRJ and UNIRIO UFF UFRJ
+Rio de Janeiro, Brazil Niterói, Brazil Rio de Janeiro, Brazil
+bpsouza@cos.ufrj.br rcmotta@id.uff.br jessicacosta@cos.ufrj.br
+Elaine Nunes Gustavo Rocha Barreto Pinto Rafael Maiani de Mello
+CAPGov - COPPETEC CAPGov - COPPETEC UFRJ
+Rio de Janeiro, Brazil Rio de Janeiro, Brazil Rio de Janeiro, Brazil
+elainenunes@cos.ufrj.br grbpinto@gmail.com rafaelmello@ic.ufrj.br
+ABSTRACT teams, including a team for test automation. We expect that our
+report may contribute to supporting the mapping and
+Since 2015, a public legal institution in Brazil has relied on a
+improvement of software quality practices in the public sector.
+large-scale information system to support its services. As the
+system's complexity and business relevance increased over the
+2 Project Characterization
+years, functional testing evolved from an ad-hoc, manual
+approach to a systematic, automated practice integrated into the 2.1 Client and Development Team
+development workflow. This paper reports on the evolution of the
+maturity stages, detailing the challenges encountered and key This experience report is based on an ongoing long-term
+milestones achieved by adopting Selenium IDE automated tool partnership with a public-sector organization in a state of Brazil.
+The client organization operates in the legal domain, specifically
+testing. It also presents the main lessons learned by the testing
+within the justice system. The motivation for the project came
+team over this long-term process. Notably, process adjustments,
+from a strategic change in several Brazilian courts of justice to
+regression testing strategies, and the adoption of Selenium IDE
+replace paper-based processes with digital processes) [3].
+were instrumental in enhancing software quality. By sharing this
+At the beginning of the project in 2015, the client’s digital
+trajectory, we aim to provide practical insight into other
+infrastructure was minimal, and legal procedures were largely
+institutions facing similar constraints and demands.
+manual. The client recognized the need for digitally integrated but
+despite the discussions about establishing the solution architecture
+KEYWORDS
+evolving quickly, proper software development strategies,
+Software Testing, Selenium IDE, Experience Report including those for quality assurance and testing, were not yet
+defined. Today, the client operates with significantly higher digital
+expertise, motivated by the complexity and volume of legal
+1 Introduction
+services it delivers. The pandemic period accelerated a shift
+Software systems for the public sector play a critical role in toward remote service delivery and digital inclusion, granting
+delivering essential services to citizens. The development and complexity to the quality assurance process.
+maintenance of these systems often operate under unique The system was conceived and is currently maintained by a
+constraints such as limited budgets, high turnover, complex third-party team composing the [omitted] program. This program
+regulations, and the need to serve large and diverse populations develops and maintains software solutions for the public sector,
+[1]. Therefore, ensuring the quality and reliability of such systems working under the coordination of a university technology
+is not only a business concern but also a matter of public interest. foundation, offering services across project management,
+This paper addresses the experience of maintaining a core software development, and testing. Initially, the team had 20
+information system from a Brazilian legal public institution over a software professionals and operated with limited maturity.
+decade. More specifically, we report the evolution of functional According to early project reports, agile development was
+software testing practices for such systems, which initially lacked limited, focused mostly on task breakdown and iteration planning
+formal processes and specialized roles, but gradually matured into - but lacking formal design or testing specialists. Requirements
+a structured quality assurance (QA) with automated support activities were informal, driven by meetings, evolving document
+Selenium IDE tool [2]. drafts, and direct client interactions, and there was no specific
+In the following sections, we describe the system team for quality assurance and testing.
+characterization and how the testing practices evolved over time. Currently, the system has significantly evolved, and the team
+Grounded in this experience, we compiled practical lessons, has around 100 professionals, with several technical capabilities.
+highlighting the key role of organizational support in shaping The testing squad focuses on functional testing, a type of
+testing strategies and composing dedicated functional testing software testing based on the functional requirements of the
+
+--- PAGE 2 ---
+SAST’25, September 22–26, 2025, Recife, PE Souza et al.
+system [4]. Currently, the testing squad is composed of twelve Stage 1 – Report-oriented, retrospectively documented
+dedicated professionals, organized into manual (six people) and (2018–2022). It began with the definition of a testing leader and
+automated testing (six people). the hiring of the first analysts devoted to manual functional testing.
+With the formation of the testing team, all functional tests began
+2.2 System Characterization to be conceived and executed only by testers. Upon completing
+The software system under development is composed of multiple the testing cycle of each sprint, testers documented the scenarios
+interconnected components designed to support the evolving tested for each issue in a shared spreadsheet. The description of
+needs of the client institution. The system’s development has each scenario included its goal and the steps to be followed.
+followed the institutional mission of the client, which is centered However, the expected results were still not documented, and
+around offering legal support to citizens across a state of Brazil. testing data were often omitted or outdated.
+As a result, the software must adapt to a wide variety of Stage 2 – Test case-oriented, retrospectively documented
+workflows, user profiles, and legal domains—ranging from (2022–2023). To promote the automation of functional testing, the
+criminal defense and civil disputes to administrative and family project hired a software engineering researcher specialized in
+matters. Over time, four distinct waves have shaped the system: software testing and allocated one member from the manual
+1. Process Monitoring (2015): Started focusing on enabling testing team to focus on automation. Considering the project
+systems users to track and organize information about assisted characteristics and the profile of the testers, they identified
+individuals, including case history, appointments, and internal Selenium IDE [1] as the best option. In parallel with the creation
+documents. of an appropriate environment for automation, they diagnosed
+2. Public Assistance (2016): As demand increased, new three key challenges for implementing an automated testing
+modules were introduced to manage appointment queues, process: i) Lack of proper testing documentation: As noted in
+referrals, and services, aiming to reduce bottlenecks in first- Stage 1, essential elements of test cases were missing, hindering
+contact services. the automation process. ii) Late documentation: Test cases were
+3. Monitoring of Incarcerated Individuals (2018): The third typically written only after deployment, making it unfeasible to
+expansion responded to the need for managing cases of automate them during development. iii) Poor programming
+incarcerated clients. This involved tracking sentencing practices for automation: These included unfriendly navigation
+information, custody status, and rehabilitation timelines, requiring structures, improper element naming, and random generation of
+integration with legal oversight mechanisms. form element identifiers. To address these issues, the specialist
+4. External Integration (2020-current): It has expanded its initiated a series of targeted actions. First, the testing team
+interoperability with external parties, enabling service delivery, received training on how to write effective and comprehensive
+reflecting a broader trend toward digital transformation in legal test cases, aiming to improve documentation quality and
+services. Key integrations include the postal service database consistency. In parallel, meetings were held with project
+(Correios), inclusion of artificial intelligence (AI), the Federal leadership to renegotiate sprint timelines and ensure that test case
+Service (Receita Federal) for retrieving official data, and major writing could be integrated earlier in the development process.
+judicial process systems such as PJe, EPROC, and DCP. Additionally, the specialist identified critical navigation paths
+within the system and began developing automation scripts to
+What began as a single-purpose platform has grown into a support regression testing. To facilitate automation and
+complex, multi-service ecosystem that serves 20 thousand internal maintainability, development teams were also instructed to adopt
+users, 2 million processes and 2.7 million registered people. consistent naming conventions for all form elements, addressing
+one of the key technical barriers to automation.
+3 Functional Testing Stages
+Stage 3 – Partially automated, documented (2023–2024).
+At the beginning, functional testing activities [5] were issue- After significant progress in addressing previous challenges,
+oriented. In the project context, an issue (described in user story functional test automation was incorporated into the sprint
+format) may relate to the development of a new feature, the workflow of the issues implemented by one of the two
+evolution of an existing one, or bug fixing, where the scope of test development teams. This team was chosen due to its smaller size
+automation covers all. and the nature of its work, mostly maintenance of less complex
+features. At this point, most test cases were documented during
+Stage 0 – Ad-hoc (2015–2018). This stage began with the
+development, allowing for timely automation and retesting in the
+project kickstart. During this stage, the system was under
+release environment. Three new testers were hired and trained to
+continuous development. However, at the end of this stage, the set
+support this effort. Automated regression testing was introduced to
+of features was relatively small. During Stage 0, there was no
+the release testing phase, significantly reducing the number of
+dedicated team for testing or even testing leaders. The functional
+bugs reported in production and identifying merging issues.
+tests were carried out by the developers themselves during the
+However, timely test documentation remained a challenge. To
+sprints' workflow, without the concern of writing scenarios or
+address this, a strategy was introduced to pair manual and
+providing detailed test reports.
+automation testers, aiming to integrate and accelerate
+documentation and automation. Despite initial success, this
+
+--- PAGE 3 ---
+A Journey of Functional Test Evolution in the Public Sector SAST’25, September 22–26, 2025, Recife, PE
+initiative faced scheduling conflicts and shifting priorities and was Selenium IDE commands allow testers to easily assign each test
+ultimately discontinued. Less than 10% of functional tests were case description and its steps in the logs.
+identified as non-automatable due to test scenarios exceeding
+Sharing knowledge to overcome tool limitations. Despite the
+navigation boundaries (e.g., validating documents). Although this
+ease of using Selenium IDE, its command library has some key
+was a minor percentage, automation coverage remained between
+limitations. Regardless, Selenium IDE allows testers to insert
+60% and 70% per sprint due to documentation delays.
+JavaScript (JS) functions and instructions in its recordings.
+Stage 4 – Fully automated, promptly documented (2024–
+Besides, it is possible to store and manipulate the values returned
+ongoing). Following the successful automation efforts of one team,
+from running these scripts. A simple example addresses using a JS
+by mid-2024, the test automation team assumed responsibility for
+command to get the current system date to be used in native
+testing across the entire system. Although the tester pairing
+Selenium IDE commands. In this sense, sharing knowledge is
+initiative did not yield all the expected results, it effectively raised
+essential to avoid reworking. The automated testing team
+awareness about the importance of accessible, timely test
+maintains a single repository to support all automation activities.
+documentation. Taking advantage of a postponed deployment in
+late 2024, technical leaders prioritized clearing the testing
+5 Conclusion
+documentation backlog, renegotiating priorities, and refining
+sprint workflows. As a result, automation coverage increased This experience report presented the long-term evolution of
+significantly in the subsequent sprints. software testing practices in a public sector information system.
+Over nearly a decade, testing activities matured from informal,
+undocumented practices to a structured, partially automated, and
+4 Lesson Learned
+eventually fully automated process. Each stage reflected
+During the stages followed for automating the functional tests, we organizational shifts, growing technical complexity, and
+learned important lessons. we discuss the major ones: awareness of quality assurance's value. Key enablers of this
+evolution included team specialization, early documentation, and
+The efficiency of regression testing strongly depends on the the adoption of tools like Selenium IDE. Despite setbacks, such as
+coding standards. The automation of functional tests allowed the documentation delays and process misalignments, the initiative
+adoption of regression testing for the first time in the project. demonstrated that significant quality gains are achievable even
+After regression testing, we observed a considerable and stable under the constraints of public administration.
+decline in bug reporting by system users. From regression testing,
+Based on this trajectory, we identify three promising research
+it is expected to be fast and autonomous (re)execution. However, directions: (i) evaluating the cost-benefit and scalability of
+the effort spent with regression testing may considerably increase lightweight automation tools in public sector systems, (ii)
+if poor programming practices are applied. Some practices, such exploring how automated test artifacts (logs and reports)
+as the random generation of identifiers, may lead testers to contribute to traceability, auditability, and compliance, and (iii)
+manually fix several recorded steps, which may take more time studying the adoption curve of no-code and low-code tools among
+than manual testing. non-programmer testers. By sharing this journey, we hope to
+inspire other public institutions to invest in testing practices as a
+Selenium IDE is a practical alternative for populating testing path to delivering more reliable and sustainable services.
+data. In large and complex business systems such as our system, it
+may be challenging to continuously develop and maintain ACKNOWLEDGMENTS
+database scripts to update testing data after restoration.
+This paper is a result of a real Research&Development project.
+Alternatively, our experience showed that recording and
+maintaining data inclusion scripts through Selenium IDE is The authors also thank CNPQ and CAPES - Finance Code 001.
+alternative. Besides, it minimizes the need for support from
+database teams for testing. REFERENCES
+Selenium IDE is a practical tool for beginners in automation. [1] Yuri Lima, Luana Passos and Jano M. de Souza. 2025. Analysis of automation
+and retraining opportunities for the Brazilian federal public service. Conference
+The initial version of the automated testing team was composed of
+on Digital Government Research. https://doi.org/10.59490/dgo.2025.1031
+functional testing experts, but most of them were inexperienced [2] Selenium IDE. Retrieved July 1st, 2025, from https://www.selenium.dev/pt-
+with testing automation. Despite this limitation, they quickly br/documentation/ide/
+[3] Marcus Parreiras, et al. Inteligência artificial aplicada para o aumento da
+embraced Selenium IDE due to its intuitive interface, ease of use
+produtividade no atendimento de intimações. WCGE. SBC, 2022. p. 180-191.
+as a browser plugin, and the ability to record automated test [4] Jan Severo and Valéria Lelli. 2023. Testing Maze: an educational game for
+scripts. These characteristics significantly streamlined the teaching functional testing. Proceedings of the XXXVII Brazilian Symposium on
+adoption process and accelerated the training of new team Software Engineering. 2023. https://doi.org/10.1145/3613372.3614191
+[5] Glen J. Myers, Corey Sandler and Tom Badgett. 2011. The art of software
+members.
+testing. John Wiley & Sons.
+Selenium IDE logs may be used for self-document functional
+testing. The testing team is responsible for assuring that the
+system meets user requirements through testing activities. With
+the adoption of Selenium IDE, the testing team can export user-
+friendly logs describing each navigation step applied. Besides,

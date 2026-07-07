@@ -2,7 +2,10 @@ import os
 
 from jose import jwt, JWTError
 from datetime import datetime, timedelta, timezone
-from passlib.context import CryptContext
+
+from pwdlib import PasswordHash
+from pwdlib.hashers.bcrypt import BcryptHasher
+
 
 JWT_SECRET = os.getenv("JWT_SECRET", "dev-secret-change-me")
 JWT_ALGORITHM = "HS256"
@@ -11,7 +14,8 @@ JWT_EXPIRES_HOURS = int(os.getenv("JWT_EXPIRES_HOURS", "8"))
 MAX_FAILED_ATTEMPTS = 5
 LOCKOUT_SECONDS = 60
 
-_pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
+
+_pwd_context = PasswordHash((BcryptHasher(),))
 
 
 def hash_password(plain: str) -> str:

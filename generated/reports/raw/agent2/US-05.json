@@ -1,0 +1,19 @@
+{
+  "story_id": "US-05",
+  "stage": "agent2",
+  "error": {
+    "type": "RawAgentResponseError",
+    "message": "LLM response did not contain a valid JSON object."
+  },
+  "provider": "ollama",
+  "model": "llama3",
+  "metadata": {
+    "latency_seconds": 4.574344641994685,
+    "prompt_tokens": 8191,
+    "completion_tokens": 1,
+    "raw": {
+      "done_reason": "length"
+    }
+  },
+  "raw_response": "{\n"
+}

@@ -1,0 +1,58 @@
+{
+  "status_geral": "REPROVADO",
+  "pontuacao": {
+    "cobertura": 5,
+    "fidelidade_ao_requisito": 6,
+    "clareza": 7,
+    "automatizabilidade": 8
+  },
+  "casos_aprovados": [
+    "TC-05-01",
+    "TC-05-02"
+  ],
+  "casos_reprovados": [
+    "TC-05-03",
+    "TC-05-04",
+    "TC-05-05",
+    "TC-05-06"
+  ],
+  "problemas": [
+    {
+      "caso_de_teste": "TC-05-03",
+      "tipo": "fato_incorreto",
+      "descricao": "O caso assume que a solicitação está em status 'cancelada' sem mencionar isso na história.",
+      "evidencia_na_historia": "A história não menciona o status da solicitação como 'cancelada'.",
+      "acao_recomendada": "Revisar a história para incluir o status da solicitação."
+    },
+    {
+      "caso_de_teste": "TC-05-04",
+      "tipo": "fato_incorreto",
+      "descricao": "O caso assume que a solicitação está em status 'finalizada' sem mencionar isso na história.",
+      "evidencia_na_historia": "A história não menciona o status da solicitação como 'finalizada'.",
+      "acao_recomendada": "Revisar a história para incluir o status da solicitação."
+    },
+    {
+      "caso_de_teste": "TC-05-05",
+      "tipo": "fato_incorreto",
+      "descricao": "O caso assume que o usuário não tem permissão para cancelar solicitações de outros usuários.",
+      "evidencia_na_historia": "A história não menciona a permissão do usuário para cancelar solicitações de outros usuários.",
+      "acao_recomendada": "Revisar a história para incluir a permissão do usuário."
+    },
+    {
+      "caso_de_teste": "TC-05-06",
+      "tipo": "fato_incorreto",
+      "descricao": "O caso assume que a solicitação inexistente é cancelada.",
+      "evidencia_na_historia": "A história não menciona o cancelamento de solicitações inexistentes.",
+      "acao_recomendada": "Revisar a história para incluir o cancelamento de solicitações inexistentes."
+    }
+  ],
+  "cenarios_omitidos_sugeridos": [
+    {
+      "descricao": "Cancelar solicitação própria em status 'cancelada' com erro 409",
+      "criterio_relacionado": "CA-05.3",
+      "justificativa": "Essa é uma situação importante para testar a lógica de cancelamento.",
+      "tipo_sugerido": "borda"
+    }
+  ],
+  "decisao": "REPROVADO"
+}

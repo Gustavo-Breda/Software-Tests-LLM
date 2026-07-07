@@ -25,7 +25,7 @@ def register(payload: RegisterIn, db: Session = Depends(get_db)) -> User:
 
 @router.post("/login", response_model=TokenOut)
 def login(payload: LoginIn, db: Session = Depends(get_db)) -> TokenOut:
-    now = _utcnow()
+    now = utcnow()
     user = db.scalar(select(User).where(User.email == payload.email))
 
     if user and user.locked_until and user.locked_until > now:

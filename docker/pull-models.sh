@@ -21,7 +21,7 @@ if [ "$READY" = false ]; then
 fi
 
 # read the envinroment variable
-MODELS="${OLLAMA_MODELS:-llama3}"
+MODELS="${OLLAMA_PULL_MODELS:-llama3}"
 
 # dividing the model pullings
 IFS=',' read -ra REQUESTED <<< "$MODELS"

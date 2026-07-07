@@ -1,0 +1,69 @@
+{
+  "story_id": "US-05",
+  "expected_cases": [
+    {
+      "id": "EXP-05-01",
+      "titulo": "Cancelar solicitação própria em 'aberta' é bem-sucedido",
+      "criterios_cobertos": ["CA-05.1"],
+      "tipo": "positivo",
+      "must_cover": "POST /api/requests/{id}/cancel de uma solicitação própria em status 'aberta' retorna 200.",
+      "matched_generated_case_ids": []
+    },
+    {
+      "id": "EXP-05-02",
+      "titulo": "Cancelar solicitação própria em 'em_analise' é bem-sucedido",
+      "criterios_cobertos": ["CA-05.1"],
+      "tipo": "positivo",
+      "must_cover": "POST /api/requests/{id}/cancel de uma solicitação própria em status 'em_analise' (UI: 'em análise') retorna 200.",
+      "matched_generated_case_ids": []
+    },
+    {
+      "id": "EXP-05-03",
+      "titulo": "Cancelamento seta status='cancelada' e cancelled_at simultaneamente",
+      "criterios_cobertos": ["CA-05.1"],
+      "tipo": "borda",
+      "must_cover": "Após cancelamento bem-sucedido, o servidor persiste status='cancelada' e cancelled_at=agora() no mesmo instante (nenhum dos dois fica nulo).",
+      "matched_generated_case_ids": []
+    },
+    {
+      "id": "EXP-05-04",
+      "titulo": "Dialog de confirmação exibe o título da solicitação antes de chamar o endpoint",
+      "criterios_cobertos": ["CA-05.1"],
+      "tipo": "borda",
+      "must_cover": "Ao clicar em [data-testid=request-row-cancel], a UI abre [data-testid=cancel-dialog] com o título da solicitação exibido em [data-testid=cancel-dialog-title] antes da chamada a POST /api/requests/{id}/cancel.",
+      "matched_generated_case_ids": []
+    },
+    {
+      "id": "EXP-05-05",
+      "titulo": "Tentar cancelar solicitação de outro usuário é rejeitado",
+      "criterios_cobertos": ["CA-05.2"],
+      "tipo": "negativo",
+      "must_cover": "bob autenticado tentando POST /api/requests/{id}/cancel em solicitação de alice retorna 403 com mensagem literal 'Você não pode cancelar uma solicitação de outro usuário.' e a solicitação de alice permanece inalterada.",
+      "matched_generated_case_ids": []
+    },
+    {
+      "id": "EXP-05-06",
+      "titulo": "Cancelar solicitação inexistente retorna 404",
+      "criterios_cobertos": ["CA-05.2"],
+      "tipo": "negativo",
+      "must_cover": "POST /api/requests/{id}/cancel para um id que não existe retorna 404 e nenhuma solicitação é alterada.",
+      "matched_generated_case_ids": []
+    },
+    {
+      "id": "EXP-05-07",
+      "titulo": "Cancelar solicitação já 'cancelada' é rejeitado",
+      "criterios_cobertos": ["CA-05.3"],
+      "tipo": "borda",
+      "must_cover": "POST /api/requests/{id}/cancel em solicitação já em status 'cancelada' retorna 409 com mensagem literal \"Somente solicitações 'aberta' ou 'em análise' podem ser canceladas.\" e a solicitação permanece inalterada.",
+      "matched_generated_case_ids": []
+    },
+    {
+      "id": "EXP-05-08",
+      "titulo": "Cancelar solicitação já 'finalizada' é rejeitado",
+      "criterios_cobertos": ["CA-05.3"],
+      "tipo": "borda",
+      "must_cover": "POST /api/requests/{id}/cancel em solicitação em status 'finalizada' retorna 409 com mensagem literal \"Somente solicitações 'aberta' ou 'em análise' podem ser canceladas.\" e a solicitação permanece inalterada.",
+      "matched_generated_case_ids": []
+    }
+  ]
+}
