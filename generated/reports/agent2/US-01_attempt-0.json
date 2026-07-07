@@ -1,0 +1,34 @@
+{
+  "status_geral": "REPROVADO",
+  "pontuacao": {
+    "cobertura": 8,
+    "fidelidade_ao_requisito": 10,
+    "clareza": 9,
+    "automatizabilidade": 9
+  },
+  "casos_aprovados": [
+    "TC-01-01",
+    "TC-01-02",
+    "TC-01-03",
+    "TC-01-04",
+    "TC-01-05",
+    "TC-01-06"
+  ],
+  "casos_reprovados": [],
+  "problemas": [],
+  "cenarios_omitidos_sugeridos": [
+    {
+      "descricao": "Verificar que um login bem-sucedido reseta o contador de tentativas falhas antes que o bloqueio seja ativado.",
+      "criterio_relacionado": "CA-01.3",
+      "justificativa": "O critério CA-01.3 afirma explicitamente 'Login bem-sucedido reseta o contador'. Embora TC-01-01 cubra um login bem-sucedido, não há um cenário que demonstre o reset do contador *após* tentativas falhas (mas antes do bloqueio) e *antes* de um login bem-sucedido. Isso é crucial para garantir que o mecanismo de reset funcione conforme o esperado, evitando que o usuário seja bloqueado injustamente após um login correto.",
+      "tipo_sugerido": "borda"
+    },
+    {
+      "descricao": "Verificar que, após o período de bloqueio expirar, um login bem-sucedido desbloqueia a conta e reseta o contador de tentativas falhas.",
+      "criterio_relacionado": "CA-01.3",
+      "justificativa": "O critério CA-01.3 especifica que 'Login bem-sucedido reseta o contador' e que a conta é bloqueada por 60 segundos. Embora TC-01-04 e TC-01-05 cubram a ativação e o comportamento durante o bloqueio, não há um caso de teste que verifique o comportamento do sistema *após* a expiração do bloqueio, onde um login bem-sucedido deve não apenas permitir o acesso, mas também resetar o contador de tentativas falhas, permitindo novas tentativas (falhas ou não) sem bloqueio imediato.",
+      "tipo_sugerido": "borda"
+    }
+  ],
+  "decisao": "REPROVADO"
+}

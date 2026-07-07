@@ -1,0 +1,218 @@
+{
+  "test_cases": [
+    {
+      "id": "TC-05-01",
+      "titulo": "Cancelamento bem-sucedido de solicitação própria em status 'aberta'",
+      "objetivo": "Verificar que um usuário autenticado pode cancelar uma solicitação própria que esteja no status 'aberta', e que a UI e o backend refletem a mudança corretamente.",
+      "criterios_cobertos": [
+        "CA-05.1"
+      ],
+      "tipo": "positivo",
+      "prioridade": "alta",
+      "pre_condicoes": [
+        "O usuário 'alice@example.com' está logado.",
+        "Existe uma solicitação de Alice com ID conhecido (ex: 101), título 'Solicitação Aberta de Alice' e status 'aberta'."
+      ],
+      "dados_de_teste": {
+        "user_email": "alice@example.com",
+        "user_password": "Senha123",
+        "request_id": 101,
+        "request_title": "Solicitação Aberta de Alice",
+        "initial_status": "aberta"
+      },
+      "passos": [
+        "Logar no sistema como 'alice@example.com' com a senha 'Senha123'.",
+        "Navegar para a tela de listagem de solicitações (rota '/requests').",
+        "Localizar a linha da solicitação com `data-testid=request-row` que corresponde à 'Solicitação Aberta de Alice' (ID 101) e cujo `data-testid=request-row-status` exibe 'aberta'.",
+        "Clicar no botão 'Cancelar' (`data-testid=request-row-cancel`) dentro dessa linha.",
+        "Verificar que o diálogo de confirmação (`data-testid=cancel-dialog`) é exibido.",
+        "Verificar que o título da solicitação 'Solicitação Aberta de Alice' é exibido no `data-testid=cancel-dialog-title` do diálogo.",
+        "Clicar no botão 'Confirmar' (`data-testid=cancel-confirm`) no diálogo de confirmação."
+      ],
+      "resultado_esperado": "O backend retorna 200 OK. A solicitação com ID 101 tem seu status alterado para 'cancelada' e o campo `cancelled_at` é preenchido com a data/hora atual. Na UI, a linha da solicitação 101 na lista de solicitações exibe 'cancelada' em seu `data-testid=request-row-status`.",
+      "automatizavel": true,
+      "observacoes": "Este caso cobre o cenário de cancelamento para o status 'aberta'. Um caso similar para 'em_analise' também é necessário para cobrir CA-05.1 completamente.",
+      "correcao_aplicada": ""
+    },
+    {
+      "id": "TC-05-02",
+      "titulo": "Cancelamento bem-sucedido de solicitação própria em status 'em_analise'",
+      "objetivo": "Verificar que um usuário autenticado pode cancelar uma solicitação própria que esteja no status 'em_analise', e que a UI e o backend refletem a mudança corretamente.",
+      "criterios_cobertos": [
+        "CA-05.1"
+      ],
+      "tipo": "positivo",
+      "prioridade": "media",
+      "pre_condicoes": [
+        "O usuário 'alice@example.com' está logado.",
+        "Existe uma solicitação de Alice com ID conhecido (ex: 102), título 'Solicitação Em Análise de Alice' e status 'em_analise'."
+      ],
+      "dados_de_teste": {
+        "user_email": "alice@example.com",
+        "user_password": "Senha123",
+        "request_id": 102,
+        "request_title": "Solicitação Em Análise de Alice",
+        "initial_status": "em_analise"
+      },
+      "passos": [
+        "Logar no sistema como 'alice@example.com' com a senha 'Senha123'.",
+        "Navegar para a tela de listagem de solicitações (rota '/requests').",
+        "Localizar a linha da solicitação com `data-testid=request-row` que corresponde à 'Solicitação Em Análise de Alice' (ID 102) e cujo `data-testid=request-row-status` exibe 'em análise'.",
+        "Clicar no botão 'Cancelar' (`data-testid=request-row-cancel`) dentro dessa linha.",
+        "Verificar que o diálogo de confirmação (`data-testid=cancel-dialog`) é exibido.",
+        "Verificar que o título da solicitação 'Solicitação Em Análise de Alice' é exibido no `data-testid=cancel-dialog-title` do diálogo.",
+        "Clicar no botão 'Confirmar' (`data-testid=cancel-confirm`) no diálogo de confirmação."
+      ],
+      "resultado_esperado": "O backend retorna 200 OK. A solicitação com ID 102 tem seu status alterado para 'cancelada' e o campo `cancelled_at` é preenchido com a data/hora atual. Na UI, a linha da solicitação 102 na lista de solicitações exibe 'cancelada' em seu `data-testid=request-row-status`.",
+      "automatizavel": true,
+      "observacoes": "Este caso complementa TC-05-01, cobrindo o segundo status cancelável ('em_analise') conforme CA-05.1.",
+      "correcao_aplicada": ""
+    },
+    {
+      "id": "TC-05-03",
+      "titulo": "Tentativa de cancelar solicitação de outro usuário via API",
+      "objetivo": "Verificar que um usuário não pode cancelar uma solicitação que não lhe pertence, recebendo um erro 403.",
+      "criterios_cobertos": [
+        "CA-05.2"
+      ],
+      "tipo": "negativo",
+      "prioridade": "alta",
+      "pre_condicoes": [
+        "O usuário 'alice@example.com' está logado e possui um token JWT válido.",
+        "Existe uma solicitação de 'bob@example.com' com ID conhecido (ex: 201), título 'Solicitação Aberta de Bob' e status 'aberta'."
+      ],
+      "dados_de_teste": {
+        "user_email": "alice@example.com",
+        "user_password": "Senha123",
+        "target_request_id": 201,
+        "target_request_owner_email": "bob@example.com"
+      },
+      "passos": [
+        "Logar como 'alice@example.com' e obter o `access_token`.",
+        "Fazer uma requisição HTTP `POST` para o endpoint `/api/requests/201/cancel` (ID da solicitação de Bob), incluindo o `access_token` de Alice no header `Authorization: Bearer <token>`."
+      ],
+      "resultado_esperado": "O backend retorna 403 Forbidden com o corpo da resposta contendo `{\"detail\": \"Você não pode cancelar uma solicitação de outro usuário.\"}`. A solicitação com ID 201 de Bob permanece inalterada (status 'aberta').",
+      "automatizavel": true,
+      "observacoes": "Este teste foca na regra de propriedade no nível da API, já que a UI não deve permitir que Alice veja ou interaja com solicitações de Bob.",
+      "correcao_aplicada": ""
+    },
+    {
+      "id": "TC-05-04",
+      "titulo": "Tentativa de cancelar solicitação inexistente via API",
+      "objetivo": "Verificar que a tentativa de cancelar uma solicitação com um ID que não existe resulta em um erro 404.",
+      "criterios_cobertos": [
+        "CA-05.2"
+      ],
+      "tipo": "negativo",
+      "prioridade": "alta",
+      "pre_condicoes": [
+        "O usuário 'alice@example.com' está logado e possui um token JWT válido."
+      ],
+      "dados_de_teste": {
+        "user_email": "alice@example.com",
+        "user_password": "Senha123",
+        "non_existent_request_id": 99999
+      },
+      "passos": [
+        "Logar como 'alice@example.com' e obter o `access_token`.",
+        "Fazer uma requisição HTTP `POST` para o endpoint `/api/requests/99999/cancel` (onde 99999 é um ID que não corresponde a nenhuma solicitação existente), incluindo o `access_token` de Alice no header `Authorization: Bearer <token>`."
+      ],
+      "resultado_esperado": "O backend retorna 404 Not Found com o corpo da resposta contendo `{\"detail\": \"Solicitação não encontrada.\"}`. Nenhuma solicitação é alterada no sistema.",
+      "automatizavel": true,
+      "observacoes": "Este teste valida o tratamento de IDs de solicitação inválidos ou inexistentes no nível da API.",
+      "correcao_aplicada": ""
+    },
+    {
+      "id": "TC-05-05",
+      "titulo": "Tentativa de cancelar solicitação própria já 'cancelada'",
+      "objetivo": "Verificar que não é possível cancelar uma solicitação que já está no status 'cancelada', resultando em um erro 409.",
+      "criterios_cobertos": [
+        "CA-05.3"
+      ],
+      "tipo": "borda",
+      "prioridade": "alta",
+      "pre_condicoes": [
+        "O usuário 'alice@example.com' está logado.",
+        "Existe uma solicitação de Alice com ID conhecido (ex: 103), título 'Solicitação Cancelada de Alice' e status 'cancelada'."
+      ],
+      "dados_de_teste": {
+        "user_email": "alice@example.com",
+        "user_password": "Senha123",
+        "request_id": 103,
+        "request_title": "Solicitação Cancelada de Alice",
+        "initial_status": "cancelada"
+      },
+      "passos": [
+        "Logar no sistema como 'alice@example.com' com a senha 'Senha123'.",
+        "Navegar para a tela de listagem de solicitações (rota '/requests').",
+        "Localizar a linha da solicitação com `data-testid=request-row` que corresponde à 'Solicitação Cancelada de Alice' (ID 103) e cujo `data-testid=request-row-status` exibe 'cancelada'.",
+        "Clicar no botão 'Cancelar' (`data-testid=request-row-cancel`) dentro dessa linha.",
+        "Verificar que o diálogo de confirmação (`data-testid=cancel-dialog`) é exibido.",
+        "Verificar que o título da solicitação 'Solicitação Cancelada de Alice' é exibido no `data-testid=cancel-dialog-title` do diálogo.",
+        "Clicar no botão 'Confirmar' (`data-testid=cancel-confirm`) no diálogo de confirmação."
+      ],
+      "resultado_esperado": "O backend retorna 409 Conflict com o corpo da resposta contendo `{\"detail\": \"Somente solicitações 'aberta' ou 'em análise' podem ser canceladas.\"}`. A solicitação com ID 103 permanece com status 'cancelada' e `cancelled_at` inalterado. A UI deve exibir uma mensagem de erro apropriada ao usuário.",
+      "automatizavel": true,
+      "observacoes": "Este caso valida a regra de negócio que impede o cancelamento de solicitações em status terminal. Um caso similar para 'finalizada' também é necessário para cobrir CA-05.3 completamente.",
+      "correcao_aplicada": ""
+    },
+    {
+      "id": "TC-05-06",
+      "titulo": "Tentativa de cancelar solicitação própria 'finalizada'",
+      "objetivo": "Verificar que não é possível cancelar uma solicitação que já está no status 'finalizada', resultando em um erro 409.",
+      "criterios_cobertos": [
+        "CA-05.3"
+      ],
+      "tipo": "borda",
+      "prioridade": "media",
+      "pre_condicoes": [
+        "O usuário 'alice@example.com' está logado.",
+        "Existe uma solicitação de Alice com ID conhecido (ex: 104), título 'Solicitação Finalizada de Alice' e status 'finalizada'."
+      ],
+      "dados_de_teste": {
+        "user_email": "alice@example.com",
+        "user_password": "Senha123",
+        "request_id": 104,
+        "request_title": "Solicitação Finalizada de Alice",
+        "initial_status": "finalizada"
+      },
+      "passos": [
+        "Logar no sistema como 'alice@example.com' com a senha 'Senha123'.",
+        "Navegar para a tela de listagem de solicitações (rota '/requests').",
+        "Localizar a linha da solicitação com `data-testid=request-row` que corresponde à 'Solicitação Finalizada de Alice' (ID 104) e cujo `data-testid=request-row-status` exibe 'finalizada'.",
+        "Clicar no botão 'Cancelar' (`data-testid=request-row-cancel`) dentro dessa linha.",
+        "Verificar que o diálogo de confirmação (`data-testid=cancel-dialog`) é exibido.",
+        "Verificar que o título da solicitação 'Solicitação Finalizada de Alice' é exibido no `data-testid=cancel-dialog-title` do diálogo.",
+        "Clicar no botão 'Confirmar' (`data-testid=cancel-confirm`) no diálogo de confirmação."
+      ],
+      "resultado_esperado": "O backend retorna 409 Conflict com o corpo da resposta contendo `{\"detail\": \"Somente solicitações 'aberta' ou 'em análise' podem ser canceladas.\"}`. A solicitação com ID 104 permanece com status 'finalizada' e `cancelled_at` nulo. A UI deve exibir uma mensagem de erro apropriada ao usuário.",
+      "automatizavel": true,
+      "observacoes": "Este caso complementa TC-05-05, cobrindo o segundo status terminal ('finalizada') conforme CA-05.3.",
+      "correcao_aplicada": ""
+    }
+  ],
+  "matriz_rastreabilidade": [
+    {
+      "criterio": "CA-05.1",
+      "casos": [
+        "TC-05-01",
+        "TC-05-02"
+      ]
+    },
+    {
+      "criterio": "CA-05.2",
+      "casos": [
+        "TC-05-03",
+        "TC-05-04"
+      ]
+    },
+    {
+      "criterio": "CA-05.3",
+      "casos": [
+        "TC-05-05",
+        "TC-05-06"
+      ]
+    }
+  ],
+  "alertas": []
+}

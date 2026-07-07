@@ -1,0 +1,203 @@
+{
+  "test_cases": [
+    {
+      "id": "TC-01-01",
+      "titulo": "Login bem-sucedido com credenciais válidas",
+      "objetivo": "Verificar que um usuário cadastrado consegue realizar login com e-mail e senha corretos, recebendo um token JWT e sendo redirecionado para a tela de listagem de solicitações.",
+      "criterios_cobertos": [
+        "CA-01.1"
+      ],
+      "tipo": "positivo",
+      "prioridade": "alta",
+      "pre_condicoes": [
+        "O usuário 'alice@example.com' com senha 'Senha123' está cadastrado no sistema (dado de seed)."
+      ],
+      "dados_de_teste": {
+        "email": "alice@example.com",
+        "password": "Senha123"
+      },
+      "passos": [
+        "Acessar a rota /login no frontend.",
+        "Preencher o campo 'input_email' ([data-testid=login-email]) com 'alice@example.com'.",
+        "Preencher o campo 'input_password' ([data-testid=login-password]) com 'Senha123'.",
+        "Clicar no botão 'btn_submit' ([data-testid=login-submit])."
+      ],
+      "resultado_esperado": "A requisição POST /api/auth/login retorna status 200 OK com um token JWT no corpo. O navegador é redirecionado para a rota /requests e a tela 'requests_list' é exibida.",
+      "automatizavel": true,
+      "observacoes": "Caso de caminho feliz fundamental, cobrindo o fluxo principal de login bem-sucedido.",
+      "correcao_aplicada": ""
+    },
+    {
+      "id": "TC-01-02",
+      "titulo": "Rejeição de login com senha incorreta para e-mail existente",
+      "objetivo": "Verificar que, ao tentar logar com um e-mail cadastrado e uma senha incorreta, o sistema retorna 401 e a mensagem genérica de erro, sem revelar a existência do e-mail.",
+      "criterios_cobertos": [
+        "CA-01.2"
+      ],
+      "tipo": "negativo",
+      "prioridade": "alta",
+      "pre_condicoes": [
+        "O usuário 'alice@example.com' está cadastrado no sistema."
+      ],
+      "dados_de_teste": {
+        "email": "alice@example.com",
+        "password": "SenhaIncorreta123"
+      },
+      "passos": [
+        "Acessar a rota /login.",
+        "Preencher o campo 'input_email' ([data-testid=login-email]) com 'alice@example.com'.",
+        "Preencher o campo 'input_password' ([data-testid=login-password]) com 'SenhaIncorreta123'.",
+        "Clicar no botão 'btn_submit' ([data-testid=login-submit])."
+      ],
+      "resultado_esperado": "A requisição POST /api/auth/login retorna status 401 Unauthorized. O elemento 'error_message' ([data-testid=login-error]) é exibido com a mensagem 'E-mail ou senha inválidos.'. O usuário permanece na rota /login.",
+      "automatizavel": true,
+      "observacoes": "Este caso testa a parte de 'senha incorreta' do CA-01.2 e a mensagem genérica de erro.",
+      "correcao_aplicada": ""
+    },
+    {
+      "id": "TC-01-03",
+      "titulo": "Rejeição de login com e-mail inexistente",
+      "objetivo": "Verificar que, ao tentar logar com um e-mail não cadastrado, o sistema retorna 401 e a mesma mensagem genérica de erro, sem revelar a existência do e-mail (anti-enumeração).",
+      "criterios_cobertos": [
+        "CA-01.2"
+      ],
+      "tipo": "negativo",
+      "prioridade": "alta",
+      "pre_condicoes": [
+        "O e-mail 'naoexiste@example.com' não está cadastrado no sistema."
+      ],
+      "dados_de_teste": {
+        "email": "naoexiste@example.com",
+        "password": "QualquerSenha123"
+      },
+      "passos": [
+        "Acessar a rota /login.",
+        "Preencher o campo 'input_email' ([data-testid=login-email]) com 'naoexiste@example.com'.",
+        "Preencher o campo 'input_password' ([data-testid=login-password]) com 'QualquerSenha123'.",
+        "Clicar no botão 'btn_submit' ([data-testid=login-submit])."
+      ],
+      "resultado_esperado": "A requisição POST /api/auth/login retorna status 401 Unauthorized. O elemento 'error_message' ([data-testid=login-error]) é exibido com a mensagem 'E-mail ou senha inválidos.'. O usuário permanece na rota /login.",
+      "automatizavel": true,
+      "observacoes": "Este caso testa a parte de 'e-mail inexistente' do CA-01.2 e a regra de anti-enumeração de usuários.",
+      "correcao_aplicada": ""
+    },
+    {
+      "id": "TC-01-04",
+      "titulo": "Bloqueio de conta após 5 tentativas falhas consecutivas",
+      "objetivo": "Verificar que após 5 tentativas de login falhas consecutivas para o mesmo e-mail, a conta é bloqueada e a 6ª tentativa retorna 423 Locked.",
+      "criterios_cobertos": [
+        "CA-01.3"
+      ],
+      "tipo": "borda",
+      "prioridade": "alta",
+      "pre_condicoes": [
+        "O usuário 'bob@example.com' está cadastrado e não bloqueado."
+      ],
+      "dados_de_teste": {
+        "email": "bob@example.com",
+        "password_falha_1_a_5": "SenhaErradaX",
+        "password_falha_6": "SenhaErradaY"
+      },
+      "passos": [
+        "Acessar a rota /login.",
+        "Repetir os passos 3 e 4 por 5 vezes consecutivas:",
+        "  a. Preencher o campo 'input_email' ([data-testid=login-email]) com 'bob@example.com'.",
+        "  b. Preencher o campo 'input_password' ([data-testid=login-password]) com 'SenhaErradaX'.",
+        "  c. Clicar no botão 'btn_submit' ([data-testid=login-submit]).",
+        "  d. Verificar que a resposta é 401 e a mensagem 'E-mail ou senha inválidos.' é exibida.",
+        "Na 6ª tentativa:",
+        "  a. Preencher o campo 'input_email' ([data-testid=login-email]) com 'bob@example.com'.",
+        "  b. Preencher o campo 'input_password' ([data-testid=login-password]) com 'SenhaErradaY'.",
+        "  c. Clicar no botão 'btn_submit' ([data-testid=login-submit])."
+      ],
+      "resultado_esperado": "A 6ª requisição POST /api/auth/login retorna status 423 Locked. O header 'Retry-After' está presente com um valor numérico (e.g., 60). O elemento 'lockout_message' ([data-testid=login-lockout]) é exibido com a mensagem 'Conta bloqueada. Tente novamente em N segundos.' (onde N é o valor do Retry-After).",
+      "automatizavel": true,
+      "observacoes": "Utiliza 'bob@example.com' para evitar bloquear 'alice@example.com', que é preferencial para outras US. Este caso valida o ponto de ativação do bloqueio.",
+      "correcao_aplicada": ""
+    },
+    {
+      "id": "TC-01-05",
+      "titulo": "Tentativa de login com senha correta durante bloqueio de conta",
+      "objetivo": "Verificar que, durante o período de bloqueio, mesmo uma senha correta não permite o login e a conta permanece bloqueada, retornando 423 Locked.",
+      "criterios_cobertos": [
+        "CA-01.3"
+      ],
+      "tipo": "borda",
+      "prioridade": "alta",
+      "pre_condicoes": [
+        "A conta 'bob@example.com' está bloqueada devido a tentativas falhas anteriores (conforme TC-01-04)."
+      ],
+      "dados_de_teste": {
+        "email": "bob@example.com",
+        "password": "Senha123"
+      },
+      "passos": [
+        "Assegurar que a conta 'bob@example.com' está bloqueada (executar TC-01-04 ou similar).",
+        "Acessar a rota /login.",
+        "Preencher o campo 'input_email' ([data-testid=login-email]) com 'bob@example.com'.",
+        "Preencher o campo 'input_password' ([data-testid=login-password]) com 'Senha123'.",
+        "Clicar no botão 'btn_submit' ([data-testid=login-submit])."
+      ],
+      "resultado_esperado": "A requisição POST /api/auth/login retorna status 423 Locked. O header 'Retry-After' está presente com um valor numérico. O elemento 'lockout_message' ([data-testid=login-lockout]) é exibido com a mensagem 'Conta bloqueada. Tente novamente em N segundos.'. O usuário permanece na rota /login.",
+      "automatizavel": true,
+      "observacoes": "Este caso valida a regra 'qualquer tentativa (incluindo senha correta) retorna 423 Locked' durante o bloqueio ativo.",
+      "correcao_aplicada": ""
+    },
+    {
+      "id": "TC-01-06",
+      "titulo": "Rejeição de login com e-mail em formato inválido",
+      "objetivo": "Verificar que a tentativa de login com um e-mail que não segue o formato padrão é rejeitada com 422 Unprocessable Entity.",
+      "criterios_cobertos": [
+        "CA-01.4"
+      ],
+      "tipo": "negativo",
+      "prioridade": "alta",
+      "pre_condicoes": [],
+      "dados_de_teste": {
+        "email": "email_sem_arroba",
+        "password": "QualquerSenha123"
+      },
+      "passos": [
+        "Acessar a rota /login.",
+        "Preencher o campo 'input_email' ([data-testid=login-email]) com 'email_sem_arroba'.",
+        "Preencher o campo 'input_password' ([data-testid=login-password]) com 'QualquerSenha123'.",
+        "Clicar no botão 'btn_submit' ([data-testid=login-submit])."
+      ],
+      "resultado_esperado": "A requisição POST /api/auth/login retorna status 422 Unprocessable Entity. O corpo da resposta contém detalhes de validação indicando o erro no formato do e-mail. O elemento 'error_message' ([data-testid=login-error]) é exibido com uma mensagem de erro de validação (ex: 'E-mail inválido'). O usuário permanece na rota /login.",
+      "automatizavel": true,
+      "observacoes": "Cobre a validação de formato de e-mail no lado do servidor, conforme especificado pelo CA-01.4.",
+      "correcao_aplicada": ""
+    }
+  ],
+  "matriz_rastreabilidade": [
+    {
+      "criterio": "CA-01.1",
+      "casos": [
+        "TC-01-01"
+      ]
+    },
+    {
+      "criterio": "CA-01.2",
+      "casos": [
+        "TC-01-02",
+        "TC-01-03"
+      ]
+    },
+    {
+      "criterio": "CA-01.3",
+      "casos": [
+        "TC-01-04",
+        "TC-01-05"
+      ]
+    },
+    {
+      "criterio": "CA-01.4",
+      "casos": [
+        "TC-01-06"
+      ]
+    }
+  ],
+  "alertas": [
+    "O critério CA-01.3 menciona que 'Login bem-sucedido reseta o contador'. Embora o TC-01-01 cubra um login bem-sucedido, não há um caso de teste específico que verifique o reset do contador de tentativas falhas *após* um bloqueio e subsequente expiração do tempo de bloqueio. Isso exigiria esperar 60 segundos ou mais, o que pode ser impraticável para testes automatizados rápidos, mas é um cenário a ser considerado para testes manuais ou de performance/segurança."
+  ]
+}
