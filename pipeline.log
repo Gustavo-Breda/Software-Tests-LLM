@@ -136,6 +136,664 @@ Traceback (most recent call last):
     raise TypeError(f'Object of type {o.__class__.__name__} '
 TypeError: Object of type Candidate is not JSON serializable
 
+2026-07-07 18:38:38 | INFO     | runner     | Provider: gemini:gemini-2.5-flash
+2026-07-07 18:38:39 | INFO     | runner     | Found 5 stories to process
+2026-07-07 18:38:39 | INFO     | runner     | 
+2026-07-07 18:38:39 | INFO     | runner     | ============================================================
+2026-07-07 18:38:39 | INFO     | runner     |   Story 1/5 — US-01: Realizar login com e-mail e senha
+2026-07-07 18:38:39 | INFO     | runner     | ============================================================
+2026-07-07 18:38:39 | INFO     | runner     | [US-01] Running Agent 0 (quality gate)...
+2026-07-07 18:38:46 | INFO     | runner     | [US-01] Agent 0 → APROVADA
+2026-07-07 18:38:46 | INFO     | runner     | [US-01] Running Agent 1 (test case generation)...
+2026-07-07 18:39:13 | INFO     | runner     | [US-01] Agent 1 → done — 6 test cases generated
+2026-07-07 18:39:13 | INFO     | runner     | [US-01] Running Agent 2 (judge + repair loop)...
+2026-07-07 18:40:36 | INFO     | runner     | [US-01] Agent 2 attempt-0 saved — decision=REPROVADO approved=6 rejected=0 problems=0 omitted=1 path=generated/reports/agent2/US-01_attempt-0.json
+2026-07-07 18:40:36 | INFO     | runner     | [US-01] Agent 2 attempt-1 saved — decision=REPROVADO approved=7 rejected=0 problems=0 omitted=1 path=generated/reports/agent2/US-01_attempt-1.json
+2026-07-07 18:40:36 | INFO     | runner     | [US-01] Agent 2 attempt-2 saved — decision=APROVADO approved=8 rejected=0 problems=0 omitted=0 path=generated/reports/agent2/US-01_attempt-2.json
+2026-07-07 18:40:36 | INFO     | runner     | [US-01] Repair attempt-1 saved — cases=7 alerts=0 path=generated/test_cases_repaired/US-01_attempt-1.json
+2026-07-07 18:40:36 | INFO     | runner     | [US-01] Repair attempt-2 saved — cases=8 alerts=0 path=generated/test_cases_repaired/US-01_attempt-2.json
+2026-07-07 18:40:36 | INFO     | runner     | [US-01] Repair final saved — cases=8 alerts=0 path=generated/test_cases_repaired/US-01_final.json
+2026-07-07 18:40:36 | INFO     | runner     | [US-01] Agent 2 → APROVADO after 2 repair attempt(s)
+2026-07-07 18:40:36 | INFO     | runner     | 
+2026-07-07 18:40:36 | INFO     | runner     | ============================================================
+2026-07-07 18:40:36 | INFO     | runner     |   Story 2/5 — US-02: Cadastrar nova conta de usuário
+2026-07-07 18:40:36 | INFO     | runner     | ============================================================
+2026-07-07 18:40:36 | INFO     | runner     | [US-02] Running Agent 0 (quality gate)...
+2026-07-07 18:40:57 | WARNING  | runner     | [US-02] Agent 0 → PRECISA_DE_ESCLARECIMENTO (4 problems)
+2026-07-07 18:40:57 | INFO     | runner     | 
+2026-07-07 18:40:57 | INFO     | runner     | ============================================================
+2026-07-07 18:40:57 | INFO     | runner     |   Story 3/5 — US-03: Criar nova solicitação de serviço
+2026-07-07 18:40:57 | INFO     | runner     | ============================================================
+2026-07-07 18:40:57 | INFO     | runner     | [US-03] Running Agent 0 (quality gate)...
+2026-07-07 18:41:17 | WARNING  | runner     | [US-03] Agent 0 → PRECISA_DE_ESCLARECIMENTO (3 problems)
+2026-07-07 18:41:17 | INFO     | runner     | 
+2026-07-07 18:41:17 | INFO     | runner     | ============================================================
+2026-07-07 18:41:17 | INFO     | runner     |   Story 4/5 — US-04: Listar e filtrar minhas solicitações
+2026-07-07 18:41:17 | INFO     | runner     | ============================================================
+2026-07-07 18:41:17 | INFO     | runner     | [US-04] Running Agent 0 (quality gate)...
+2026-07-07 18:41:33 | WARNING  | runner     | [US-04] Agent 0 → PRECISA_DE_ESCLARECIMENTO (2 problems)
+2026-07-07 18:41:33 | INFO     | runner     | 
+2026-07-07 18:41:33 | INFO     | runner     | ============================================================
+2026-07-07 18:41:33 | INFO     | runner     |   Story 5/5 — US-05: Cancelar uma solicitação não finalizada
+2026-07-07 18:41:33 | INFO     | runner     | ============================================================
+2026-07-07 18:41:33 | INFO     | runner     | [US-05] Running Agent 0 (quality gate)...
+2026-07-07 18:41:43 | INFO     | runner     | [US-05] Agent 0 → APROVADA
+2026-07-07 18:41:43 | INFO     | runner     | [US-05] Running Agent 1 (test case generation)...
+2026-07-07 18:42:08 | INFO     | runner     | [US-05] Agent 1 → done — 6 test cases generated
+2026-07-07 18:42:08 | INFO     | runner     | [US-05] Running Agent 2 (judge + repair loop)...
+2026-07-07 18:42:18 | INFO     | runner     | [US-05] Agent 2 attempt-0 saved — decision=APROVADO approved=6 rejected=0 problems=0 omitted=0 path=generated/reports/agent2/US-05_attempt-0.json
+2026-07-07 18:42:18 | INFO     | runner     | [US-05] Agent 2 → APROVADO after 0 repair attempt(s)
+2026-07-07 18:42:18 | INFO     | runner     | Done — total=5 | agent0_ok=5 | agent1_ok=2 | agent2_ok=2 | blocked=3 | errors=0 | repair_attempts=2 | rejected_after_repair=0
+2026-07-07 18:52:03 | INFO     | runner     | Provider: gemini:gemini-2.5-flash
+2026-07-07 18:52:03 | INFO     | runner     | Found 5 stories to process
+2026-07-07 18:52:03 | INFO     | runner     | 
+2026-07-07 18:52:03 | INFO     | runner     | ============================================================
+2026-07-07 18:52:03 | INFO     | runner     |   Story 1/5 — US-01: Realizar login com e-mail e senha
+2026-07-07 18:52:03 | INFO     | runner     | ============================================================
+2026-07-07 18:52:03 | INFO     | runner     | [US-01] Running Agent 0 (quality gate)...
+2026-07-07 18:52:14 | INFO     | runner     | [US-01] Agent 0 → APROVADA
+2026-07-07 18:52:14 | INFO     | runner     | [US-01] Running Agent 1 (test case generation)...
+2026-07-07 18:52:42 | INFO     | runner     | [US-01] Agent 1 → done — 6 test cases generated
+2026-07-07 18:52:42 | INFO     | runner     | [US-01] Running Agent 2 (judge + repair loop)...
+2026-07-07 18:53:28 | INFO     | runner     | [US-01] Agent 2 attempt-0 saved — decision=REPROVADO approved=6 rejected=0 problems=0 omitted=1 path=generated/reports/agent2/US-01_attempt-0.json
+2026-07-07 18:53:28 | INFO     | runner     | [US-01] Agent 2 attempt-1 saved — decision=APROVADO approved=7 rejected=0 problems=0 omitted=0 path=generated/reports/agent2/US-01_attempt-1.json
+2026-07-07 18:53:28 | INFO     | runner     | [US-01] Repair attempt-1 saved — cases=7 alerts=1 path=generated/test_cases_repaired/US-01_attempt-1.json
+2026-07-07 18:53:28 | INFO     | runner     | [US-01] Repair final saved — cases=7 alerts=1 path=generated/test_cases_repaired/US-01_final.json
+2026-07-07 18:53:28 | INFO     | runner     | [US-01] Agent 2 → APROVADO after 1 repair attempt(s)
+2026-07-07 18:53:28 | INFO     | runner     | 
+2026-07-07 18:53:28 | INFO     | runner     | ============================================================
+2026-07-07 18:53:28 | INFO     | runner     |   Story 2/5 — US-02: Cadastrar nova conta de usuário
+2026-07-07 18:53:28 | INFO     | runner     | ============================================================
+2026-07-07 18:53:28 | INFO     | runner     | [US-02] Running Agent 0 (quality gate)...
+2026-07-07 18:53:39 | WARNING  | runner     | [US-02] Agent 0 → PRECISA_DE_ESCLARECIMENTO (1 problem)
+2026-07-07 18:53:39 | INFO     | runner     | 
+2026-07-07 18:53:39 | INFO     | runner     | ============================================================
+2026-07-07 18:53:39 | INFO     | runner     |   Story 3/5 — US-03: Criar nova solicitação de serviço
+2026-07-07 18:53:39 | INFO     | runner     | ============================================================
+2026-07-07 18:53:39 | INFO     | runner     | [US-03] Running Agent 0 (quality gate)...
+2026-07-07 18:53:51 | INFO     | runner     | [US-03] Agent 0 → APROVADA
+2026-07-07 18:53:51 | INFO     | runner     | [US-03] Running Agent 1 (test case generation)...
+2026-07-07 18:55:18 | ERROR    | runner     | [US-03] Agent 1 → FAILED: RawAgentResponseError: Agent 1 semantic validation failed: TC-03-03 field title must have length < 5.
+2026-07-07 18:55:18 | INFO     | runner     | 
+2026-07-07 18:55:18 | INFO     | runner     | ============================================================
+2026-07-07 18:55:18 | INFO     | runner     |   Story 4/5 — US-04: Listar e filtrar minhas solicitações
+2026-07-07 18:55:18 | INFO     | runner     | ============================================================
+2026-07-07 18:55:18 | INFO     | runner     | [US-04] Running Agent 0 (quality gate)...
+2026-07-07 18:55:28 | INFO     | runner     | [US-04] Agent 0 → APROVADA
+2026-07-07 18:55:28 | INFO     | runner     | [US-04] Running Agent 1 (test case generation)...
+2026-07-07 18:56:00 | INFO     | runner     | [US-04] Agent 1 → done — 6 test cases generated
+2026-07-07 18:56:00 | INFO     | runner     | [US-04] Running Agent 2 (judge + repair loop)...
+2026-07-07 18:56:17 | WARNING  | gemini     | Server error (attempt 1): ServerError — retrying in 1s
+2026-07-07 18:56:19 | WARNING  | gemini     | Server error (attempt 2): ServerError — retrying in 2s
+2026-07-07 18:59:22 | INFO     | runner     | [US-04] Agent 2 attempt-0 saved — decision=REPROVADO approved=6 rejected=0 problems=0 omitted=2 path=generated/reports/agent2/US-04_attempt-0.json
+2026-07-07 18:59:22 | INFO     | runner     | [US-04] Agent 2 attempt-1 saved — decision=REPROVADO approved=7 rejected=1 problems=1 omitted=2 path=generated/reports/agent2/US-04_attempt-1.json
+2026-07-07 18:59:22 | INFO     | runner     | [US-04] Agent 2 attempt-2 saved — decision=REPROVADO approved=9 rejected=1 problems=1 omitted=0 path=generated/reports/agent2/US-04_attempt-2.json
+2026-07-07 18:59:22 | INFO     | runner     | [US-04] Agent 2 attempt-3 saved — decision=APROVADO approved=10 rejected=0 problems=0 omitted=0 path=generated/reports/agent2/US-04_attempt-3.json
+2026-07-07 18:59:22 | INFO     | runner     | [US-04] Repair attempt-1 saved — cases=8 alerts=0 path=generated/test_cases_repaired/US-04_attempt-1.json
+2026-07-07 18:59:22 | INFO     | runner     | [US-04] Repair attempt-2 saved — cases=10 alerts=1 path=generated/test_cases_repaired/US-04_attempt-2.json
+2026-07-07 18:59:22 | INFO     | runner     | [US-04] Repair attempt-3 saved — cases=10 alerts=1 path=generated/test_cases_repaired/US-04_attempt-3.json
+2026-07-07 18:59:22 | INFO     | runner     | [US-04] Repair final saved — cases=10 alerts=1 path=generated/test_cases_repaired/US-04_final.json
+2026-07-07 18:59:22 | INFO     | runner     | [US-04] Agent 2 → APROVADO after 3 repair attempt(s)
+2026-07-07 18:59:22 | INFO     | runner     | 
+2026-07-07 18:59:22 | INFO     | runner     | ============================================================
+2026-07-07 18:59:22 | INFO     | runner     |   Story 5/5 — US-05: Cancelar uma solicitação não finalizada
+2026-07-07 18:59:22 | INFO     | runner     | ============================================================
+2026-07-07 18:59:22 | INFO     | runner     | [US-05] Running Agent 0 (quality gate)...
+2026-07-07 18:59:38 | WARNING  | runner     | [US-05] Agent 0 → PRECISA_DE_ESCLARECIMENTO (4 problems)
+2026-07-07 18:59:38 | INFO     | runner     | Done — total=5 | agent0_ok=5 | agent1_ok=2 | agent2_ok=2 | blocked=2 | errors=1 | repair_attempts=4 | rejected_after_repair=0
+2026-07-07 19:00:07 | WARNING  | gemini     | Server error (attempt 1): ServerError — retrying in 1s
 
-󰕈 gustavo-breda  …/LLM-tests   refactor/new-changes $!?   15:31  
- 
+2026-07-07 19:04:08 | INFO     | runner     | Provider: gemini:gemini-2.5-flash
+2026-07-07 19:04:09 | INFO     | runner     | Found 5 stories to process
+2026-07-07 19:04:09 | INFO     | runner     | 
+2026-07-07 19:04:09 | INFO     | runner     | ============================================================
+2026-07-07 19:04:09 | INFO     | runner     |   Story 1/5 — US-01: Realizar login com e-mail e senha
+2026-07-07 19:04:09 | INFO     | runner     | ============================================================
+2026-07-07 19:04:09 | INFO     | runner     | [US-01] Running Agent 0 (quality gate)...
+2026-07-07 19:04:20 | INFO     | runner     | [US-01] Agent 0 → APROVADA
+2026-07-07 19:04:20 | INFO     | runner     | [US-01] Running Agent 1 (test case generation)...
+2026-07-07 19:04:51 | INFO     | runner     | [US-01] Agent 1 → done — 6 test cases generated
+2026-07-07 19:04:51 | INFO     | runner     | [US-01] Running Agent 2 (judge + repair loop)...
+2026-07-07 19:06:01 | INFO     | runner     | [US-01] Agent 2 attempt-0 saved — decision=REPROVADO approved=5 rejected=1 problems=1 omitted=2 path=generated/reports/agent2/US-01_attempt-0.json
+2026-07-07 19:06:01 | INFO     | runner     | [US-01] Agent 2 attempt-1 saved — decision=APROVADO approved=8 rejected=0 problems=0 omitted=0 path=generated/reports/agent2/US-01_attempt-1.json
+2026-07-07 19:06:01 | INFO     | runner     | [US-01] Repair attempt-1 saved — cases=8 alerts=0 path=generated/test_cases_repaired/US-01_attempt-1.json
+2026-07-07 19:06:01 | INFO     | runner     | [US-01] Repair final saved — cases=8 alerts=0 path=generated/test_cases_repaired/US-01_final.json
+2026-07-07 19:06:01 | INFO     | runner     | [US-01] Agent 2 → APROVADO after 1 repair attempt(s)
+2026-07-07 19:06:01 | INFO     | runner     | 
+2026-07-07 19:06:01 | INFO     | runner     | ============================================================
+2026-07-07 19:06:01 | INFO     | runner     |   Story 2/5 — US-02: Cadastrar nova conta de usuário
+2026-07-07 19:06:01 | INFO     | runner     | ============================================================
+2026-07-07 19:06:01 | INFO     | runner     | [US-02] Running Agent 0 (quality gate)...
+2026-07-07 19:06:19 | WARNING  | runner     | [US-02] Agent 0 → PRECISA_DE_ESCLARECIMENTO (1 problem)
+2026-07-07 19:06:19 | INFO     | runner     | 
+2026-07-07 19:06:19 | INFO     | runner     | ============================================================
+2026-07-07 19:06:19 | INFO     | runner     |   Story 3/5 — US-03: Criar nova solicitação de serviço
+2026-07-07 19:06:19 | INFO     | runner     | ============================================================
+2026-07-07 19:06:19 | INFO     | runner     | [US-03] Running Agent 0 (quality gate)...
+2026-07-07 19:06:42 | WARNING  | runner     | [US-03] Agent 0 → PRECISA_DE_ESCLARECIMENTO (1 problem)
+2026-07-07 19:06:42 | INFO     | runner     | 
+2026-07-07 19:06:42 | INFO     | runner     | ============================================================
+2026-07-07 19:06:42 | INFO     | runner     |   Story 4/5 — US-04: Listar e filtrar minhas solicitações
+2026-07-07 19:06:42 | INFO     | runner     | ============================================================
+2026-07-07 19:06:42 | INFO     | runner     | [US-04] Running Agent 0 (quality gate)...
+2026-07-07 19:06:58 | WARNING  | runner     | [US-04] Agent 0 → PRECISA_DE_ESCLARECIMENTO (2 problems)
+2026-07-07 19:06:58 | INFO     | runner     | 
+2026-07-07 19:06:58 | INFO     | runner     | ============================================================
+2026-07-07 19:06:58 | INFO     | runner     |   Story 5/5 — US-05: Cancelar uma solicitação não finalizada
+2026-07-07 19:06:58 | INFO     | runner     | ============================================================
+2026-07-07 19:06:58 | INFO     | runner     | [US-05] Running Agent 0 (quality gate)...
+2026-07-07 19:07:09 | INFO     | runner     | [US-05] Agent 0 → APROVADA
+2026-07-07 19:07:09 | INFO     | runner     | [US-05] Running Agent 1 (test case generation)...
+2026-07-07 19:07:48 | INFO     | runner     | [US-05] Agent 1 → done — 6 test cases generated
+2026-07-07 19:07:48 | INFO     | runner     | [US-05] Running Agent 2 (judge + repair loop)...
+2026-07-07 19:08:36 | INFO     | runner     | [US-05] Agent 2 attempt-0 saved — decision=REPROVADO approved=4 rejected=2 problems=2 omitted=0 path=generated/reports/agent2/US-05_attempt-0.json
+2026-07-07 19:08:36 | INFO     | runner     | [US-05] Agent 2 attempt-1 saved — decision=APROVADO approved=6 rejected=0 problems=0 omitted=0 path=generated/reports/agent2/US-05_attempt-1.json
+2026-07-07 19:08:36 | INFO     | runner     | [US-05] Repair attempt-1 saved — cases=6 alerts=0 path=generated/test_cases_repaired/US-05_attempt-1.json
+2026-07-07 19:08:36 | INFO     | runner     | [US-05] Repair final saved — cases=6 alerts=0 path=generated/test_cases_repaired/US-05_final.json
+2026-07-07 19:08:36 | INFO     | runner     | [US-05] Agent 2 → APROVADO after 1 repair attempt(s)
+2026-07-07 19:08:36 | INFO     | runner     | Done — total=5 | agent0_ok=5 | agent1_ok=2 | agent2_ok=2 | blocked=3 | errors=0 | repair_attempts=2 | rejected_after_repair=0
+
+2026-07-07 19:14:00 | INFO     | runner     | Provider: gemini:gemini-2.5-flash
+2026-07-07 19:14:01 | INFO     | runner     | Found 5 stories to process
+2026-07-07 19:14:01 | INFO     | runner     | 
+2026-07-07 19:14:01 | INFO     | runner     | ============================================================
+2026-07-07 19:14:01 | INFO     | runner     |   Story 1/5 — US-01: Realizar login com e-mail e senha
+2026-07-07 19:14:01 | INFO     | runner     | ============================================================
+2026-07-07 19:14:01 | INFO     | runner     | [US-01] Running Agent 0 (quality gate)...
+2026-07-07 19:14:09 | INFO     | runner     | [US-01] Agent 0 → APROVADA
+2026-07-07 19:14:09 | INFO     | runner     | [US-01] Running Agent 1 (test case generation)...
+2026-07-07 19:15:12 | INFO     | runner     | [US-01] Agent 1 → done — 6 test cases generated
+2026-07-07 19:15:12 | INFO     | runner     | [US-01] Running Agent 2 (judge + repair loop)...
+2026-07-07 19:16:03 | INFO     | runner     | [US-01] Agent 2 attempt-0 saved — decision=REPROVADO approved=5 rejected=1 problems=1 omitted=1 path=generated/reports/agent2/US-01_attempt-0.json
+2026-07-07 19:16:03 | INFO     | runner     | [US-01] Agent 2 attempt-1 saved — decision=APROVADO approved=7 rejected=0 problems=0 omitted=0 path=generated/reports/agent2/US-01_attempt-1.json
+2026-07-07 19:16:03 | INFO     | runner     | [US-01] Repair attempt-1 saved — cases=7 alerts=0 path=generated/test_cases_repaired/US-01_attempt-1.json
+2026-07-07 19:16:03 | INFO     | runner     | [US-01] Repair final saved — cases=7 alerts=0 path=generated/test_cases_repaired/US-01_final.json
+2026-07-07 19:16:03 | INFO     | runner     | [US-01] Agent 2 → APROVADO after 1 repair attempt(s)
+2026-07-07 19:16:03 | INFO     | runner     | 
+2026-07-07 19:16:03 | INFO     | runner     | ============================================================
+2026-07-07 19:16:03 | INFO     | runner     |   Story 2/5 — US-02: Cadastrar nova conta de usuário
+2026-07-07 19:16:03 | INFO     | runner     | ============================================================
+2026-07-07 19:16:03 | INFO     | runner     | [US-02] Running Agent 0 (quality gate)...
+2026-07-07 19:16:29 | WARNING  | runner     | [US-02] Agent 0 → PRECISA_DE_ESCLARECIMENTO (1 problem)
+2026-07-07 19:16:29 | INFO     | runner     | 
+2026-07-07 19:16:29 | INFO     | runner     | ============================================================
+2026-07-07 19:16:29 | INFO     | runner     |   Story 3/5 — US-03: Criar nova solicitação de serviço
+2026-07-07 19:16:29 | INFO     | runner     | ============================================================
+2026-07-07 19:16:29 | INFO     | runner     | [US-03] Running Agent 0 (quality gate)...
+2026-07-07 19:16:46 | WARNING  | runner     | [US-03] Agent 0 → PRECISA_DE_ESCLARECIMENTO (1 problem)
+2026-07-07 19:16:46 | INFO     | runner     | 
+2026-07-07 19:16:46 | INFO     | runner     | ============================================================
+2026-07-07 19:16:46 | INFO     | runner     |   Story 4/5 — US-04: Listar e filtrar minhas solicitações
+2026-07-07 19:16:46 | INFO     | runner     | ============================================================
+2026-07-07 19:16:46 | INFO     | runner     | [US-04] Running Agent 0 (quality gate)...
+2026-07-07 19:17:02 | WARNING  | runner     | [US-04] Agent 0 → PRECISA_DE_ESCLARECIMENTO (3 problems)
+2026-07-07 19:17:02 | INFO     | runner     | 
+2026-07-07 19:17:02 | INFO     | runner     | ============================================================
+2026-07-07 19:17:02 | INFO     | runner     |   Story 5/5 — US-05: Cancelar uma solicitação não finalizada
+2026-07-07 19:17:02 | INFO     | runner     | ============================================================
+2026-07-07 19:17:02 | INFO     | runner     | [US-05] Running Agent 0 (quality gate)...
+2026-07-07 19:17:12 | INFO     | runner     | [US-05] Agent 0 → APROVADA
+2026-07-07 19:17:12 | INFO     | runner     | [US-05] Running Agent 1 (test case generation)...
+2026-07-07 19:17:44 | INFO     | runner     | [US-05] Agent 1 → done — 6 test cases generated
+2026-07-07 19:17:44 | INFO     | runner     | [US-05] Running Agent 2 (judge + repair loop)...
+2026-07-07 19:18:01 | INFO     | runner     | [US-05] Agent 2 attempt-0 saved — decision=APROVADO approved=6 rejected=0 problems=0 omitted=0 path=generated/reports/agent2/US-05_attempt-0.json
+2026-07-07 19:18:01 | INFO     | runner     | [US-05] Agent 2 → APROVADO after 0 repair attempt(s)
+2026-07-07 19:18:01 | INFO     | runner     | Done — total=5 | agent0_ok=5 | agent1_ok=2 | agent2_ok=2 | blocked=3 | errors=0 | repair_attempts=1 | rejected_after_repair=0
+
+2026-07-07 19:22:20 | INFO     | runner     | Provider: gemini:gemini-2.5-flash
+2026-07-07 19:22:21 | INFO     | runner     | Found 5 stories to process
+2026-07-07 19:22:21 | INFO     | runner     | 
+2026-07-07 19:22:21 | INFO     | runner     | ============================================================
+2026-07-07 19:22:21 | INFO     | runner     |   Story 1/5 — US-01: Realizar login com e-mail e senha
+2026-07-07 19:22:21 | INFO     | runner     | ============================================================
+2026-07-07 19:22:21 | INFO     | runner     | [US-01] Running Agent 0 (quality gate)...
+2026-07-07 19:22:38 | WARNING  | runner     | [US-01] Agent 0 → PRECISA_DE_ESCLARECIMENTO (1 problem)
+2026-07-07 19:22:38 | INFO     | runner     | 
+2026-07-07 19:22:38 | INFO     | runner     | ============================================================
+2026-07-07 19:22:38 | INFO     | runner     |   Story 2/5 — US-02: Cadastrar nova conta de usuário
+2026-07-07 19:22:38 | INFO     | runner     | ============================================================
+2026-07-07 19:22:38 | INFO     | runner     | [US-02] Running Agent 0 (quality gate)...
+2026-07-07 19:22:55 | WARNING  | runner     | [US-02] Agent 0 → PRECISA_DE_ESCLARECIMENTO (2 problems)
+2026-07-07 19:22:55 | INFO     | runner     | 
+2026-07-07 19:22:55 | INFO     | runner     | ============================================================
+2026-07-07 19:22:55 | INFO     | runner     |   Story 3/5 — US-03: Criar nova solicitação de serviço
+2026-07-07 19:22:55 | INFO     | runner     | ============================================================
+2026-07-07 19:22:55 | INFO     | runner     | [US-03] Running Agent 0 (quality gate)...
+2026-07-07 19:23:08 | WARNING  | runner     | [US-03] Agent 0 → PRECISA_DE_ESCLARECIMENTO (1 problem)
+2026-07-07 19:23:08 | INFO     | runner     | 
+2026-07-07 19:23:08 | INFO     | runner     | ============================================================
+2026-07-07 19:23:08 | INFO     | runner     |   Story 4/5 — US-04: Listar e filtrar minhas solicitações
+2026-07-07 19:23:08 | INFO     | runner     | ============================================================
+2026-07-07 19:23:08 | INFO     | runner     | [US-04] Running Agent 0 (quality gate)...
+2026-07-07 19:23:22 | ERROR    | runner     | [US-04] Agent 0 → FAILED: RawAgentResponseError: Schema validation failed at justificativa_derivabilidade: '' should be non-empty
+2026-07-07 19:23:22 | INFO     | runner     | 
+2026-07-07 19:23:22 | INFO     | runner     | ============================================================
+2026-07-07 19:23:22 | INFO     | runner     |   Story 5/5 — US-05: Cancelar uma solicitação não finalizada
+2026-07-07 19:23:22 | INFO     | runner     | ============================================================
+2026-07-07 19:23:22 | INFO     | runner     | [US-05] Running Agent 0 (quality gate)...
+2026-07-07 19:23:40 | WARNING  | runner     | [US-05] Agent 0 → PRECISA_DE_ESCLARECIMENTO (2 problems)
+2026-07-07 19:23:40 | INFO     | runner     | Done — total=5 | agent0_ok=4 | agent1_ok=0 | agent2_ok=0 | blocked=4 | errors=1 | repair_attempts=0 | rejected_after_repair=0
+
+2026-07-07 19:33:41 | INFO     | runner     | Provider: gemini:gemini-2.5-flash
+2026-07-07 19:33:42 | INFO     | runner     | Found 5 stories to process
+2026-07-07 19:33:42 | INFO     | runner     | 
+2026-07-07 19:33:42 | INFO     | runner     | ============================================================
+2026-07-07 19:33:42 | INFO     | runner     |   Story 1/5 — US-01: Realizar login com e-mail e senha
+2026-07-07 19:33:42 | INFO     | runner     | ============================================================
+2026-07-07 19:33:42 | INFO     | runner     | [US-01] Running Agent 0 (quality gate)...
+2026-07-07 19:33:49 | INFO     | runner     | [US-01] Agent 0 → APROVADA
+2026-07-07 19:33:49 | INFO     | runner     | [US-01] Running Agent 1 (test case generation)...
+2026-07-07 19:34:11 | INFO     | runner     | [US-01] Agent 1 → done — 6 test cases generated
+2026-07-07 19:34:11 | INFO     | runner     | [US-01] Running Agent 2 (judge + repair loop)...
+2026-07-07 19:35:38 | INFO     | runner     | [US-01] Agent 2 attempt-0 saved — decision=REPROVADO approved=6 rejected=0 problems=0 omitted=1 path=generated/reports/agent2/US-01_attempt-0.json
+2026-07-07 19:35:38 | INFO     | runner     | [US-01] Agent 2 attempt-1 saved — decision=REPROVADO approved=7 rejected=0 problems=0 omitted=1 path=generated/reports/agent2/US-01_attempt-1.json
+2026-07-07 19:35:38 | INFO     | runner     | [US-01] Agent 2 attempt-2 saved — decision=APROVADO approved=8 rejected=0 problems=0 omitted=0 path=generated/reports/agent2/US-01_attempt-2.json
+2026-07-07 19:35:38 | INFO     | runner     | [US-01] Repair attempt-1 saved — cases=7 alerts=1 path=generated/test_cases_repaired/US-01_attempt-1.json
+2026-07-07 19:35:38 | INFO     | runner     | [US-01] Repair attempt-2 saved — cases=8 alerts=1 path=generated/test_cases_repaired/US-01_attempt-2.json
+2026-07-07 19:35:38 | INFO     | runner     | [US-01] Repair final saved — cases=8 alerts=1 path=generated/test_cases_repaired/US-01_final.json
+2026-07-07 19:35:38 | INFO     | runner     | [US-01] Agent 2 → APROVADO after 2 repair attempt(s)
+2026-07-07 19:35:38 | INFO     | runner     | 
+2026-07-07 19:35:38 | INFO     | runner     | ============================================================
+2026-07-07 19:35:38 | INFO     | runner     |   Story 2/5 — US-02: Cadastrar nova conta de usuário
+2026-07-07 19:35:38 | INFO     | runner     | ============================================================
+2026-07-07 19:35:38 | INFO     | runner     | [US-02] Running Agent 0 (quality gate)...
+2026-07-07 19:35:55 | WARNING  | runner     | [US-02] Agent 0 → PRECISA_DE_ESCLARECIMENTO (2 problems)
+2026-07-07 19:35:55 | INFO     | runner     | 
+2026-07-07 19:35:55 | INFO     | runner     | ============================================================
+2026-07-07 19:35:55 | INFO     | runner     |   Story 3/5 — US-03: Criar nova solicitação de serviço
+2026-07-07 19:35:55 | INFO     | runner     | ============================================================
+2026-07-07 19:35:55 | INFO     | runner     | [US-03] Running Agent 0 (quality gate)...
+2026-07-07 19:36:12 | WARNING  | runner     | [US-03] Agent 0 → PRECISA_DE_ESCLARECIMENTO (2 problems)
+2026-07-07 19:36:12 | INFO     | runner     | 
+2026-07-07 19:36:12 | INFO     | runner     | ============================================================
+2026-07-07 19:36:12 | INFO     | runner     |   Story 4/5 — US-04: Listar e filtrar minhas solicitações
+2026-07-07 19:36:12 | INFO     | runner     | ============================================================
+2026-07-07 19:36:12 | INFO     | runner     | [US-04] Running Agent 0 (quality gate)...
+2026-07-07 19:36:30 | WARNING  | runner     | [US-04] Agent 0 → PRECISA_DE_ESCLARECIMENTO (2 problems)
+2026-07-07 19:36:30 | INFO     | runner     | 
+2026-07-07 19:36:30 | INFO     | runner     | ============================================================
+2026-07-07 19:36:30 | INFO     | runner     |   Story 5/5 — US-05: Cancelar uma solicitação não finalizada
+2026-07-07 19:36:30 | INFO     | runner     | ============================================================
+2026-07-07 19:36:30 | INFO     | runner     | [US-05] Running Agent 0 (quality gate)...
+2026-07-07 19:36:46 | WARNING  | runner     | [US-05] Agent 0 → PRECISA_DE_ESCLARECIMENTO (3 problems)
+2026-07-07 19:36:46 | INFO     | runner     | Done — total=5 | agent0_ok=5 | agent1_ok=1 | agent2_ok=1 | blocked=4 | errors=0 | repair_attempts=2 | rejected_after_repair=0
+
+2026-07-07 19:41:34 | INFO     | runner     | Provider: gemini:gemini-2.5-flash
+2026-07-07 19:41:34 | INFO     | runner     | Found 5 stories to process
+2026-07-07 19:41:34 | INFO     | runner     | 
+2026-07-07 19:41:34 | INFO     | runner     | ============================================================
+2026-07-07 19:41:34 | INFO     | runner     |   Story 1/5 — US-01: Realizar login com e-mail e senha
+2026-07-07 19:41:34 | INFO     | runner     | ============================================================
+2026-07-07 19:41:34 | INFO     | runner     | [US-01] Running Agent 0 (quality gate)...
+2026-07-07 19:41:44 | INFO     | runner     | [US-01] Agent 0 → APROVADA
+2026-07-07 19:41:44 | INFO     | runner     | [US-01] Running Agent 1 (test case generation)...
+2026-07-07 19:42:09 | INFO     | runner     | [US-01] Agent 1 → done — 6 test cases generated
+2026-07-07 19:42:09 | INFO     | runner     | [US-01] Running Agent 2 (judge + repair loop)...
+2026-07-07 19:42:55 | INFO     | runner     | [US-01] Agent 2 attempt-0 saved — decision=REPROVADO approved=6 rejected=0 problems=0 omitted=2 path=generated/reports/agent2/US-01_attempt-0.json
+2026-07-07 19:42:55 | INFO     | runner     | [US-01] Agent 2 attempt-1 saved — decision=APROVADO approved=8 rejected=0 problems=0 omitted=0 path=generated/reports/agent2/US-01_attempt-1.json
+2026-07-07 19:42:55 | INFO     | runner     | [US-01] Repair attempt-1 saved — cases=8 alerts=0 path=generated/test_cases_repaired/US-01_attempt-1.json
+2026-07-07 19:42:55 | INFO     | runner     | [US-01] Repair final saved — cases=8 alerts=0 path=generated/test_cases_repaired/US-01_final.json
+2026-07-07 19:42:55 | INFO     | runner     | [US-01] Agent 2 → APROVADO after 1 repair attempt(s)
+2026-07-07 19:42:55 | INFO     | runner     | 
+2026-07-07 19:42:55 | INFO     | runner     | ============================================================
+2026-07-07 19:42:55 | INFO     | runner     |   Story 2/5 — US-02: Cadastrar nova conta de usuário
+2026-07-07 19:42:55 | INFO     | runner     | ============================================================
+2026-07-07 19:42:55 | INFO     | runner     | [US-02] Running Agent 0 (quality gate)...
+2026-07-07 19:43:18 | WARNING  | runner     | [US-02] Agent 0 → PRECISA_DE_ESCLARECIMENTO (2 problems)
+2026-07-07 19:43:18 | INFO     | runner     | 
+2026-07-07 19:43:18 | INFO     | runner     | ============================================================
+2026-07-07 19:43:18 | INFO     | runner     |   Story 3/5 — US-03: Criar nova solicitação de serviço
+2026-07-07 19:43:18 | INFO     | runner     | ============================================================
+2026-07-07 19:43:18 | INFO     | runner     | [US-03] Running Agent 0 (quality gate)...
+2026-07-07 19:43:35 | WARNING  | runner     | [US-03] Agent 0 → PRECISA_DE_ESCLARECIMENTO (1 problem)
+2026-07-07 19:43:35 | INFO     | runner     | 
+2026-07-07 19:43:35 | INFO     | runner     | ============================================================
+2026-07-07 19:43:35 | INFO     | runner     |   Story 4/5 — US-04: Listar e filtrar minhas solicitações
+2026-07-07 19:43:35 | INFO     | runner     | ============================================================
+2026-07-07 19:43:35 | INFO     | runner     | [US-04] Running Agent 0 (quality gate)...
+2026-07-07 19:43:46 | WARNING  | runner     | [US-04] Agent 0 → PRECISA_DE_ESCLARECIMENTO (1 problem)
+2026-07-07 19:43:46 | INFO     | runner     | 
+2026-07-07 19:43:46 | INFO     | runner     | ============================================================
+2026-07-07 19:43:46 | INFO     | runner     |   Story 5/5 — US-05: Cancelar uma solicitação não finalizada
+2026-07-07 19:43:46 | INFO     | runner     | ============================================================
+2026-07-07 19:43:46 | INFO     | runner     | [US-05] Running Agent 0 (quality gate)...
+2026-07-07 19:44:02 | WARNING  | runner     | [US-05] Agent 0 → PRECISA_DE_ESCLARECIMENTO (3 problems)
+2026-07-07 19:44:02 | INFO     | runner     | Done — total=5 | agent0_ok=5 | agent1_ok=1 | agent2_ok=1 | blocked=4 | errors=0 | repair_attempts=1 | rejected_after_repair=0
+
+2026-07-07 19:55:40 | INFO     | runner     | Provider: gemini:gemini-2.5-flash
+2026-07-07 19:55:41 | INFO     | runner     | Found 5 stories to process
+2026-07-07 19:55:41 | INFO     | runner     | 
+2026-07-07 19:55:41 | INFO     | runner     | ============================================================
+2026-07-07 19:55:41 | INFO     | runner     |   Story 1/5 — US-01: Realizar login com e-mail e senha
+2026-07-07 19:55:41 | INFO     | runner     | ============================================================
+2026-07-07 19:55:41 | INFO     | runner     | [US-01] Running Agent 0 (quality gate)...
+2026-07-07 19:55:43 | WARNING  | gemini     | Server error (attempt 1): ServerError — retrying in 1s
+2026-07-07 19:55:45 | WARNING  | gemini     | Server error (attempt 2): ServerError — retrying in 2s
+2026-07-07 19:56:09 | WARNING  | runner     | [US-01] Agent 0 → PRECISA_DE_ESCLARECIMENTO (3 problems)
+2026-07-07 19:56:09 | INFO     | runner     | 
+2026-07-07 19:56:09 | INFO     | runner     | ============================================================
+2026-07-07 19:56:09 | INFO     | runner     |   Story 2/5 — US-02: Cadastrar nova conta de usuário
+2026-07-07 19:56:09 | INFO     | runner     | ============================================================
+2026-07-07 19:56:09 | INFO     | runner     | [US-02] Running Agent 0 (quality gate)...
+2026-07-07 19:56:33 | WARNING  | runner     | [US-02] Agent 0 → PRECISA_DE_ESCLARECIMENTO (2 problems)
+2026-07-07 19:56:33 | INFO     | runner     | 
+2026-07-07 19:56:33 | INFO     | runner     | ============================================================
+2026-07-07 19:56:33 | INFO     | runner     |   Story 3/5 — US-03: Criar nova solicitação de serviço
+2026-07-07 19:56:33 | INFO     | runner     | ============================================================
+2026-07-07 19:56:33 | INFO     | runner     | [US-03] Running Agent 0 (quality gate)...
+2026-07-07 19:56:41 | INFO     | runner     | [US-03] Agent 0 → APROVADA
+2026-07-07 19:56:41 | INFO     | runner     | [US-03] Running Agent 1 (test case generation)...
+2026-07-07 19:59:15 | WARNING  | gemini     | Server error (attempt 1): ServerError — retrying in 1s
+2026-07-07 20:01:15 | WARNING  | gemini     | Server error (attempt 2): ServerError — retrying in 2s
+2026-07-07 20:01:19 | ERROR    | runner     | [US-03] Agent 1 → FAILED: ServerError: 503 UNAVAILABLE. {'error': {'code': 503, 'message': 'This model is currently experiencing high demand. Spikes in demand are usually temporary. Please try again later.', 'status': 'UNAVAILABLE'}}
+2026-07-07 20:01:19 | INFO     | runner     | 
+2026-07-07 20:01:19 | INFO     | runner     | ============================================================
+2026-07-07 20:01:19 | INFO     | runner     |   Story 4/5 — US-04: Listar e filtrar minhas solicitações
+2026-07-07 20:01:19 | INFO     | runner     | ============================================================
+2026-07-07 20:01:19 | INFO     | runner     | [US-04] Running Agent 0 (quality gate)...
+2026-07-07 20:01:21 | WARNING  | gemini     | Server error (attempt 1): ServerError — retrying in 1s
+2026-07-07 20:01:23 | WARNING  | gemini     | Server error (attempt 2): ServerError — retrying in 2s
+2026-07-07 20:01:28 | ERROR    | runner     | [US-04] Agent 0 → FAILED: ServerError: 503 UNAVAILABLE. {'error': {'code': 503, 'message': 'This model is currently experiencing high demand. Spikes in demand are usually temporary. Please try again later.', 'status': 'UNAVAILABLE'}}
+2026-07-07 20:01:28 | INFO     | runner     | 
+2026-07-07 20:01:28 | INFO     | runner     | ============================================================
+2026-07-07 20:01:28 | INFO     | runner     |   Story 5/5 — US-05: Cancelar uma solicitação não finalizada
+2026-07-07 20:01:28 | INFO     | runner     | ============================================================
+2026-07-07 20:01:28 | INFO     | runner     | [US-05] Running Agent 0 (quality gate)...
+2026-07-07 20:01:46 | WARNING  | runner     | [US-05] Agent 0 → PRECISA_DE_ESCLARECIMENTO (2 problems)
+2026-07-07 20:01:46 | INFO     | runner     | Done — total=5 | agent0_ok=4 | agent1_ok=0 | agent2_ok=0 | blocked=3 | errors=2 | repair_attempts=0 | rejected_after_repair=0
+2026-07-07 20:01:48 | WARNING  | gemini     | Server error (attempt 1): ServerError — retrying in 1s
+2026-07-07 20:02:06 | WARNING  | gemini     | Server error (attempt 2): ServerError — retrying in 2s
+
+2026-07-07 20:16:53 | INFO     | runner     | Provider: gemini:gemini-2.5-flash
+2026-07-07 20:16:53 | INFO     | runner     | Found 5 stories to process
+2026-07-07 20:16:53 | INFO     | runner     | 
+2026-07-07 20:16:53 | INFO     | runner     | ============================================================
+2026-07-07 20:16:53 | INFO     | runner     |   Story 1/5 — US-01: Realizar login com e-mail e senha
+2026-07-07 20:16:53 | INFO     | runner     | ============================================================
+2026-07-07 20:16:53 | INFO     | runner     | [US-01] Running Agent 0 (quality gate)...
+2026-07-07 20:17:02 | INFO     | runner     | [US-01] Agent 0 → APROVADA
+2026-07-07 20:17:02 | INFO     | runner     | [US-01] Running Agent 1 (test case generation)...
+2026-07-07 20:17:24 | INFO     | runner     | [US-01] Agent 1 → done — 6 test cases generated
+2026-07-07 20:17:24 | INFO     | runner     | [US-01] Running Agent 2 (judge + repair loop)...
+2026-07-07 20:18:17 | INFO     | runner     | [US-01] Agent 2 attempt-0 saved — decision=REPROVADO approved=6 rejected=0 problems=0 omitted=2 path=generated/reports/agent2/US-01_attempt-0.json
+2026-07-07 20:18:17 | INFO     | runner     | [US-01] Agent 2 attempt-1 saved — decision=APROVADO approved=8 rejected=0 problems=0 omitted=0 path=generated/reports/agent2/US-01_attempt-1.json
+2026-07-07 20:18:17 | INFO     | runner     | [US-01] Repair attempt-1 saved — cases=8 alerts=0 path=generated/test_cases_repaired/US-01_attempt-1.json
+2026-07-07 20:18:17 | INFO     | runner     | [US-01] Repair final saved — cases=8 alerts=0 path=generated/test_cases_repaired/US-01_final.json
+2026-07-07 20:18:17 | INFO     | runner     | [US-01] Agent 2 → APROVADO after 1 repair attempt(s)
+2026-07-07 20:18:17 | INFO     | runner     | 
+2026-07-07 20:18:17 | INFO     | runner     | ============================================================
+2026-07-07 20:18:17 | INFO     | runner     |   Story 2/5 — US-02: Cadastrar nova conta de usuário
+2026-07-07 20:18:17 | INFO     | runner     | ============================================================
+2026-07-07 20:18:17 | INFO     | runner     | [US-02] Running Agent 0 (quality gate)...
+2026-07-07 20:18:31 | INFO     | runner     | [US-02] Agent 0 → APROVADA
+2026-07-07 20:18:31 | INFO     | runner     | [US-02] Running Agent 1 (test case generation)...
+2026-07-07 20:18:55 | INFO     | runner     | [US-02] Agent 1 → done — 6 test cases generated
+2026-07-07 20:18:55 | INFO     | runner     | [US-02] Running Agent 2 (judge + repair loop)...
+2026-07-07 20:20:30 | INFO     | runner     | [US-02] Agent 2 attempt-0 saved — decision=REPROVADO approved=6 rejected=0 problems=0 omitted=3 path=generated/reports/agent2/US-02_attempt-0.json
+2026-07-07 20:20:30 | INFO     | runner     | [US-02] Agent 2 attempt-1 saved — decision=REPROVADO approved=9 rejected=0 problems=1 omitted=0 path=generated/reports/agent2/US-02_attempt-1.json
+2026-07-07 20:20:30 | INFO     | runner     | [US-02] Agent 2 attempt-2 saved — decision=APROVADO approved=9 rejected=0 problems=0 omitted=0 path=generated/reports/agent2/US-02_attempt-2.json
+2026-07-07 20:20:30 | INFO     | runner     | [US-02] Repair attempt-1 saved — cases=9 alerts=1 path=generated/test_cases_repaired/US-02_attempt-1.json
+2026-07-07 20:20:30 | INFO     | runner     | [US-02] Repair attempt-2 saved — cases=9 alerts=0 path=generated/test_cases_repaired/US-02_attempt-2.json
+2026-07-07 20:20:30 | INFO     | runner     | [US-02] Repair final saved — cases=9 alerts=0 path=generated/test_cases_repaired/US-02_final.json
+2026-07-07 20:20:30 | INFO     | runner     | [US-02] Agent 2 → APROVADO after 2 repair attempt(s)
+2026-07-07 20:20:30 | INFO     | runner     | 
+2026-07-07 20:20:30 | INFO     | runner     | ============================================================
+2026-07-07 20:20:30 | INFO     | runner     |   Story 3/5 — US-03: Criar nova solicitação de serviço
+2026-07-07 20:20:30 | INFO     | runner     | ============================================================
+2026-07-07 20:20:30 | INFO     | runner     | [US-03] Running Agent 0 (quality gate)...
+2026-07-07 20:20:41 | INFO     | runner     | [US-03] Agent 0 → APROVADA
+2026-07-07 20:20:41 | INFO     | runner     | [US-03] Running Agent 1 (test case generation)...
+2026-07-07 20:23:05 | WARNING  | gemini     | Server error (attempt 1): ServerError — retrying in 1s
+2026-07-07 20:25:04 | WARNING  | gemini     | Server error (attempt 2): ServerError — retrying in 2s
+2026-07-07 20:27:05 | ERROR    | runner     | [US-03] Agent 1 → FAILED: ServerError: 504 DEADLINE_EXCEEDED. {'error': {'code': 504, 'message': 'The request timed out. Please try again.', 'status': 'DEADLINE_EXCEEDED'}}
+2026-07-07 20:27:05 | INFO     | runner     | 
+2026-07-07 20:27:05 | INFO     | runner     | ============================================================
+2026-07-07 20:27:05 | INFO     | runner     |   Story 4/5 — US-04: Listar e filtrar minhas solicitações
+2026-07-07 20:27:05 | INFO     | runner     | ============================================================
+2026-07-07 20:27:05 | INFO     | runner     | [US-04] Running Agent 0 (quality gate)...
+2026-07-07 20:27:23 | WARNING  | runner     | [US-04] Agent 0 → PRECISA_DE_ESCLARECIMENTO (3 problems)
+2026-07-07 20:27:23 | INFO     | runner     | 
+2026-07-07 20:27:23 | INFO     | runner     | ============================================================
+2026-07-07 20:27:23 | INFO     | runner     |   Story 5/5 — US-05: Cancelar uma solicitação não finalizada
+2026-07-07 20:27:23 | INFO     | runner     | ============================================================
+2026-07-07 20:27:23 | INFO     | runner     | [US-05] Running Agent 0 (quality gate)...
+2026-07-07 20:27:41 | WARNING  | runner     | [US-05] Agent 0 → PRECISA_DE_ESCLARECIMENTO (3 problems)
+2026-07-07 20:27:41 | INFO     | runner     | Done — total=5 | agent0_ok=5 | agent1_ok=2 | agent2_ok=2 | blocked=2 | errors=1 | repair_attempts=3 | rejected_after_repair=0
+
+2026-07-07 20:35:21 | INFO     | runner     | Provider: gemini:gemini-2.5-flash
+2026-07-07 20:35:22 | INFO     | runner     | Found 5 stories to process
+2026-07-07 20:35:22 | INFO     | runner     | 
+2026-07-07 20:35:22 | INFO     | runner     | ============================================================
+2026-07-07 20:35:22 | INFO     | runner     |   Story 1/5 — US-01: Realizar login com e-mail e senha
+2026-07-07 20:35:22 | INFO     | runner     | ============================================================
+2026-07-07 20:35:22 | INFO     | runner     | [US-01] Running Agent 0 (quality gate)...
+2026-07-07 20:35:30 | INFO     | runner     | [US-01] Agent 0 → APROVADA
+2026-07-07 20:35:30 | INFO     | runner     | [US-01] Running Agent 1 (test case generation)...
+2026-07-07 20:35:53 | INFO     | runner     | [US-01] Agent 1 → done — 6 test cases generated
+2026-07-07 20:35:53 | INFO     | runner     | [US-01] Running Agent 2 (judge + repair loop)...
+2026-07-07 20:36:44 | INFO     | runner     | [US-01] Agent 2 attempt-0 saved — decision=REPROVADO approved=6 rejected=0 problems=0 omitted=1 path=generated/reports/agent2/US-01_attempt-0.json
+2026-07-07 20:36:44 | INFO     | runner     | [US-01] Agent 2 attempt-1 saved — decision=APROVADO approved=7 rejected=0 problems=0 omitted=0 path=generated/reports/agent2/US-01_attempt-1.json
+2026-07-07 20:36:44 | INFO     | runner     | [US-01] Repair attempt-1 saved — cases=7 alerts=0 path=generated/test_cases_repaired/US-01_attempt-1.json
+2026-07-07 20:36:44 | INFO     | runner     | [US-01] Repair final saved — cases=7 alerts=0 path=generated/test_cases_repaired/US-01_final.json
+2026-07-07 20:36:44 | INFO     | runner     | [US-01] Agent 2 → APROVADO after 1 repair attempt(s)
+2026-07-07 20:36:44 | INFO     | runner     | 
+2026-07-07 20:36:44 | INFO     | runner     | ============================================================
+2026-07-07 20:36:44 | INFO     | runner     |   Story 2/5 — US-02: Cadastrar nova conta de usuário
+2026-07-07 20:36:44 | INFO     | runner     | ============================================================
+2026-07-07 20:36:44 | INFO     | runner     | [US-02] Running Agent 0 (quality gate)...
+2026-07-07 20:36:52 | WARNING  | gemini     | Server error (attempt 1): ServerError — retrying in 1s
+2026-07-07 20:37:17 | WARNING  | runner     | [US-02] Agent 0 → PRECISA_DE_ESCLARECIMENTO (2 problems)
+2026-07-07 20:37:17 | INFO     | runner     | 
+2026-07-07 20:37:17 | INFO     | runner     | ============================================================
+2026-07-07 20:37:17 | INFO     | runner     |   Story 3/5 — US-03: Criar nova solicitação de serviço
+2026-07-07 20:37:17 | INFO     | runner     | ============================================================
+2026-07-07 20:37:17 | INFO     | runner     | [US-03] Running Agent 0 (quality gate)...
+2026-07-07 20:37:27 | INFO     | runner     | [US-03] Agent 0 → APROVADA
+2026-07-07 20:37:27 | INFO     | runner     | [US-03] Running Agent 1 (test case generation)...
+2026-07-07 20:39:55 | WARNING  | gemini     | Server error (attempt 1): ServerError — retrying in 1s
+2026-07-07 20:40:24 | WARNING  | gemini     | Server error (attempt 2): ServerError — retrying in 2s
+2026-07-07 20:41:17 | ERROR    | runner     | [US-03] Agent 1 → FAILED: RawAgentResponseError: Agent 1 semantic validation failed: TC-03-02 field title must have length > 100.
+2026-07-07 20:41:17 | INFO     | runner     | 
+2026-07-07 20:41:17 | INFO     | runner     | ============================================================
+2026-07-07 20:41:17 | INFO     | runner     |   Story 4/5 — US-04: Listar e filtrar minhas solicitações
+2026-07-07 20:41:17 | INFO     | runner     | ============================================================
+2026-07-07 20:41:17 | INFO     | runner     | [US-04] Running Agent 0 (quality gate)...
+2026-07-07 20:41:27 | INFO     | runner     | [US-04] Agent 0 → APROVADA
+2026-07-07 20:41:27 | INFO     | runner     | [US-04] Running Agent 1 (test case generation)...
+2026-07-07 20:41:58 | INFO     | runner     | [US-04] Agent 1 → done — 6 test cases generated
+2026-07-07 20:41:58 | INFO     | runner     | [US-04] Running Agent 2 (judge + repair loop)...
+2026-07-07 20:42:43 | INFO     | runner     | [US-04] Agent 2 attempt-0 saved — decision=REPROVADO approved=6 rejected=0 problems=0 omitted=1 path=generated/reports/agent2/US-04_attempt-0.json
+2026-07-07 20:42:43 | INFO     | runner     | [US-04] Agent 2 attempt-1 saved — decision=APROVADO approved=7 rejected=0 problems=0 omitted=0 path=generated/reports/agent2/US-04_attempt-1.json
+2026-07-07 20:42:43 | INFO     | runner     | [US-04] Repair attempt-1 saved — cases=7 alerts=0 path=generated/test_cases_repaired/US-04_attempt-1.json
+2026-07-07 20:42:43 | INFO     | runner     | [US-04] Repair final saved — cases=7 alerts=0 path=generated/test_cases_repaired/US-04_final.json
+2026-07-07 20:42:43 | INFO     | runner     | [US-04] Agent 2 → APROVADO after 1 repair attempt(s)
+2026-07-07 20:42:43 | INFO     | runner     | 
+2026-07-07 20:42:43 | INFO     | runner     | ============================================================
+2026-07-07 20:42:43 | INFO     | runner     |   Story 5/5 — US-05: Cancelar uma solicitação não finalizada
+2026-07-07 20:42:43 | INFO     | runner     | ============================================================
+2026-07-07 20:42:43 | INFO     | runner     | [US-05] Running Agent 0 (quality gate)...
+2026-07-07 20:42:49 | INFO     | runner     | [US-05] Agent 0 → APROVADA
+2026-07-07 20:42:49 | INFO     | runner     | [US-05] Running Agent 1 (test case generation)...
+2026-07-07 20:43:28 | INFO     | runner     | [US-05] Agent 1 → done — 6 test cases generated
+2026-07-07 20:43:28 | INFO     | runner     | [US-05] Running Agent 2 (judge + repair loop)...
+2026-07-07 20:43:39 | INFO     | runner     | [US-05] Agent 2 attempt-0 saved — decision=APROVADO approved=6 rejected=0 problems=0 omitted=0 path=generated/reports/agent2/US-05_attempt-0.json
+2026-07-07 20:43:39 | INFO     | runner     | [US-05] Agent 2 → APROVADO after 0 repair attempt(s)
+2026-07-07 20:43:39 | INFO     | runner     | Done — total=5 | agent0_ok=5 | agent1_ok=3 | agent2_ok=3 | blocked=1 | errors=1 | repair_attempts=2 | rejected_after_repair=0
+2026-07-07 20:44:01 | WARNING  | gemini     | Server error (attempt 1): ServerError — retrying in 1s
+2026-07-07 20:44:08 | WARNING  | gemini     | Server error (attempt 2): ServerError — retrying in 2s
+
+2026-07-07 20:47:37 | INFO     | runner     | Provider: gemini:gemini-2.5-flash
+2026-07-07 20:47:37 | INFO     | runner     | Found 5 stories to process
+2026-07-07 20:47:37 | INFO     | runner     | 
+2026-07-07 20:47:37 | INFO     | runner     | ============================================================
+2026-07-07 20:47:37 | INFO     | runner     |   Story 1/5 — US-01: Realizar login com e-mail e senha
+2026-07-07 20:47:37 | INFO     | runner     | ============================================================
+2026-07-07 20:47:37 | INFO     | runner     | [US-01] Running Agent 0 (quality gate)...
+2026-07-07 20:47:47 | INFO     | runner     | [US-01] Agent 0 → APROVADA
+2026-07-07 20:47:47 | INFO     | runner     | [US-01] Running Agent 1 (test case generation)...
+2026-07-07 20:48:09 | INFO     | runner     | [US-01] Agent 1 → done — 6 test cases generated
+2026-07-07 20:48:09 | INFO     | runner     | [US-01] Running Agent 2 (judge + repair loop)...
+2026-07-07 20:48:55 | INFO     | runner     | [US-01] Agent 2 attempt-0 saved — decision=REPROVADO approved=5 rejected=1 problems=1 omitted=0 path=generated/reports/agent2/US-01_attempt-0.json
+2026-07-07 20:48:55 | INFO     | runner     | [US-01] Agent 2 attempt-1 saved — decision=APROVADO approved=6 rejected=0 problems=0 omitted=0 path=generated/reports/agent2/US-01_attempt-1.json
+2026-07-07 20:48:55 | INFO     | runner     | [US-01] Repair attempt-1 saved — cases=6 alerts=0 path=generated/test_cases_repaired/US-01_attempt-1.json
+2026-07-07 20:48:55 | INFO     | runner     | [US-01] Repair final saved — cases=6 alerts=0 path=generated/test_cases_repaired/US-01_final.json
+2026-07-07 20:48:55 | INFO     | runner     | [US-01] Agent 2 → APROVADO after 1 repair attempt(s)
+2026-07-07 20:48:55 | INFO     | runner     | 
+2026-07-07 20:48:55 | INFO     | runner     | ============================================================
+2026-07-07 20:48:55 | INFO     | runner     |   Story 2/5 — US-02: Cadastrar nova conta de usuário
+2026-07-07 20:48:55 | INFO     | runner     | ============================================================
+2026-07-07 20:48:55 | INFO     | runner     | [US-02] Running Agent 0 (quality gate)...
+2026-07-07 20:49:14 | WARNING  | runner     | [US-02] Agent 0 → PRECISA_DE_ESCLARECIMENTO (4 problems)
+2026-07-07 20:49:14 | INFO     | runner     | 
+2026-07-07 20:49:14 | INFO     | runner     | ============================================================
+2026-07-07 20:49:14 | INFO     | runner     |   Story 3/5 — US-03: Criar nova solicitação de serviço
+2026-07-07 20:49:14 | INFO     | runner     | ============================================================
+2026-07-07 20:49:14 | INFO     | runner     | [US-03] Running Agent 0 (quality gate)...
+2026-07-07 20:49:28 | WARNING  | runner     | [US-03] Agent 0 → PRECISA_DE_ESCLARECIMENTO (1 problem)
+2026-07-07 20:49:28 | INFO     | runner     | 
+2026-07-07 20:49:28 | INFO     | runner     | ============================================================
+2026-07-07 20:49:28 | INFO     | runner     |   Story 4/5 — US-04: Listar e filtrar minhas solicitações
+2026-07-07 20:49:28 | INFO     | runner     | ============================================================
+2026-07-07 20:49:28 | INFO     | runner     | [US-04] Running Agent 0 (quality gate)...
+2026-07-07 20:49:42 | WARNING  | runner     | [US-04] Agent 0 → PRECISA_DE_ESCLARECIMENTO (2 problems)
+2026-07-07 20:49:42 | INFO     | runner     | 
+2026-07-07 20:49:42 | INFO     | runner     | ============================================================
+2026-07-07 20:49:42 | INFO     | runner     |   Story 5/5 — US-05: Cancelar uma solicitação não finalizada
+2026-07-07 20:49:42 | INFO     | runner     | ============================================================
+2026-07-07 20:49:42 | INFO     | runner     | [US-05] Running Agent 0 (quality gate)...
+2026-07-07 20:49:58 | ERROR    | runner     | [US-05] Agent 0 → FAILED: RawAgentResponseError: Schema validation failed at justificativa_derivabilidade: '' should be non-empty
+2026-07-07 20:49:58 | INFO     | runner     | Done — total=5 | agent0_ok=4 | agent1_ok=1 | agent2_ok=1 | blocked=3 | errors=1 | repair_attempts=1 | rejected_after_repair=0
+2026-07-07 20:50:31 | WARNING  | gemini     | Server error (attempt 1): ServerError — retrying in 1s
+
+2026-07-07 21:16:34 | INFO     | runner     | Provider: gemini:gemini-2.5-flash
+2026-07-07 21:16:35 | INFO     | runner     | Found 5 stories to process
+2026-07-07 21:16:35 | INFO     | runner     | 
+2026-07-07 21:16:35 | INFO     | runner     | ============================================================
+2026-07-07 21:16:35 | INFO     | runner     |   Story 1/5 — US-01: Realizar login com e-mail e senha
+2026-07-07 21:16:35 | INFO     | runner     | ============================================================
+2026-07-07 21:16:35 | INFO     | runner     | [US-01] Running Agent 0 (quality gate)...
+2026-07-07 21:16:42 | WARNING  | gemini     | Server error (attempt 1): ServerError — retrying in 1s
+2026-07-07 21:16:46 | WARNING  | gemini     | Server error (attempt 2): ServerError — retrying in 2s
+2026-07-07 21:16:51 | ERROR    | runner     | [US-01] Agent 0 → FAILED: ServerError: 503 UNAVAILABLE. {'error': {'code': 503, 'message': 'This model is currently experiencing high demand. Spikes in demand are usually temporary. Please try again later.', 'status': 'UNAVAILABLE'}}
+2026-07-07 21:16:51 | INFO     | runner     | 
+2026-07-07 21:16:51 | INFO     | runner     | ============================================================
+2026-07-07 21:16:51 | INFO     | runner     |   Story 2/5 — US-02: Cadastrar nova conta de usuário
+2026-07-07 21:16:51 | INFO     | runner     | ============================================================
+2026-07-07 21:16:51 | INFO     | runner     | [US-02] Running Agent 0 (quality gate)...
+2026-07-07 21:18:01 | INFO     | runner     | Provider: gemini:Gemini-3.5-Flash
+2026-07-07 21:18:02 | INFO     | runner     | Found 5 stories to process
+2026-07-07 21:18:02 | INFO     | runner     | 
+2026-07-07 21:18:02 | INFO     | runner     | ============================================================
+2026-07-07 21:18:02 | INFO     | runner     |   Story 1/5 — US-01: Realizar login com e-mail e senha
+2026-07-07 21:18:02 | INFO     | runner     | ============================================================
+2026-07-07 21:18:02 | INFO     | runner     | [US-01] Running Agent 0 (quality gate)...
+2026-07-07 21:18:02 | ERROR    | runner     | [US-01] Agent 0 → FAILED: ClientError: 400 INVALID_ARGUMENT. {'error': {'code': 400, 'message': '* GenerateContentRequest.model: unexpected model name format\n', 'status': 'INVALID_ARGUMENT'}}
+2026-07-07 21:18:02 | INFO     | runner     | 
+2026-07-07 21:18:02 | INFO     | runner     | ============================================================
+2026-07-07 21:18:02 | INFO     | runner     |   Story 2/5 — US-02: Cadastrar nova conta de usuário
+2026-07-07 21:18:02 | INFO     | runner     | ============================================================
+2026-07-07 21:18:02 | INFO     | runner     | [US-02] Running Agent 0 (quality gate)...
+2026-07-07 21:18:03 | ERROR    | runner     | [US-02] Agent 0 → FAILED: ClientError: 400 INVALID_ARGUMENT. {'error': {'code': 400, 'message': '* GenerateContentRequest.model: unexpected model name format\n', 'status': 'INVALID_ARGUMENT'}}
+2026-07-07 21:18:03 | INFO     | runner     | 
+2026-07-07 21:18:03 | INFO     | runner     | ============================================================
+2026-07-07 21:18:03 | INFO     | runner     |   Story 3/5 — US-03: Criar nova solicitação de serviço
+2026-07-07 21:18:03 | INFO     | runner     | ============================================================
+2026-07-07 21:18:03 | INFO     | runner     | [US-03] Running Agent 0 (quality gate)...
+2026-07-07 21:18:03 | ERROR    | runner     | [US-03] Agent 0 → FAILED: ClientError: 400 INVALID_ARGUMENT. {'error': {'code': 400, 'message': '* GenerateContentRequest.model: unexpected model name format\n', 'status': 'INVALID_ARGUMENT'}}
+2026-07-07 21:18:03 | INFO     | runner     | 
+2026-07-07 21:18:03 | INFO     | runner     | ============================================================
+2026-07-07 21:18:03 | INFO     | runner     |   Story 4/5 — US-04: Listar e filtrar minhas solicitações
+2026-07-07 21:18:03 | INFO     | runner     | ============================================================
+2026-07-07 21:18:03 | INFO     | runner     | [US-04] Running Agent 0 (quality gate)...
+2026-07-07 21:18:03 | ERROR    | runner     | [US-04] Agent 0 → FAILED: ClientError: 400 INVALID_ARGUMENT. {'error': {'code': 400, 'message': '* GenerateContentRequest.model: unexpected model name format\n', 'status': 'INVALID_ARGUMENT'}}
+2026-07-07 21:18:03 | INFO     | runner     | 
+2026-07-07 21:18:03 | INFO     | runner     | ============================================================
+2026-07-07 21:18:03 | INFO     | runner     |   Story 5/5 — US-05: Cancelar uma solicitação não finalizada
+2026-07-07 21:18:03 | INFO     | runner     | ============================================================
+2026-07-07 21:18:03 | INFO     | runner     | [US-05] Running Agent 0 (quality gate)...
+2026-07-07 21:18:04 | ERROR    | runner     | [US-05] Agent 0 → FAILED: ClientError: 400 INVALID_ARGUMENT. {'error': {'code': 400, 'message': '* GenerateContentRequest.model: unexpected model name format\n', 'status': 'INVALID_ARGUMENT'}}
+2026-07-07 21:18:04 | INFO     | runner     | Done — total=5 | agent0_ok=0 | agent1_ok=0 | agent2_ok=0 | blocked=0 | errors=5 | repair_attempts=0 | rejected_after_repair=0
+2026-07-07 21:18:49 | INFO     | runner     | Provider: gemini:gemini-3.5-flash
+2026-07-07 21:18:50 | INFO     | runner     | Found 5 stories to process
+2026-07-07 21:18:50 | INFO     | runner     | 
+2026-07-07 21:18:50 | INFO     | runner     | ============================================================
+2026-07-07 21:18:50 | INFO     | runner     |   Story 1/5 — US-01: Realizar login com e-mail e senha
+2026-07-07 21:18:50 | INFO     | runner     | ============================================================
+2026-07-07 21:18:50 | INFO     | runner     | [US-01] Running Agent 0 (quality gate)...
+2026-07-07 21:19:02 | INFO     | runner     | [US-01] Agent 0 → APROVADA
+2026-07-07 21:19:02 | INFO     | runner     | [US-01] Running Agent 1 (test case generation)...
+2026-07-07 21:19:20 | INFO     | runner     | [US-01] Agent 1 → done — 6 test cases generated
+2026-07-07 21:19:20 | INFO     | runner     | [US-01] Running Agent 2 (judge + repair loop)...
+2026-07-07 21:19:34 | INFO     | runner     | [US-01] Agent 2 attempt-0 saved — decision=APROVADO approved=6 rejected=0 problems=0 omitted=0 path=generated/reports/agent2/US-01_attempt-0.json
+2026-07-07 21:19:34 | INFO     | runner     | [US-01] Agent 2 → APROVADO after 0 repair attempt(s)
+2026-07-07 21:19:34 | INFO     | runner     | 
+2026-07-07 21:19:34 | INFO     | runner     | ============================================================
+2026-07-07 21:19:34 | INFO     | runner     |   Story 2/5 — US-02: Cadastrar nova conta de usuário
+2026-07-07 21:19:34 | INFO     | runner     | ============================================================
+2026-07-07 21:19:34 | INFO     | runner     | [US-02] Running Agent 0 (quality gate)...
+2026-07-07 21:19:47 | WARNING  | runner     | [US-02] Agent 0 → PRECISA_DE_ESCLARECIMENTO (2 problems)
+2026-07-07 21:19:47 | INFO     | runner     | 
+2026-07-07 21:19:47 | INFO     | runner     | ============================================================
+2026-07-07 21:19:47 | INFO     | runner     |   Story 3/5 — US-03: Criar nova solicitação de serviço
+2026-07-07 21:19:47 | INFO     | runner     | ============================================================
+2026-07-07 21:19:47 | INFO     | runner     | [US-03] Running Agent 0 (quality gate)...
+2026-07-07 21:20:03 | WARNING  | runner     | [US-03] Agent 0 → PRECISA_DE_ESCLARECIMENTO (2 problems)
+2026-07-07 21:20:03 | INFO     | runner     | 
+2026-07-07 21:20:03 | INFO     | runner     | ============================================================
+2026-07-07 21:20:03 | INFO     | runner     |   Story 4/5 — US-04: Listar e filtrar minhas solicitações
+2026-07-07 21:20:03 | INFO     | runner     | ============================================================
+2026-07-07 21:20:03 | INFO     | runner     | [US-04] Running Agent 0 (quality gate)...
+2026-07-07 21:20:16 | WARNING  | runner     | [US-04] Agent 0 → PRECISA_DE_ESCLARECIMENTO (2 problems)
+2026-07-07 21:20:16 | INFO     | runner     | 
+2026-07-07 21:20:16 | INFO     | runner     | ============================================================
+2026-07-07 21:20:16 | INFO     | runner     |   Story 5/5 — US-05: Cancelar uma solicitação não finalizada
+2026-07-07 21:20:16 | INFO     | runner     | ============================================================
+2026-07-07 21:20:16 | INFO     | runner     | [US-05] Running Agent 0 (quality gate)...
+2026-07-07 21:20:26 | WARNING  | runner     | [US-05] Agent 0 → PRECISA_DE_ESCLARECIMENTO (1 problem)
+2026-07-07 21:20:26 | INFO     | runner     | Done — total=5 | agent0_ok=5 | agent1_ok=1 | agent2_ok=1 | blocked=4 | errors=0 | repair_attempts=0 | rejected_after_repair=0
+2026-07-07 21:22:42 | INFO     | runner     | Provider: gemini:gemini-3.5-flash
+2026-07-07 21:22:43 | INFO     | runner     | Found 5 stories to process
+2026-07-07 21:22:43 | INFO     | runner     | 
+2026-07-07 21:22:43 | INFO     | runner     | ============================================================
+2026-07-07 21:22:43 | INFO     | runner     |   Story 1/5 — US-01: Realizar login com e-mail e senha
+2026-07-07 21:22:43 | INFO     | runner     | ============================================================
+2026-07-07 21:22:43 | INFO     | runner     | [US-01] Running Agent 0 (quality gate)...
+
+2026-07-07 21:22:55 | INFO     | runner     | Provider: gemini:gemini-3.5-flash
+2026-07-07 21:22:56 | INFO     | runner     | Found 5 stories to process
+2026-07-07 21:22:56 | INFO     | runner     | 
+2026-07-07 21:22:56 | INFO     | runner     | ============================================================
+2026-07-07 21:22:56 | INFO     | runner     |   Story 1/5 — US-01: Realizar login com e-mail e senha
+2026-07-07 21:22:56 | INFO     | runner     | ============================================================
+2026-07-07 21:22:56 | INFO     | runner     | [US-01] Running Agent 0 (quality gate)...
+2026-07-07 21:24:56 | WARNING  | gemini     | Server error (attempt 1): ServerError — retrying in 1s
+2026-07-07 21:25:18 | WARNING  | gemini     | Server error (attempt 2): ServerError — retrying in 2s
+2026-07-07 21:26:29 | INFO     | runner     | [US-01] Agent 0 → APROVADA
+2026-07-07 21:26:29 | INFO     | runner     | [US-01] Running Agent 1 (test case generation)...
+2026-07-07 21:27:11 | INFO     | runner     | [US-01] Agent 1 → done — 6 test cases generated
+2026-07-07 21:27:11 | INFO     | runner     | [US-01] Running Agent 2 (judge + repair loop)...
+2026-07-07 21:27:12 | WARNING  | gemini     | Server error (attempt 1): ServerError — retrying in 1s
+2026-07-07 21:27:14 | WARNING  | gemini     | Server error (attempt 2): ServerError — retrying in 2s
+2026-07-07 21:27:17 | ERROR    | runner     | [US-01] Agent 2 → FAILED: ServerError: 503 UNAVAILABLE. {'error': {'code': 503, 'message': 'This model is currently experiencing high demand. Spikes in demand are usually temporary. Please try again later.', 'status': 'UNAVAILABLE'}}
+2026-07-07 21:27:17 | INFO     | runner     | 
+2026-07-07 21:27:17 | INFO     | runner     | ============================================================
+2026-07-07 21:27:17 | INFO     | runner     |   Story 2/5 — US-02: Cadastrar nova conta de usuário
+2026-07-07 21:27:17 | INFO     | runner     | ============================================================
+2026-07-07 21:27:17 | INFO     | runner     | [US-02] Running Agent 0 (quality gate)...
+2026-07-07 21:27:26 | INFO     | runner     | [US-02] Agent 0 → APROVADA
+2026-07-07 21:27:26 | INFO     | runner     | [US-02] Running Agent 1 (test case generation)...
+2026-07-07 21:27:45 | INFO     | runner     | [US-02] Agent 1 → done — 6 test cases generated
+2026-07-07 21:27:45 | INFO     | runner     | [US-02] Running Agent 2 (judge + repair loop)...
+2026-07-07 21:27:49 | WARNING  | gemini     | Server error (attempt 1): ServerError — retrying in 1s
+2026-07-07 21:27:51 | WARNING  | gemini     | Server error (attempt 2): ServerError — retrying in 2s
+2026-07-07 21:27:54 | ERROR    | runner     | [US-02] Agent 2 → FAILED: ServerError: 503 UNAVAILABLE. {'error': {'code': 503, 'message': 'This model is currently experiencing high demand. Spikes in demand are usually temporary. Please try again later.', 'status': 'UNAVAILABLE'}}
+2026-07-07 21:27:54 | INFO     | runner     | 
+2026-07-07 21:27:54 | INFO     | runner     | ============================================================
+2026-07-07 21:27:54 | INFO     | runner     |   Story 3/5 — US-03: Criar nova solicitação de serviço
+2026-07-07 21:27:54 | INFO     | runner     | ============================================================
+2026-07-07 21:27:54 | INFO     | runner     | [US-03] Running Agent 0 (quality gate)...
+2026-07-07 21:28:10 | INFO     | runner     | [US-03] Agent 0 → APROVADA
+2026-07-07 21:28:10 | INFO     | runner     | [US-03] Running Agent 1 (test case generation)...
+2026-07-07 21:28:46 | INFO     | runner     | [US-03] Agent 1 → done — 6 test cases generated
+2026-07-07 21:28:46 | INFO     | runner     | [US-03] Running Agent 2 (judge + repair loop)...
+2026-07-07 21:28:47 | WARNING  | gemini     | Server error (attempt 1): ServerError — retrying in 1s

@@ -1,8 +1,0 @@
-{
-  "status": "APROVADA",
-  "derivavel": true,
-  "justificativa_derivabilidade": "A história de usuário US-01 e seus critérios de aceitação são claros, específicos e abrangentes. Cobrem os fluxos positivo, negativo (e-mail/senha inválidos, formato de e-mail inválido) e de borda (política de bloqueio por tentativas falhas). Todos os critérios especificam condições de entrada, ações e resultados observáveis (códigos HTTP, mensagens, redirecionamentos, headers) de forma detalhada, sem ambiguidades. As regras de negócio e validações estão em perfeita consonância com o 'system_context' fornecido, permitindo a derivação direta de casos de teste funcionais sem a necessidade de inferir ou inventar comportamentos.",
-  "observacao_formato": "A história de usuário segue o formato padrão 'Como [papel], quero [ação], para [benefício]' implicitamente e é clara.",
-  "problemas": [],
-  "recomendacao": "Prosseguir para geração de casos de teste."
-}

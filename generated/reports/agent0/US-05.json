@@ -1,8 +1,0 @@
-{
-  "status": "APROVADA",
-  "derivavel": true,
-  "justificativa_derivabilidade": "A história de usuário e seus critérios de aceitação são claros, específicos e abrangentes. Os critérios cobrem os fluxos positivo, negativo e de borda esperados, detalhando as condições de entrada, as ações e os resultados observáveis (códigos HTTP, mensagens de erro, alterações de estado no backend e comportamento da UI). O contexto do sistema fornecido é rico em detalhes sobre regras de negócio, semântica HTTP e mapeamento da UI, permitindo a derivação direta de casos de teste funcionais sem a necessidade de inventar regras ou fazer suposições.",
-  "observacao_formato": "A história de usuário segue o formato padrão 'Como [papel], quero [ação], para [benefício]'.",
-  "problemas": [],
-  "recomendacao": "Prosseguir para geração de casos de teste."
-}

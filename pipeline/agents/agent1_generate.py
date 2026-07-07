@@ -407,22 +407,29 @@ def _assert_text_boundary(
     criteria_text: str,
     requirement_name: str,
 ) -> None:
-    if not _case_mentions_invalid_boundary(case, requirement_name):
+    case_text = _normalise_text(_case_text(case))
+    if requirement_name not in case_text:
         return
-    shorter_match = re.search(rf"{requirement_name}[^.。;,]*menor (?:que|do que) (\d+)", criteria_text)
-    if shorter_match:
-        limit = int(shorter_match.group(1))
-        if len(value) >= limit:
-            raise AgentOutputError(
-                f"Agent 1 semantic validation failed: {case['id']} field {field_name} must have length < {limit}."
-            )
-    longer_match = re.search(rf"{requirement_name}[^.。;,]*maior (?:que|do que) (\d+)", criteria_text)
-    if longer_match:
-        limit = int(longer_match.group(1))
-        if len(value) <= limit:
-            raise AgentOutputError(
-                f"Agent 1 semantic validation failed: {case['id']} field {field_name} must have length > {limit}."
-            )
+
+    # Check shorter boundary (only if case targets shorter/minor/minimum limits)
+    if any(marker in case_text for marker in ("menor", "curt", "min", "inf")):
+        shorter_match = re.search(rf"{requirement_name}[^.。;,]*menor (?:que|do que) (\d+)", criteria_text)
+        if shorter_match:
+            limit = int(shorter_match.group(1))
+            if len(value) >= limit:
+                raise AgentOutputError(
+                    f"Agent 1 semantic validation failed: {case['id']} field {field_name} must have length < {limit}."
+                )
+
+    # Check longer boundary (only if case targets longer/major/maximum limits)
+    if any(marker in case_text for marker in ("maior", "long", "max", "sup")):
+        longer_match = re.search(rf"{requirement_name}[^.。;,]*maior (?:que|do que) (\d+)", criteria_text)
+        if longer_match:
+            limit = int(longer_match.group(1))
+            if len(value) <= limit:
+                raise AgentOutputError(
+                    f"Agent 1 semantic validation failed: {case['id']} field {field_name} must have length > {limit}."
+                )
 
 
 def _validate_password_boundaries(case: dict[str, Any], data: dict[str, Any], criteria_text: str) -> None:

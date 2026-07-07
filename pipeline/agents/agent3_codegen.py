@@ -155,11 +155,17 @@ def _validate_semantics(
         )
 
     for filename, content in files.items():
-        if "time.sleep(" in content:
-            raise AgentOutputError(
-                f"Agent 3 semantic validation failed: {filename} uses time.sleep()."
-            )
-        _parse_python(filename, content)
+        module = _parse_python(filename, content)
+        for node in ast.walk(module):
+            if isinstance(node, ast.Call):
+                if isinstance(node.func, ast.Attribute) and isinstance(node.func.value, ast.Name) and node.func.value.id == "time" and node.func.attr == "sleep":
+                    raise AgentOutputError(
+                        f"Agent 3 semantic validation failed: {filename} uses time.sleep()."
+                    )
+                if isinstance(node.func, ast.Name) and node.func.id == "sleep":
+                    raise AgentOutputError(
+                        f"Agent 3 semantic validation failed: {filename} uses time.sleep()."
+                    )
 
     _validate_test_functions(generation, files[expected_test_file])
     _validate_test_files_do_not_embed_selectors(files)
@@ -179,7 +185,7 @@ def _validate_test_functions(generation: GenerationOutput, test_file: str) -> No
     module = _parse_python("generated test file", test_file)
     test_names = {
         node.name
-        for node in module.body
+        for node in ast.walk(module)
         if isinstance(node, ast.FunctionDef) and node.name.startswith("test_")
     }
     for case in generation.test_cases:

@@ -35,7 +35,7 @@ class GeminiClient(LLMClient):
         self._types = genai_types
         self._client = genai.Client(
             api_key=api_key,
-            http_options=genai_types.HttpOptions(timeout=_HTTP_TIMEOUT),
+            http_options=genai_types.HttpOptions(timeout=_HTTP_TIMEOUT * 1000),
         )
         log.debug("Model: %s | timeout=%ds", model, _HTTP_TIMEOUT)
 
@@ -50,11 +50,14 @@ class GeminiClient(LLMClient):
         response = None
         finish_reason = None
 
-        config = self._types.GenerateContentConfig(
-            system_instruction=system,
-            temperature=temperature,
-            max_output_tokens=max_tokens,
-        )
+        config_args = {
+            "system_instruction": system,
+            "temperature": temperature,
+        }
+        if max_tokens and max_tokens < 8192:
+            config_args["max_output_tokens"] = max_tokens
+
+        config = self._types.GenerateContentConfig(**config_args)
 
         last_exc: Exception | None = None
         start = time.perf_counter()
