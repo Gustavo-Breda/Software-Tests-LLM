@@ -7,33 +7,12 @@ from .adapter import LLMClient, LLMResponse
 
 log = logging.getLogger("gemini")
 
-# Models that support ThinkingConfig. Matched by prefix so versioned variants
-# (e.g. gemini-2.5-flash-001) are also covered. "-lite" models are explicitly
-# excluded — they do not support thinking and would fail with ThinkingConfig.
-_THINKING_MODEL_PREFIXES = ("gemini-2.5-flash", "gemini-2.5-pro")
-
-# thinking budget for reproducibility
-_THINKING_BUDGET = 100_000
-
-# minimum total token budget for thinking models (thinking + output combined)
-_GEMINI_MIN_OUTPUT_TOKENS = 16_384
-
-# HTTP timeout in seconds per model class.
-# Thinking models generate up to 100k reasoning tokens before the first output byte —
-# this can take several minutes. Non-thinking models are much faster.
-_TIMEOUT_THINKING = 600  # 10 min
-_TIMEOUT_STANDARD = 120  # 2 min
+_HTTP_TIMEOUT = 120  # 2 min — no thinking, responses are fast
 
 # transient server errors — short exponential backoff (1s, 2s)
 _RETRYABLE_SERVER = ("ServerError", "ServiceUnavailable", "TooManyRequests", "ResourceExhausted")
 # connection/TLS hangs — longer fixed backoff (30s, 60s) to let rate-limit window reset
 _RETRYABLE_TIMEOUT = ("TimeoutError", "ConnectTimeout", "ReadTimeout", "PoolTimeout", "ConnectError")
-
-
-def _is_thinking_model(model: str) -> bool:
-    if model.endswith("-lite"):
-        return False
-    return any(model.startswith(prefix) for prefix in _THINKING_MODEL_PREFIXES)
 
 
 class GeminiClient(LLMClient):
@@ -54,14 +33,11 @@ class GeminiClient(LLMClient):
 
         self._genai = genai
         self._types = genai_types
-
-        thinking = _is_thinking_model(model)
-        timeout = _TIMEOUT_THINKING if thinking else _TIMEOUT_STANDARD
         self._client = genai.Client(
             api_key=api_key,
-            http_options=genai_types.HttpOptions(timeout=timeout),
+            http_options=genai_types.HttpOptions(timeout=_HTTP_TIMEOUT),
         )
-        log.debug("Model: %s | thinking=%s | timeout=%ds", model, thinking, timeout)
+        log.debug("Model: %s | timeout=%ds", model, _HTTP_TIMEOUT)
 
     def complete(
         self,
@@ -74,35 +50,18 @@ class GeminiClient(LLMClient):
         response = None
         finish_reason = None
 
-        thinking = _is_thinking_model(self.model)
-        thinking_config = (
-            self._types.ThinkingConfig(thinking_budget=_THINKING_BUDGET)
-            if thinking
-            else None
-        )
-        effective_max = max(max_tokens, _GEMINI_MIN_OUTPUT_TOKENS) if thinking else max_tokens
         config = self._types.GenerateContentConfig(
             system_instruction=system,
-            thinking_config=thinking_config,
             temperature=temperature,
-            max_output_tokens=effective_max,
+            max_output_tokens=max_tokens,
         )
-        # print(
-        #     f"[gemini] request model={self.model} thinking={is_thinking_model} "
-        #     f"temp={temperature} max_tokens={effective_max}"
-        # )
 
         last_exc: Exception | None = None
         start = time.perf_counter()
 
         for attempt in range(3):
             try:
-                log.debug(
-                    "Request attempt %d — max_tokens=%d thinking=%s",
-                    attempt + 1,
-                    effective_max,
-                    thinking,
-                )
+                log.debug("Request attempt %d — max_tokens=%d", attempt + 1, max_tokens)
                 response = self._client.models.generate_content(
                     model=self.model,
                     contents=prompt,
@@ -147,25 +106,17 @@ class GeminiClient(LLMClient):
         prompt_tokens = getattr(usage, "prompt_token_count", None) if usage else None
         completion_tokens = getattr(usage, "candidates_token_count", None) if usage else None
 
-        if usage:
-            thoughts_tokens = getattr(usage, "thinking_token_count", None) or getattr(
-                usage, "thoughts_token_count", None
-            )
-        else:
-            thoughts_tokens = None
         print(
             f"[gemini] done model={self.model} latency={elapsed:.2f}s "
             f"prompt_tokens={prompt_tokens} completion_tokens={completion_tokens} "
-            f"thinking_tokens={thoughts_tokens} finish_reason={finish_reason}"
+            f"finish_reason={finish_reason}"
         )
-
         log.debug(
-            "Response in %.1fs | finish=%s | prompt_tok=%s | completion_tok=%s | thinking_tok=%s",
+            "Response in %.1fs | finish=%s | prompt_tok=%s | completion_tok=%s",
             elapsed,
             finish_reason,
             prompt_tokens,
             completion_tokens,
-            thoughts_tokens,
         )
 
         return LLMResponse(
@@ -178,6 +129,5 @@ class GeminiClient(LLMClient):
             raw={
                 "candidates": candidates,
                 "finish_reason": finish_reason,
-                "thinking_token_count": thoughts_tokens,
             },
         )
