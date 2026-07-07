@@ -356,7 +356,7 @@ def _documented_testids() -> set[str]:
 
 
 def _validate_no_unsupported_exact_totals(blob: ContextBlob, cases: list[dict[str, Any]]) -> None:
-    context_text = _normalise_text_for_search(blob.text)
+    context_text = _normalise_text(blob.text)
     pattern = re.compile(
         r"\b(?:total|quantidade|listar|exibir|mostrar)\D{0,24}(\d+)\b",
         flags=re.IGNORECASE,
@@ -490,10 +490,6 @@ def _normalise_text(text: str) -> str:
         {"á": "a", "à": "a", "ã": "a", "â": "a", "é": "e", "ê": "e", "í": "i", "ó": "o", "ô": "o", "õ": "o", "ú": "u", "ç": "c"}
     )
     return text.lower().translate(replacements)
-
-
-def _normalise_text_for_search(text: str) -> str:
-    return _normalise_text(text)
 
 
 def _has_exact_total_evidence(context_text: str, number: str) -> bool:

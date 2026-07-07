@@ -77,7 +77,8 @@ services:
         condition: service_healthy
     volumes:
       - .:/app
-    network_mode: host
+    networks:
+      - llm-tests-network
     environment:
       - LLM_PROVIDER=${LLM_PROVIDER:-ollama}
       - LLM_MODEL=${LLM_MODEL:-llama3}
@@ -85,7 +86,7 @@ services:
       - ANTHROPIC_API_KEY=${ANTHROPIC_API_KEY}
       - GEMINI_MODEL=${GEMINI_MODEL}
       - CLAUDE_MODEL=${CLAUDE_MODEL}
-      - OLLAMA_BASE_URL=${OLLAMA_BASE_URL:-http://localhost:11434}
+      - OLLAMA_BASE_URL=${OLLAMA_BASE_URL:-http://ollama:11434}
       - OLLAMA_PULL_MODELS=${OLLAMA_PULL_MODELS}
 
 networks:

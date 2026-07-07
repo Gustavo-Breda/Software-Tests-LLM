@@ -22,7 +22,11 @@ em scripts funcionais de UI contra o app PoC.
 4. Use Page Object Model: seletores e ações de tela ficam em `pages.py`; funções `test_*` não devem conter seletores raw.
 5. Use seletores `data-testid` documentados no UI map. Não invente seletores. Se faltar seletor, registre em `pendencias_de_automacao`.
 6. Não use `time.sleep()`. Use `WebDriverWait` com expected conditions explícitas.
-7. Crie uma função por caso automatizável: `test_{case_id}_{descricao_curta}`, com comentário contendo ID e objetivo.
+7. Crie UMA função por caso automatizável com nome exatamente no formato `test_{case_id_em_minúsculas}_{descricao_curta}`.
+   Exemplo: caso TC-02-01 → `def test_tc_02_01_cadastro_bem_sucedido(driver):`.
+   PROIBIDO usar @pytest.mark.parametrize para agrupar casos distintos em uma única função.
+   PROIBIDO criar funções genéricas como `test_case`, `test_run`, `test_all`.
+   Cada caso de teste deve ter EXATAMENTE uma função própria identificável pelo seu ID.
 8. Dados de teste devem ficar em fixtures no `conftest.py`, nunca literais dentro das funções `test_*`.
 9. Prefira código simples, determinístico e coletável por PyTest sem executar browser durante import.
 10. Se um caso exigir comportamento impossível sem execução longa ou controle de tempo, automatize a parte viável e registre pendência.

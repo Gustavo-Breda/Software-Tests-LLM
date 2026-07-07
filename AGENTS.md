@@ -4,7 +4,7 @@ Guidance for AI coding agents (Claude Code, Cursor, Copilot, etc.) working in
 this repository. Humans: see [`README.md`](./README.md) for the project overview
 and [`docs/PLAN.md`](./docs/PLAN.md) for the full roadmap and data contracts.
 
-> **Repo stage:** Phases 1–3 complete. Phase 4 (Agent 2 — judge + repair loop) is next.
+> **Repo stage:** Phases 0–5 complete. Phase 6 (Summarizer) is next.
 > Always verify a path exists before editing or running it.
 
 ---

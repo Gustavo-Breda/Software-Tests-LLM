@@ -14,57 +14,6 @@ from pipeline.settings import get_settings
 from pipeline.llm.factory import get_client
 from pipeline.agents.utils import RawAgentResponseError
 
-
-def run_agent0_all(
-    client: Any,
-    *,
-    reports_dir: Path | None = None,
-) -> tuple[dict[str, Any], int]:
-    print("[runner] run_agent0_all start")
-    builder = ContextBuilder.from_repo()
-    destination = reports_dir or Path("generated") / "reports" / "agent0"
-    destination.mkdir(parents=True, exist_ok=True)
-
-    results: list[dict[str, Any]] = []
-    has_error = False
-
-    for blob in builder.build_all():
-        print(f"[runner] agent0 story={blob.story_id}")
-        try:
-            output = agent0_quality_gate.run(blob, client)
-            result = {
-                "story_id": blob.story_id,
-                "ok": True,
-                "output": output.to_dict(),
-            }
-            report_path = destination / f"{blob.story_id}.json"
-            report_path.write_text(
-                json.dumps(output.to_dict(), ensure_ascii=False, indent=2) + "\n",
-                encoding="utf-8",
-            )
-            print(f"[runner] agent0 saved story={blob.story_id} path={report_path}")
-        except Exception as exc:
-            has_error = True
-            raw_path = _save_raw_error("agent0", blob.story_id, exc, reports_dir)
-            print(f"[runner] agent0 error story={blob.story_id} type={type(exc).__name__}: {exc}")
-            result = {
-                "story_id": blob.story_id,
-                "ok": False,
-                "error": {
-                    "type": type(exc).__name__,
-                    "message": str(exc),
-                    "raw_response_path": str(raw_path) if raw_path else "",
-                },
-            }
-        results.append(result)
-
-    aggregate = {
-        "stage": "agent0_quality_gate",
-        "total": len(results),
-        "failed": sum(1 for item in results if not item["ok"]),
-        "results": results,
-    }
-    return aggregate, 1 if has_error else 0
 log = logging.getLogger("runner")
 
 
@@ -370,12 +319,6 @@ def run_phase4(
             agent2_results.append(error)
             errors.append(error)
 
-    summary = {
-        "agent0_ok": sum(1 for item in agent0_results if item.get("ok")),
-        "agent1_ok": sum(1 for item in agent1_results if item.get("ok")),
-        "blocked": len(blocked),
-        "errors": len(errors),
-    }
     log.info(
         "Done — total=%d | agent0_ok=%d | agent1_ok=%d | agent2_ok=%d | blocked=%d | errors=%d | repair_attempts=%d | rejected_after_repair=%d",
         len(agent0_results),
@@ -418,19 +361,6 @@ def run_phase4(
         f"rejected_after_repair={aggregate['summary']['rejected_after_repair']}"
     )
     return aggregate, 1 if blocked or errors or rejected_after_repair else 0
-
-
-def run_phase3(
-    client: Any,
-    *,
-    agent0_reports_dir: Path | None = None,
-    test_cases_dir: Path | None = None,
-) -> tuple[dict[str, Any], int]:
-    return run_phase4(
-        client,
-        agent0_reports_dir=agent0_reports_dir,
-        test_cases_dir=test_cases_dir,
-    )
 
 
 def _load_final_judge_report(agent2_dir: Path, story_id: str) -> dict[str, Any] | None:

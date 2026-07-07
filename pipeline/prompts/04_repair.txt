@@ -25,7 +25,6 @@ Instruções de reparo:
 - Aplique a "acao_recomendada" correspondente.
 - Esta história é {story_id}. Mantenha o ID original se for correção; use novo ID começando obrigatoriamente com "{test_case_id_prefix}" se for substituição completa.
 - Exemplos válidos para esta história: "{test_case_id_prefix}01", "{test_case_id_prefix}02". Exemplos inválidos: "TC-US-05-01", "TC-US05-01", "TC-5-01", "CT-05-01".
-se for substituição completa.
 - Registre em "correcao_aplicada" o que foi alterado e por quê.
 2. Para cada item em "cenarios_omitidos_sugeridos" do relatório:
 - Crie um novo caso de teste com novo ID.
