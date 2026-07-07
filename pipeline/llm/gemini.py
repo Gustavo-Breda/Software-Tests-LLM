@@ -18,6 +18,12 @@ _THINKING_BUDGET = 100_000
 # minimum total token budget for thinking models (thinking + output combined)
 _GEMINI_MIN_OUTPUT_TOKENS = 16_384
 
+# HTTP timeout in seconds per model class.
+# Thinking models generate up to 100k reasoning tokens before the first output byte —
+# this can take several minutes. Non-thinking models are much faster.
+_TIMEOUT_THINKING = 600  # 10 min
+_TIMEOUT_STANDARD = 120  # 2 min
+
 # transient server errors — short exponential backoff (1s, 2s)
 _RETRYABLE_SERVER = ("ServerError", "ServiceUnavailable", "TooManyRequests", "ResourceExhausted")
 # connection/TLS hangs — longer fixed backoff (30s, 60s) to let rate-limit window reset
@@ -47,14 +53,15 @@ class GeminiClient(LLMClient):
             raise ValueError("GOOGLE_API_KEY is not set.")
 
         self._genai = genai
-        self._client = genai.Client(
-            api_key=api_key,
-            http_options=genai_types.HttpOptions(timeout=60),
-        )
         self._types = genai_types
 
         thinking = _is_thinking_model(model)
-        log.debug("Model: %s | thinking=%s", model, thinking)
+        timeout = _TIMEOUT_THINKING if thinking else _TIMEOUT_STANDARD
+        self._client = genai.Client(
+            api_key=api_key,
+            http_options=genai_types.HttpOptions(timeout=timeout),
+        )
+        log.debug("Model: %s | thinking=%s | timeout=%ds", model, thinking, timeout)
 
     def complete(
         self,
