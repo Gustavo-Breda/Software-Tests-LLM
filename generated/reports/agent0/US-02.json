@@ -1,30 +1,37 @@
 {
   "status": "PRECISA_DE_ESCLARECIMENTO",
   "derivavel": false,
-  "justificativa_derivabilidade": "A história de usuário e seus critérios de aceitação apresentam omissões significativas em relação a validações de entrada e detalhes de mensagens de sucesso. A ausência de especificação para o formato inválido de e-mail, campos vazios e o conteúdo exato da mensagem de sucesso impede a geração completa e precisa de casos de teste funcionais sem a necessidade de inferência ou invenção de regras por parte do analista ou do agente de testes.",
-  "observacao_formato": "A história de usuário não segue o formato padrão 'Como [papel], quero [ação], para [benefício]'. No entanto, o conteúdo é claro e compreensível.",
+  "justificativa_derivabilidade": "Não é possível derivar todos os casos de teste funcionais com a granularidade necessária devido à omissão de detalhes sobre mensagens de erro na UI para validações e a ausência de critérios para cenários de validação de e-mail inválido e campos vazios, além da falta de especificação de um limite superior para a senha.",
+  "observacao_formato": "A história de usuário apresenta os elementos essenciais (persona, ação, benefício) de forma clara, embora não siga estritamente o formato 'Como... quero... para...'.",
   "problemas": [
     {
-      "criterio_id": "CA-02.1",
-      "tipo": "omissao",
-      "descricao": "O critério menciona 'Mensagem de sucesso é exibida', mas não especifica o conteúdo exato dessa mensagem. Embora o `system_context` indique o `data-testid` para o toast de sucesso, o texto exibido ao usuário não é detalhado.",
-      "impacto_em_testes": "O Agente 1 ou o analista teria que inventar o texto da mensagem de sucesso, o que pode levar a testes inconsistentes com a implementação real ou a falhas de teste por uma expectativa de mensagem incorreta.",
-      "pergunta_para_o_product_owner": "Qual é o texto exato da mensagem de sucesso que deve ser exibida ao usuário após um cadastro bem-sucedido?"
-    },
-    {
       "criterio_id": "CA-02.3",
       "tipo": "omissao",
-      "descricao": "O critério não aborda explicitamente o caso de um e-mail com formato inválido (e.g., 'usuario@.com', 'usuario@dominio'). O `system_context` especifica que o campo `email` deve ter 'formato de e-mail válido' e que falhas de validação retornam 422.",
-      "impacto_em_testes": "Casos de teste para validação de formato de e-mail não seriam gerados, deixando uma lacuna na cobertura de testes para um requisito de validação explícito do sistema.",
-      "pergunta_para_o_product_owner": "Deve ser adicionado um critério de aceitação para o caso de e-mail com formato inválido, especificando a resposta esperada (e.g., status HTTP 422 e mensagem de erro específica)?"
+      "descricao": "O critério especifica o status HTTP (422) e a não criação do usuário para falhas de validação, mas não detalha as mensagens de erro específicas que devem ser exibidas ao usuário na interface para cada tipo de falha (e.g., nome curto, senha sem número, etc.). O contexto apenas descreve o formato genérico do corpo da resposta 422, mas não o conteúdo das mensagens para cada regra de validação.",
+      "impacto_em_testes": "O Agente 1 teria que inferir as mensagens de erro a serem exibidas na UI (`register-error`) para cada cenário de validação, o que pode levar a inconsistências ou a testes menos robustos e verificáveis na camada de interface.",
+      "pergunta_para_o_product_owner": "Quais são as mensagens de erro exatas esperadas para cada falha de validação (nome curto/longo, senha sem letra/número/curta) e como elas devem ser apresentadas na interface (e.g., em um toast, sob o campo específico, ou em um bloco de erro geral)? Qual o `msg` esperado no detalhe do 422 para cada tipo de falha?"
     },
     {
-      "criterio_id": "CA-02.3",
+      "criterio_id": "GERAL",
       "tipo": "omissao",
-      "descricao": "O critério não especifica o comportamento esperado para campos obrigatórios (nome, e-mail, senha) enviados como strings vazias. O `system_context` menciona que `name` não pode ser 'vazio após strip', e os outros campos são implicitamente obrigatórios para o registro. Falhas de validação Pydantic retornam 422.",
-      "impacto_em_testes": "Casos de teste para campos vazios não seriam gerados, o que é uma validação fundamental para formulários de cadastro e um cenário comum de erro.",
-      "pergunta_para_o_product_owner": "Deve ser adicionado um critério de aceitação para o caso de campos obrigatórios (nome, e-mail, senha) serem enviados vazios, especificando a resposta esperada (e.g., status HTTP 422 e mensagem de erro)?"
+      "descricao": "Não há um critério de aceitação explícito para o cenário em que o e-mail fornecido não está em um formato válido (e.g., 'usuario@dominio', 'emailinvalido'). O contexto indica que o campo `email` deve ter 'formato de e-mail válido', o que implica uma validação que retornaria 422, mas o comportamento específico não está coberto por um critério.",
+      "impacto_em_testes": "O Agente 1 não teria uma diretriz clara para gerar casos de teste para e-mails com formato inválido, como 'emailinvalido' ou 'a@b.c', que são cenários comuns de validação de borda.",
+      "pergunta_para_o_product_owner": "Deve ser adicionado um critério de aceitação para o caso de e-mail com formato inválido? Qual seria o comportamento esperado (status HTTP, mensagem de erro na UI e no corpo do 422)? Este cenário deve ser coberto por CA-02.3 ou por um novo critério?"
+    },
+    {
+      "criterio_id": "GERAL",
+      "tipo": "omissao",
+      "descricao": "Não há um critério de aceitação explícito para o cenário em que o campo `name` ou `email` é enviado vazio (ou apenas com espaços). O contexto indica que esses campos não devem ser vazios após `strip`, o que é uma regra de validação que retornaria 422, mas não está coberta por um critério específico.",
+      "impacto_em_testes": "O Agente 1 não teria uma diretriz clara para gerar casos de teste para campos `name` e `email` vazios, que são cenários comuns de validação e deveriam retornar 422.",
+      "pergunta_para_o_product_owner": "Deve ser adicionado um critério de aceitação para o caso de `name` ou `email` vazios? Qual seria o comportamento esperado (status HTTP, mensagem de erro na UI e no corpo do 422)? Este cenário deve ser coberto por CA-02.3 ou por um novo critério?"
+    },
+    {
+      "criterio_id": "GERAL",
+      "tipo": "falta_de_dado",
+      "descricao": "O contexto especifica um limite inferior para a senha (≥8 caracteres), mas não um limite superior. Embora não seja uma regra de negócio explícita de validação, é uma boa prática definir um limite máximo para campos de texto para evitar ataques de sobrecarga ou problemas de armazenamento/processamento.",
+      "impacto_em_testes": "O Agente 1 não pode gerar casos de teste de borda para senhas excessivamente longas, o que é uma prática comum em testes de segurança e robustez.",
+      "pergunta_para_o_product_owner": "Existe um limite máximo de caracteres para a senha de usuário? Se sim, qual é? Este limite deve ser adicionado às regras de validação e coberto por um critério de aceitação?"
     }
   ],
-  "recomendacao": "Revisar os critérios de aceitação para incluir os detalhes das mensagens de sucesso e cobrir os cenários de validação de formato de e-mail inválido e campos obrigatórios vazios, conforme as regras de negócio e validação do `system_context`."
+  "recomendacao": "Solicitar esclarecimentos ao Product Owner sobre as mensagens de erro esperadas para validações, a cobertura de cenários de e-mail inválido e campos vazios, e a definição de um limite superior para a senha, antes de prosseguir com a geração de casos de teste."
 }

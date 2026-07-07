@@ -44,3 +44,98 @@
 2026-07-07 18:14:02 | INFO     | runner     | [US-05] Agent 2 attempt-0 saved — decision=APROVADO approved=6 rejected=0 problems=0 omitted=0 path=generated/reports/agent2/US-05_attempt-0.json
 2026-07-07 18:14:02 | INFO     | runner     | [US-05] Agent 2 → APROVADO after 0 repair attempt(s)
 2026-07-07 18:14:02 | INFO     | runner     | Done — total=5 | agent0_ok=5 | agent1_ok=2 | agent2_ok=2 | blocked=3 | errors=0 | repair_attempts=1 | rejected_after_repair=0
+
+2026-07-07 18:26:49 | INFO     | runner     | Provider: gemini:gemini-2.5-flash
+2026-07-07 18:26:49 | INFO     | runner     | Found 5 stories to process
+2026-07-07 18:26:49 | INFO     | runner     | 
+2026-07-07 18:26:49 | INFO     | runner     | ============================================================
+2026-07-07 18:26:49 | INFO     | runner     |   Story 1/5 — US-01: Realizar login com e-mail e senha
+2026-07-07 18:26:49 | INFO     | runner     | ============================================================
+2026-07-07 18:26:49 | INFO     | runner     | [US-01] Running Agent 0 (quality gate)...
+2026-07-07 18:26:57 | INFO     | runner     | [US-01] Agent 0 → APROVADA
+2026-07-07 18:26:57 | INFO     | runner     | [US-01] Running Agent 1 (test case generation)...
+2026-07-07 18:27:35 | INFO     | runner     | [US-01] Agent 1 → done — 6 test cases generated
+2026-07-07 18:27:35 | INFO     | runner     | [US-01] Running Agent 2 (judge + repair loop)...
+2026-07-07 18:28:18 | INFO     | runner     | [US-01] Agent 2 attempt-0 saved — decision=REPROVADO approved=6 rejected=0 problems=0 omitted=1 path=generated/reports/agent2/US-01_attempt-0.json
+2026-07-07 18:28:18 | INFO     | runner     | [US-01] Agent 2 attempt-1 saved — decision=APROVADO approved=7 rejected=0 problems=0 omitted=0 path=generated/reports/agent2/US-01_attempt-1.json
+2026-07-07 18:28:18 | INFO     | runner     | [US-01] Repair attempt-1 saved — cases=7 alerts=0 path=generated/test_cases_repaired/US-01_attempt-1.json
+2026-07-07 18:28:18 | INFO     | runner     | [US-01] Repair final saved — cases=7 alerts=0 path=generated/test_cases_repaired/US-01_final.json
+2026-07-07 18:28:18 | INFO     | runner     | [US-01] Agent 2 → APROVADO after 1 repair attempt(s)
+2026-07-07 18:28:18 | INFO     | runner     | 
+2026-07-07 18:28:18 | INFO     | runner     | ============================================================
+2026-07-07 18:28:18 | INFO     | runner     |   Story 2/5 — US-02: Cadastrar nova conta de usuário
+2026-07-07 18:28:18 | INFO     | runner     | ============================================================
+2026-07-07 18:28:18 | INFO     | runner     | [US-02] Running Agent 0 (quality gate)...
+2026-07-07 18:28:42 | WARNING  | runner     | [US-02] Agent 0 → PRECISA_DE_ESCLARECIMENTO (4 problems)
+2026-07-07 18:28:42 | INFO     | runner     | 
+2026-07-07 18:28:42 | INFO     | runner     | ============================================================
+2026-07-07 18:28:42 | INFO     | runner     |   Story 3/5 — US-03: Criar nova solicitação de serviço
+2026-07-07 18:28:42 | INFO     | runner     | ============================================================
+2026-07-07 18:28:42 | INFO     | runner     | [US-03] Running Agent 0 (quality gate)...
+2026-07-07 18:28:53 | INFO     | runner     | [US-03] Agent 0 → APROVADA
+2026-07-07 18:28:53 | INFO     | runner     | [US-03] Running Agent 1 (test case generation)...
+2026-07-07 18:31:49 | ERROR    | runner     | [US-03] Agent 1 → FAILED: RawAgentResponseError: LLM response did not contain a valid JSON object.
+gemini] done model=gemini-2.5-flash latency=74.23s prompt_tokens=5957 completion_tokens=None finish_reason=RECITATION
+Traceback (most recent call last):
+  File "/app/pipeline/agents/agent1_generate.py", line 87, in run
+    data = extract_json_object(response.text)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/app/pipeline/agents/utils.py", line 68, in extract_json_object
+    raise AgentOutputError("LLM response did not contain a valid JSON object.")
+pipeline.agents.utils.AgentOutputError: LLM response did not contain a valid JSON object.
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/app/pipeline/workflow/runner.py", line 202, in run_phase4
+    agent1_output = agent1_generate.run(blob, client)
+                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/app/pipeline/agents/agent1_generate.py", line 97, in run
+    raise raw_exc from exc
+pipeline.agents.utils.RawAgentResponseError: LLM response did not contain a valid JSON object.
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "<frozen runpy>", line 198, in _run_module_as_main
+  File "<frozen runpy>", line 88, in _run_code
+  File "/app/pipeline/workflow/runner.py", line 480, in <module>
+    main()
+  File "/app/pipeline/workflow/runner.py", line 467, in main
+    aggregate, exit_code = run_phase5(client)
+                           ^^^^^^^^^^^^^^^^^^
+  File "/app/pipeline/workflow/runner.py", line 34, in run_phase5
+    phase4_aggregate, phase4_exit = run_phase4(
+                                    ^^^^^^^^^^^
+  File "/app/pipeline/workflow/runner.py", line 218, in run_phase4
+    raw_path = _save_raw_error("agent1", blob.story_id, exc, agent0_destination.parent)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/app/pipeline/workflow/runner.py", line 437, in _save_raw_error
+    path.write_text(json.dumps(payload, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
+                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.11/json/__init__.py", line 238, in dumps
+    **kw).encode(obj)
+          ^^^^^^^^^^^
+  File "/usr/local/lib/python3.11/json/encoder.py", line 202, in encode
+    chunks = list(chunks)
+             ^^^^^^^^^^^^
+  File "/usr/local/lib/python3.11/json/encoder.py", line 432, in _iterencode
+    yield from _iterencode_dict(o, _current_indent_level)
+  File "/usr/local/lib/python3.11/json/encoder.py", line 406, in _iterencode_dict
+    yield from chunks
+  File "/usr/local/lib/python3.11/json/encoder.py", line 406, in _iterencode_dict
+    yield from chunks
+  File "/usr/local/lib/python3.11/json/encoder.py", line 406, in _iterencode_dict
+    yield from chunks
+  File "/usr/local/lib/python3.11/json/encoder.py", line 326, in _iterencode_list
+    yield from chunks
+  File "/usr/local/lib/python3.11/json/encoder.py", line 439, in _iterencode
+    o = _default(o)
+        ^^^^^^^^^^^
+  File "/usr/local/lib/python3.11/json/encoder.py", line 180, in default
+    raise TypeError(f'Object of type {o.__class__.__name__} '
+TypeError: Object of type Candidate is not JSON serializable
+
+
+󰕈 gustavo-breda  …/LLM-tests   refactor/new-changes $!?   15:31  
+ 
