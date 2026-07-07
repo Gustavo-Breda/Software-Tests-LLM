@@ -119,6 +119,14 @@ class GeminiClient(LLMClient):
             completion_tokens,
         )
 
+        # RECITATION/SAFETY: content was blocked — raise so the caller can handle it
+        # (returning empty text would silently fail JSON parsing downstream)
+        _BLOCKED = {"RECITATION", "SAFETY", "PROHIBITED_CONTENT", "SPII"}
+        if finish_reason in _BLOCKED:
+            raise RuntimeError(
+                f"Gemini blocked response: finish_reason={finish_reason} model={self.model}"
+            )
+
         return LLMResponse(
             text=response_text,
             model=self.model,
@@ -127,7 +135,8 @@ class GeminiClient(LLMClient):
             prompt_tokens=prompt_tokens,
             completion_tokens=completion_tokens,
             raw={
-                "candidates": candidates,
+                # Store only primitives — SDK Candidate objects are not JSON-serializable
                 "finish_reason": finish_reason,
+                "n_candidates": len(candidates),
             },
         )

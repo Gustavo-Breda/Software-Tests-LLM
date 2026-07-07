@@ -434,7 +434,7 @@ def _save_raw_error(
         "metadata": exc.metadata,
         "raw_response": exc.raw_text,
     }
-    path.write_text(json.dumps(payload, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
+    path.write_text(json.dumps(payload, ensure_ascii=False, indent=2, default=str) + "\n", encoding="utf-8")
     print(f"[runner] raw response saved story={story_id} stage={stage} path={path}")
     return path
 
