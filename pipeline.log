@@ -624,3 +624,12 @@
 2026-07-02 14:17:36 | INFO     | runner     | [US-05] Agent 2 attempt-0 saved — decision=APROVADO approved=6 rejected=0 problems=0 omitted=0 path=generated/reports/agent2/US-05_attempt-0.json
 2026-07-02 14:17:36 | INFO     | runner     | [US-05] Agent 2 → APROVADO after 0 repair attempt(s)
 2026-07-02 14:17:36 | INFO     | runner     | Done — total=5 | agent0_ok=5 | agent1_ok=5 | agent2_ok=5 | blocked=0 | errors=0 | repair_attempts=4 | rejected_after_repair=1
+2026-07-07 16:45:21 | INFO     | runner     | Provider: gemini:gemini-2.5-flash
+2026-07-07 16:45:22 | INFO     | runner     | Found 5 stories to process
+2026-07-07 16:45:22 | INFO     | runner     | 
+2026-07-07 16:45:22 | INFO     | runner     | ============================================================
+2026-07-07 16:45:22 | INFO     | runner     |   Story 1/5 — US-01: Realizar login com e-mail e senha
+2026-07-07 16:45:22 | INFO     | runner     | ============================================================
+2026-07-07 16:45:22 | INFO     | runner     | [US-01] Running Agent 0 (quality gate)...
+2026-07-07 16:45:22 | WARNING  | gemini     | Connection timeout (attempt 1): ConnectTimeout — retrying in 30s
+2026-07-07 16:45:53 | WARNING  | gemini     | Connection timeout (attempt 2): ReadTimeout — retrying in 60s
