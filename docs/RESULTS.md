@@ -32,11 +32,11 @@ Protocolo de corretude: **all-or-nothing** (um defeito = caso inteiro Defective)
 |---|---|---|---|
 | US-01 | ✅ APROVADA | ✅ Completo (8 casos, 8 scripts) | — |
 | US-02 | ✅ APROVADA | ✅ Completo (9 casos, 9 scripts) | — |
-| US-03 | ✅ APROVADA | ❌ Não avançou | Analista não aprovou avanço (gate humano) |
+| US-03 | ⚠️ PRECISA_DE_ESCLARECIMENTO | ❌ Bloqueada | Agent 0 identificou omissões nos critérios |
 | US-04 | ⚠️ PRECISA_DE_ESCLARECIMENTO | ❌ Bloqueada | Agent 0 identificou omissões nos critérios |
 | US-05 | ⚠️ PRECISA_DE_ESCLARECIMENTO | ❌ Bloqueada | Agent 0 identificou omissões nos critérios |
 
-US-03 passou no gate técnico mas o analista optou por não avançá-la nesta run — comportamento correto: o pipeline aguarda aprovação humana explícita antes de cada etapa. US-04 e US-05 foram bloqueadas pelo próprio Agent 0 por omissões reais nos critérios de aceitação.
+US-03, US-04 e US-05 foram bloqueadas pelo Agent 0 por omissões reais nos critérios de aceitação. Apenas US-01 e US-02 avançaram para geração — **comportamento intencional da arquitetura**.
 
 ### 2.2 Agent 0 — Quality Gate (todas as 5 histórias)
 
@@ -44,13 +44,11 @@ US-03 passou no gate técnico mas o analista optou por não avançá-la nesta ru
 |---|---|---|
 | US-01 | ✅ APROVADA | Nenhum |
 | US-02 | ✅ APROVADA | Nenhum |
-| US-03 | ✅ APROVADA | Nenhum |
+| US-03 | ⚠️ PRECISA_DE_ESCLARECIMENTO | Comportamento da UI para erros 422 não descrito em CA-03.2; resposta da UI para tentativa não autenticada (401) não detalhada em CA-03.3 |
 | US-04 | ⚠️ PRECISA_DE_ESCLARECIMENTO | Comportamento para acesso não autenticado não especificado; valores inválidos nos filtros sem comportamento definido; paginação não especificada |
 | US-05 | ⚠️ PRECISA_DE_ESCLARECIMENTO | Feedback de UI para erros 403, 404 e 409 não descrito nos critérios; mensagem de erro do 404 ausente no critério CA-05.2 |
 
-US-04 e US-05 foram corretamente bloqueadas pelo gate. Os problemas identificados são legítimos — sem saber o comportamento da UI nos cenários de erro, o Agent 1 teria que inventar regras, gerando casos de teste com fatos incorretos. Esse é exatamente o tipo de omissão que o Agent 0 deve pegar antes da geração.
-
-O gate também explica por que o pipeline só avançou com US-01, US-02 e US-03: as demais histórias precisariam de refinamento humano antes de prosseguir — **comportamento intencional da arquitetura**.
+As três histórias bloqueadas têm omissões legítimas — sem saber o comportamento da UI nos cenários de erro, o Agent 1 teria que inventar regras, gerando casos de teste com fatos incorretos. O gate bloqueou corretamente todas as três. O pipeline só avançou com US-01 e US-02 — **comportamento intencional da arquitetura**.
 
 ### 2.3 Agent 1 + Juiz + Reparo — US-01
 
@@ -284,7 +282,7 @@ def test_tc_01_04_lockout_seis_tentativas(driver, credentials_lockout):
 |---|---|---|---|
 | Modelo | GPT-4o / DeepSeek / Gemini 1.5 | gemini-2.5-flash | gemini-3.5-flash |
 | Protocolo | zero/one-shot, sem RAG | RAG + juiz + reparo | RAG + juiz + reparo |
-| Histórias aprovadas pelo gate | 10 | 3/5 (US-04, US-05 bloqueadas) | 1/5 (US-02..05 bloqueadas) |
+| Histórias aprovadas pelo gate | 10 | 2/5 (US-03..05 bloqueadas) | 1/5 (US-02..05 bloqueadas) |
 | Histórias end-to-end | 10 | 2 (US-01 + US-02) | 1 (US-01) |
 | Casos avaliados | 1.528 | 17 | 6 |
 | **Precision** | ~0.72 | **0.882** (15/17) | **1.000** (6/6) |

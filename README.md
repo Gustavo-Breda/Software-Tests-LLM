@@ -236,24 +236,24 @@ traceability matrix.
 
 ## Evaluation
 
-Avaliação controlada contra 5 histórias de usuário e um oracle humano (gabarito).
-Métricas seguem o protocolo de Silva et al. (2026) para comparação direta.
-Ver [`docs/RESULTS.md`](docs/RESULTS.md) para a análise completa.
+Controlled evaluation against 5 user stories and a human oracle (ground truth).
+Metrics follow the Silva et al. (2026) protocol for direct comparison.
+See [`docs/RESULTS.md`](docs/RESULTS.md) for the full analysis.
 
-| Métrica | gemini-2.5-flash | gemini-3.5-flash | Baseline Silva et al. |
+| Metric | gemini-2.5-flash | gemini-3.5-flash | Baseline Silva et al. |
 |---|---|---|---|
 | Precision | **0.882** (15/17) | **1.000** (6/6) | ~0.72 |
 | Recall US-01 | **0.875** (7/8 oracle) | **0.875** (7/8 oracle) | ~0.56 |
 | F1 US-01 | **0.875** | **0.933** | — |
-| Codegen funcional | ✅ 17 funções (US-01+02) | ✅ 6 funções (US-01) | N/A |
-| Iterações de reparo (US-01) | 2 | **0** (aprovado de primeira) | — |
+| Functional codegen | ✅ 17 functions (US-01+02) | ✅ 6 functions (US-01) | N/A |
+| Repair iterations (US-01) | 2 | **0** (approved on first attempt) | — |
 
-**Principais achados:**
-- Ambas as runs superam o baseline de Silva et al. em Precision, Recall e F1.
-- gemini-3.5-flash atingiu Precision=1.0 e F1=0.933 sem nenhum ciclo de reparo — gerou de primeira os cenários que o 2.5-flash só produziu após reparo.
-- IncorrectFact residual: 2 defeitos em 23 casos avaliados (TC-01-05 off-by-one no contador de bloqueio; TC-02-07 string com 82 chars declarada como 80).
-- O pipeline inclui gates de revisão humana entre etapas — o não-processamento de US-03..05 é intencional, não uma falha.
-- Fase 6 (execução de scripts) não realizada — scripts gerados aguardam validação funcional.
+**Key findings:**
+- Both runs outperform the Silva et al. baseline on Precision, Recall, and F1.
+- gemini-3.5-flash achieved Precision=1.0 and F1=0.933 with zero repair cycles — directly generating the scenarios the 2.5-flash only produced after repair.
+- Residual IncorrectFact: 2 defects in 23 evaluated cases (TC-01-05 off-by-one in lockout counter; TC-02-07 string of 82 chars declared as 80).
+- The pipeline includes human review gates between stages — US-03..05 not advancing is intentional, not a failure.
+- Phase 6 (script execution) not performed — generated scripts await functional validation.
 
 ---
 

@@ -73,7 +73,7 @@ Regras obrigatórias:
 TODOS os campos do JSON devem estar preenchidos.
 Caso a US esteja aprovada:
     - o campo "recomendacao" deve ter o valor "Prosseguir para geração de casos de teste."
-    - o campo "justivicativa_derivabilidade" deve conter um texto com a justificativa do por que é possivel derivar casos de teste com a US.
+    - o campo "justificativa_derivabilidade" deve conter um texto com a justificativa do por que é possivel derivar casos de teste com a US.
 Retorne estritamente em JSON, sem texto fora do JSON:
 {
     "status": "APROVADA" | "PRECISA_DE_ESCLARECIMENTO",
