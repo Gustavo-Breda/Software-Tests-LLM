@@ -1,8 +1,30 @@
 {
-  "status": "APROVADA",
-  "derivavel": true,
-  "justificativa_derivabilidade": "A história de usuário e seus critérios de aceitação são claros, específicos e alinhados com o contexto do sistema fornecido. Os critérios cobrem os fluxos positivo, negativo e de borda esperados para a criação de uma solicitação de serviço, incluindo validações de campos, atribuições automáticas do servidor e tratamento de autenticação. Todos os resultados esperados são observáveis e mensuráveis, permitindo a derivação direta de casos de teste funcionais sem a necessidade de inferir regras ou detalhes de comportamento.",
-  "observacao_formato": "A história de usuário segue o formato esperado (persona, ação, benefício).",
-  "problemas": [],
-  "recomendacao": "Prosseguir para geração de casos de teste."
+  "status": "PRECISA_DE_ESCLARECIMENTO",
+  "derivavel": false,
+  "justificativa_derivabilidade": "Os critérios de aceitação, embora bem estruturados, apresentam omissões significativas sobre o comportamento esperado da interface do usuário e detalhes da resposta da API em cenários de erro. Essas lacunas impediriam a geração completa e precisa de casos de teste funcionais, exigindo que o analista inventasse detalhes cruciais.",
+  "observacao_formato": "A história de usuário não segue estritamente o formato 'Como [papel], quero [ação], para [benefício]', mas a informação está clara e completa nos campos 'persona', 'acao' e 'beneficio'.",
+  "problemas": [
+    {
+      "criterio_id": "CA-03.2",
+      "tipo": "falta_de_dado",
+      "descricao": "O critério especifica que a requisição retorna 422 em caso de falha de validação, mas não detalha o formato do corpo da resposta HTTP. O 'system_context' menciona que o corpo segue o formato do FastAPI (`{ \"detail\": [ {loc, msg, type}, ... ] }`), mas o critério não o incorpora.",
+      "impacto_em_testes": "O Agent 1 teria que inferir o formato exato do corpo da resposta 422 para validar a API, o que deveria ser uma especificação explícita no critério para garantir a consistência dos testes.",
+      "pergunta_para_o_product_owner": "O corpo da resposta 422 para falhas de validação deve seguir o formato padrão do FastAPI, conforme descrito no 'system_context'? Se sim, por favor, adicione essa informação ao critério."
+    },
+    {
+      "criterio_id": "CA-03.2",
+      "tipo": "omissao",
+      "descricao": "O critério não especifica como os erros de validação (que resultam em 422) são apresentados ao usuário na interface. O mapa de UI indica um elemento `error_message` (`[data-testid=request-error]`), mas o critério não detalha seu uso ou o conteúdo esperado das mensagens de erro.",
+      "impacto_em_testes": "O Agent 1 não teria como gerar passos de teste para verificar a exibição das mensagens de erro na UI, nem o conteúdo específico dessas mensagens para cada tipo de validação falha.",
+      "pergunta_para_o_product_owner": "Como os erros de validação devem ser exibidos na tela de criação de solicitação? Qual elemento da UI deve ser usado e qual o conteúdo esperado das mensagens de erro para cada tipo de falha (e.g., título muito curto, descrição vazia)?"
+    },
+    {
+      "criterio_id": "CA-03.3",
+      "tipo": "omissao",
+      "descricao": "O critério especifica que a requisição retorna 401 em caso de falta de autenticação, mas não detalha o comportamento esperado da interface do usuário (e.g., redirecionamento para a tela de login, exibição de uma mensagem de erro genérica).",
+      "impacto_em_testes": "O Agent 1 não teria como gerar passos de teste para verificar o fluxo da UI após uma tentativa de criação não autenticada, deixando um gap na cobertura de testes de interface.",
+      "pergunta_para_o_product_owner": "Qual o comportamento esperado da UI quando uma tentativa de criação de solicitação retorna 401 por falta de autenticação (e.g., redirecionamento para a tela de login, exibição de uma mensagem de erro específica)?"
+    }
+  ],
+  "recomendacao": "Revisar os critérios de aceitação para incluir os detalhes sobre o formato do corpo da resposta 422 e o comportamento esperado da interface do usuário em cenários de erro (validação e autenticação). Após a revisão, a história poderá ser reavaliada para aprovação."
 }
