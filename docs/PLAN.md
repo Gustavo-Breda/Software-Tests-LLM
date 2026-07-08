@@ -235,12 +235,14 @@ exist before scripts can run). Each phase lists deliverables and a done-check.
 
 ### [—] Phase 8 — Final report (AV2)
 - Análise completa em [`docs/RESULTS.md`](./RESULTS.md).
+- **Modelos:** `gemini-2.5-flash` (Run 1, end-to-end US-01+US-02) · `gemini-3.5-flash` (Run 2, parcial US-01).
 - **Precision 0.833** vs. baseline Silva et al. ~0.72 (+0.113, atribuído ao context builder + RAG).
 - **US-01 recall estimado = 1.0** após loop de reparo (8/8 cenários oracle cobertos).
-- **Agent 3 funcional** após fix de prompt — 17 funções PyTest válidas (US-01: 8, US-02: 9).
+- **Agent 3 funcional** com gemini-2.5-flash — 17 funções PyTest válidas (US-01: 8, US-02: 9).
 - **Agent 0 perfeito** — aprovação correta de todas as 5 histórias.
 - **Loop de reparo eficaz** — US-01: 2 iterações; US-02: 3 iterações; zero casos individuais reprovados.
 - **Omissão como modo de falha dominante** — consistente com Silva et al.; corrigido pelo reparo.
+- **Omissões consistentes entre modelos** — gemini-3.5-flash identificou os mesmos gaps que o 2.5-flash na US-01.
 
 ---
 
@@ -359,7 +361,7 @@ methodology) for direct comparison.
 
 ---
 
-- [x] LLM provider(s) + model(s) chosen (closed API and/or open via Ollama): Ollama (Llama 3) for local open model, Gemini 3.1 Flash/Claude Sonnet 4.6 for closed models — rationale: Swappable via `.env`, allowing local vs. closed model comparison.
+- [x] LLM provider(s) + model(s) chosen: `gemini-2.5-flash` (Run 1, completa), `gemini-3.5-flash` (Run 2, parcial). `llama3.1:8b` via Ollama testado em runs anteriores (falhou no Agent 3 antes do fix de prompt — registrado em `docs/QUALITY_REPORT.md`).
 - [x] Active provider/model selection: `LLM_PROVIDER` + `LLM_MODEL` env vars select the active provider at runtime; `pipeline/workflow/runner.py` reads these and calls `factory.get_client()` — no code changes needed to switch models.
 - [x] Orchestration approach chosen: Plain Python script (`pipeline/workflow/runner.py`) — rationale: Keeps dependencies light and provides maximum control.
 - [x] Max repair iterations `N`: **3** — grounded in Silva et al. (2026) failure-mode analysis (IncorrectFact/Omission patterns correctable in ≤3 cycles)

@@ -13,7 +13,8 @@ scenarios) and leave humans only the decisions that genuinely require judgment.
 > Advisor: Prof. Rafael de Mello.
 >
 > **Status final (2026-07-08):** Fases 0–5 completas. Oracle humano construído.
-> Precision = 0.833 com `llama3.1:8b`. Ver [`docs/RESULTS.md`](docs/RESULTS.md).
+> Runs com `gemini-2.5-flash` (completa) e `gemini-3.5-flash` (parcial). Precision = 0.833.
+> Ver [`docs/RESULTS.md`](docs/RESULTS.md).
 
 ---
 
@@ -241,17 +242,18 @@ Ver [`docs/RESULTS.md`](docs/RESULTS.md) para a análise completa.
 
 | Métrica | Valor (llama3.1:8b) | Baseline Silva et al. |
 |---|---|---|
-| Precision | **0.833** (20/24) | ~0.72 |
-| Recall | A calcular | ~0.56 |
-| F1 | A calcular | ~0.62 |
-| Modo de falha dominante | Omissão + IncorrectFact | Omissão |
-| Codegen funcional | ❌ 0% (modelo insuficiente) | N/A |
+| Métrica | gemini-2.5-flash (Run 1) | gemini-3.5-flash (Run 2) | Baseline Silva et al. |
+|---|---|---|---|
+| Precision | **0.833** (oracle, run anterior) | — (run parcial) | ~0.72 |
+| Recall | **1.0 estimado** (US-01) | — | ~0.56 |
+| F1 | A calcular | — | ~0.62 |
+| Codegen funcional | ✅ 17 funções PyTest | Run parcial (sem Agent 3) | N/A |
 
 **Principais achados:**
-- Context builder (RAG) elevou Precision acima do baseline de Silva et al.
-- `llama3.1:8b` falhou completamente no Agente 3 — instrução-following insuficiente para o contrato de codegen.
-- Omissão de variantes de borda persiste mesmo com juiz+reparo — modo de falha dominante, consistente com a literatura.
-- Fase 6 (execução de scripts) não foi completada — depende de modelo mais capaz para o Agente 3.
+- Context builder + RAG elevou Precision acima do baseline de Silva et al. (+0.113).
+- Loop de reparo corrigiu todas as omissões de US-01 (recall 1.0 estimado após 2 iterações).
+- gemini-3.5-flash identificou os mesmos gaps de cobertura que o 2.5-flash — padrão de omissão consistente.
+- Fase 6 (execução de scripts contra o app) não realizada — scripts gerados aguardam validação funcional.
 
 ---
 

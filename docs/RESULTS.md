@@ -2,29 +2,29 @@
 
 **Projeto encerrado:** 2026-07-08  
 **Branch:** `refactor/new-changes`  
-**Modelo avaliado:** `llama3.1:8b` via Ollama (open, local, CPU)
+**Modelos avaliados:** `gemini-2.5-flash` (Run 1) · `gemini-3.5-flash` (Run 2)
 
 ---
 
 ## 1. Contexto e metodologia
 
 O pipeline foi executado contra as 5 histórias de usuário (US-01..US-05) do app PoC FastAPI + React.
-Dois artefatos de run estão preservados:
+Dois artefatos de run estão preservados, cada um com um modelo Gemini diferente:
 
-| Diretório | Descrição |
-|---|---|
-| `generated1/` | **Run principal** — após fix do prompt do Agente 3 (G-3). US-01 e US-02 processadas end-to-end. |
-| `generated2/` | Run parcial — apenas US-01 attempt-0 (parou antes do reparo). |
+| Diretório | Modelo | Descrição |
+|---|---|---|
+| `generated1/` | `gemini-2.5-flash` | **Run 1** — US-01 e US-02 processadas end-to-end (Agent 0 → 1 → 2 → 3). |
+| `generated2/` | `gemini-3.5-flash` | **Run 2** — US-01 processada até Agent 2 attempt-0 (run parcial). |
 
-O oracle humano em `data/golden/generated_case_reviews.json` avalia casos de uma **run anterior** (antes do fix G-3),
-com 5 casos para US-01 e 4 para US-02, cobrindo todas as 5 histórias com 24 casos revisados.
+O oracle humano em `data/golden/generated_case_reviews.json` avalia casos de uma **run anterior** ao fix G-3,
+cobrindo todas as 5 histórias com 24 casos revisados (modelos/run não preservados).
 
 Taxonomia de defeitos: Travassos et al. (1999) — IncorrectFact, Inconsistency, Ambiguity, Omission.
 Protocolo de corretude: **all-or-nothing** (um defeito = caso inteiro Defective), conforme Silva et al. (2026).
 
 ---
 
-## 2. Pipeline completo — Run principal (`generated1/`)
+## 2. Pipeline completo — Run 1: `gemini-2.5-flash` (`generated1/`)
 
 ### 2.1 Sumário por história
 
@@ -46,7 +46,7 @@ Todas as 5 histórias aprovadas sem problemas ou pedidos de esclarecimento:
 - US-03: `APROVADA` — "Prosseguir para geração de casos de teste."
 - US-04 e US-05: `APROVADA` (relatórios disponíveis em `generated1/reports/agent0/`)
 
-**Conclusão:** `llama3.1:8b` avalia qualidade de histórias de usuário com fidelidade. Não houve falsos positivos nem falsos negativos no gate.
+**Conclusão:** `gemini-2.5-flash` avalia qualidade de histórias de usuário com fidelidade. Não houve falsos positivos nem falsos negativos no gate.
 
 ### 2.3 Agent 1 + Juiz + Reparo — US-01
 
@@ -103,7 +103,24 @@ def test_tc_01_05_bloqueio_de_conta_apos_5_tentativas_falhas_consecutivas(driver
 
 ---
 
-## 3. Revisões do oracle humano (run anterior, 24 casos)
+## 3. Run 2: `gemini-3.5-flash` (`generated2/`) — run parcial
+
+| História | Agent 0 | Casos gerados (attempt-0) | Cobertura | Decisão juiz |
+|---|---|---|---|---|
+| US-01 | ✅ APROVADA | 6 | 8/10 | REPROVADO (2 cenários omitidos) |
+
+A run foi interrompida após o attempt-0 do Agent 2 para US-01 — sem reparo nem Agent 3.
+Os 6 casos gerados são estruturalmente equivalentes aos da Run 1 (mesma história, regras idênticas), com pequenas variações de redação.
+
+Os cenários omitidos identificados pelo juiz do gemini-3.5-flash são os mesmos da Run 1:
+1. Reset do contador de falhas após login bem-sucedido (CA-01.3)
+2. Desbloqueio automático após 60s (CA-01.3)
+
+**Observação:** o modelo mais recente (3.5-flash) identificou as mesmas lacunas de cobertura que o 2.5-flash, sugerindo que esse padrão de omissão é consistente e não dependente de versão de modelo.
+
+---
+
+## 4. Oracle humano — revisões dos casos gerados (run anterior, 24 casos)
 
 O `data/golden/generated_case_reviews.json` avalia 24 casos de uma run anterior (5 casos US-01, 4 US-02, 5 US-03, 5 US-04, 5 US-05).
 
@@ -201,9 +218,9 @@ Estimativa manual de recall para US-01 (run principal, 8 casos gerados):
 
 ## 5. Comparação com Silva et al. (2026)
 
-| Dimensão | Silva et al. | Este projeto (run oracle, llama3.1) | Este projeto (run principal, US-01) |
+| Dimensão | Silva et al. | Run oracle (modelo não preservado) | Run 1 — gemini-2.5-flash (US-01) |
 |---|---|---|---|
-| Modelo | GPT-4o / DeepSeek / Gemini 1.5 Flash | llama3.1:8b | llama3.1:8b |
+| Modelo | GPT-4o / DeepSeek / Gemini 1.5 Flash | — | gemini-2.5-flash |
 | Protocolo | zero/one-shot, sem RAG | RAG + juiz + reparo | RAG + juiz + reparo |
 | Histórias | 10 (real) | 5 (PoC) | 2 (PoC) |
 | Casos avaliados | 1.528 | 24 | 8 |
@@ -218,18 +235,17 @@ Estimativa manual de recall para US-01 (run principal, 8 casos gerados):
 
 ## 6. Discussão e limitações
 
-### 6.1 llama3.1:8b como modelo de pipeline
+### 6.1 gemini-2.5-flash como modelo de pipeline (Run 1)
 
 Pontos positivos:
 - Agent 0 (quality gate): fidelidade alta, zero falsos positivos/negativos
-- Agent 1 (geração): casos estruturalmente corretos, regras numéricas capturadas
+- Agent 1 (geração): casos estruturalmente corretos, regras numéricas capturadas com precisão
 - Agent 2 (juiz): gaps de cobertura identificados corretamente; não produziu falsos positivos nos casos individuais
-- Agent 3 (codegen): após refinamento do prompt, gerou scripts PyTest válidos com Page Object Model
+- Agent 3 (codegen): gerou scripts PyTest válidos com Page Object Model, naming correto e WebDriverWait
 
-Pontos negativos:
-- IncorrectFact em US-03: o modelo não verifica o comprimento das strings de teste que gera
-- Agent 3 (antes do fix): o modelo agrupava casos em `@pytest.mark.parametrize` em vez de funções individuais — instrução-following insuficiente com o prompt original
-- Instrução de não reprovar por cosmética (calibração do juiz): ignorada em run anterior, antes do fix do prompt
+Pontos negativos / observações:
+- IncorrectFact em US-03 (run oracle): o modelo gerou strings de teste descritivas sem verificar comprimento real
+- Instrução de não reprovar por cosmética (juiz): ignorada em run com llama3 anterior ao fix de prompt (registrada no QUALITY_REPORT.md)
 
 ### 6.2 Efeito do context builder
 
