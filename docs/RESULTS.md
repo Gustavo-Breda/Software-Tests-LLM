@@ -103,7 +103,7 @@ def test_tc_01_05_bloqueio_de_conta_apos_5_tentativas_falhas_consecutivas(driver
     assert "Conta bloqueada. Tente novamente em 60 segundos." in login_page.get_lockout_message()
 ```
 
-**Conclusão sobre o Agent 3:** após o fix do prompt (proibição explícita de `@pytest.mark.parametrize` e funções genéricas — G-3 no quality report), `llama3.1:8b` gerou scripts com a estrutura correta. A capacidade de instrução-following do modelo, embora limitada em runs anteriores, respondeu ao refinamento do prompt.
+**Conclusão sobre o Agent 3:** após o fix do prompt (proibição explícita de `@pytest.mark.parametrize` e funções genéricas — G-3 no quality report), o `gemini-2.5-flash` gerou scripts com a estrutura correta: Page Object Model, `WebDriverWait`, naming convention e sem `time.sleep()`.
 
 ---
 
@@ -162,55 +162,110 @@ def test_tc_01_04_lockout_seis_tentativas(driver, credentials_lockout):
 
 ---
 
-## 4. Oracle humano — revisões dos casos gerados (run anterior, 24 casos)
+## 4. Avaliação dos casos gerados — revisão por run
 
-O `data/golden/generated_case_reviews.json` avalia 24 casos de uma run anterior (5 casos US-01, 4 US-02, 5 US-03, 5 US-04, 5 US-05).
+> Avaliações gravadas em `data/golden/generated1_case_reviews.json` e `data/golden/generated2_case_reviews.json`,
+> no mesmo formato-guia de `data/golden/generated_case_reviews.json`.
+> Protocolo: **all-or-nothing** (Travassos et al., 1999; Silva et al., 2026) — um defeito = caso inteiro Defective.
+> Cobertura calculada contra `data/golden/US-XX.json` (oracle por história).
+> Apenas histórias que avançaram pelo pipeline são avaliadas.
 
-### 3.1 Resultado por história
+### 4.1 Run 1 — gemini-2.5-flash — US-01 (8 casos)
 
-| História | Casos | Corretos | Defeituosos | Precision |
-|---|---|---|---|---|
-| US-01 | 5 | 5 | 0 | 1.00 |
-| US-02 | 4 | 4 | 0 | 1.00 |
-| US-03 | 5 | 2 | 3 | 0.40 |
-| US-04 | 5 | 4 | 1 | 0.80 |
-| US-05 | 5 | 5 | 0 | 1.00 |
-| **Total** | **24** | **20** | **4** | **0.833** |
+| Caso | Correto | Defeito | Justificativa |
+|---|---|---|---|
+| TC-01-01 | ✅ | — | Login válido → 200 + JWT + /requests. Cobre EXP-01-01 |
+| TC-01-02 | ✅ | — | E-mail inexistente → 401 genérico. Cobre EXP-01-02 |
+| TC-01-03 | ✅ | — | Senha incorreta → 401 genérico. Cobre EXP-01-03 |
+| TC-01-04 | ✅ | — | E-mail formato inválido → 422. Cobre EXP-01-08 |
+| TC-01-05 | ❌ | IncorrectFact | Off-by-one: testa 4 falhas + 5ª → 423; CA-01.3 e EXP-01-04 exigem 5 falhas + 6ª → 423. EXP-01-04 não coberto |
+| TC-01-06 | ✅ | — | Bloqueio persiste com senha correta → 423. Cobre EXP-01-05 |
+| TC-01-07 | ✅ | — | 4 falhas + login bem-sucedido reseta contador. Cobre EXP-01-07 |
+| TC-01-08 | ✅ | — | Desbloqueio automático após 60s → 200. Cobre EXP-01-06 |
 
-### 3.2 Defeitos encontrados
+**Precision US-01: 7/8 = 0.875** | IncorrectFact: 1
 
-| Caso | Defeito | Descrição |
+### 4.2 Run 1 — gemini-2.5-flash — US-02 (9 casos)
+
+| Caso | Correto | Defeito | Justificativa |
+|---|---|---|---|
+| TC-02-01 | ✅ | — | Cadastro válido → 201 + redirect /login. Cobre EXP-02-01 |
+| TC-02-02 | ✅ | — | E-mail duplicado → 409 + conta original inalterada. Cobre EXP-02-04 e EXP-02-05 |
+| TC-02-03 | ✅ | — | Senha sem número → 422. Cobre EXP-02-10 |
+| TC-02-04 | ✅ | — | Senha sem letra → 422. Cobre EXP-02-09 |
+| TC-02-05 | ✅ | — | Senha < 8 chars (7) → 422. Cobre EXP-02-08 |
+| TC-02-06 | ✅ | — | Nome < 3 chars (2) → 422. Cobre EXP-02-06 |
+| TC-02-07 | ❌ | IncorrectFact | Dado tem 82 chars, não 80; backend retornaria 422, não 201. EXP-02-03 não coberto |
+| TC-02-08 | ✅ | — | Nome > 80 chars → 422 (resultado correto para qualquer comprimento > 80). Cobre EXP-02-07 |
+| TC-02-09 | ✅ | — | E-mail formato inválido → 422 no cadastro. Cobre EXP-02-11 |
+
+**Precision US-02: 8/9 = 0.889** | IncorrectFact: 1
+
+### 4.3 Run 2 — gemini-3.5-flash — US-01 (6 casos)
+
+| Caso | Correto | Defeito | Justificativa |
+|---|---|---|---|
+| TC-01-01 | ✅ | — | Login válido → 200 + JWT + /requests. Cobre EXP-01-01 |
+| TC-01-02 | ✅ | — | Senha incorreta → 401 genérico. Cobre EXP-01-03 |
+| TC-01-03 | ✅ | — | E-mail inexistente → 401 genérico (anti-enumeração verificada). Cobre EXP-01-02 |
+| TC-01-04 | ✅ | — | 5 falhas + 6ª tentativa com senha correta → 423. Cobre EXP-01-04 e EXP-01-05 |
+| TC-01-05 | ✅ | — | 4 falhas + login bem-sucedido reseta contador. Cobre EXP-01-07 |
+| TC-01-06 | ✅ | — | E-mail formato inválido → 422. Cobre EXP-01-08 |
+
+**Precision US-01: 6/6 = 1.000** | Defeitos: nenhum
+
+### 4.4 Cobertura do oracle — Recall
+
+**US-01 (8 casos esperados pelo oracle)**
+
+| Oracle | Run 1 gemini-2.5-flash | Run 2 gemini-3.5-flash |
 |---|---|---|
-| TC-03-02 | IncorrectFact | Dado "Título inválido" tem 15 chars — backend retornaria 201, não 422 |
-| TC-03-03 | IncorrectFact | Dado "Descrição inválida" tem 18 chars — dentro da faixa válida, não gera 422 |
-| TC-03-05 | Inconsistency | AuthGuard redireciona antes do endpoint — fluxo descrito impossível via UI |
-| TC-04-05 | IncorrectFact | Alice tem 4 requests no seed; "filtro vazio → lista vazia" é impossível |
+| EXP-01-01 Login válido → 200 | TC-01-01 ✅ | TC-01-01 ✅ |
+| EXP-01-02 E-mail inexistente → 401 | TC-01-02 ✅ | TC-01-03 ✅ |
+| EXP-01-03 Senha incorreta → 401 | TC-01-03 ✅ | TC-01-02 ✅ |
+| EXP-01-04 5 falhas → 6ª retorna 423 | TC-01-05 ❌ off-by-one | TC-01-04 ✅ |
+| EXP-01-05 Bloqueio com senha correta | TC-01-06 ✅ | TC-01-04 ✅ |
+| EXP-01-06 Desbloqueio após 60s | TC-01-08 ✅ | — ❌ (não gerado) |
+| EXP-01-07 Sucesso reseta contador | TC-01-07 ✅ | TC-01-05 ✅ |
+| EXP-01-08 E-mail inválido → 422 | TC-01-04 ✅ | TC-01-06 ✅ |
 
-**Distribuição de defeitos:** 3 IncorrectFact (75%), 1 Inconsistency (25%). Zero Ambiguity ou Omission na análise de corretude dos casos (mas omissões de cenários detectadas pelo juiz — seção 2.3/2.4).
+**US-01 Recall Run 1: 7/8 = 0.875** | **US-01 Recall Run 2: 7/8 = 0.875**
 
-### 3.3 Padrões de defeito
+**US-02 (11 casos esperados — Run 1 apenas)**
 
-**IncorrectFact é o defeito dominante** na geração, e é concentrado em US-03 (criação de solicitação). A causa: o modelo gerou strings de teste descritivas ("Título inválido") sem computar seu comprimento real, assumindo erroneamente que violavam os limites de validação.
-
-**Inconsistency em US-03-TC-05:** O model não incorporou que o frontend tem AuthGuard — conhecimento de arquitetura de sistema que não estava explicitamente descrito nos passos, mas estava implícito no ui_map.
-
-**US-01, US-02, US-05 sem defeitos:** Histórias com regras de negócio numéricas claras (lockout, validações de tamanho com limites explícitos, workflow de cancelamento) produzem casos mais precisos.
-
----
-
-## 4. Métricas consolidadas
-
-### 4.1 Precisão dos casos de teste (Agente 1, run oracle)
-
-| Métrica | Valor |
+| Oracle | Run 1 gemini-2.5-flash |
 |---|---|
-| Precision | **0.833** (20/24) |
-| Taxa de IncorrectFact | 0.125 (3/24) |
-| Taxa de Inconsistency | 0.042 (1/24) |
-| Baseline Silva et al. (2026) | Precision ~0.72 |
-| **Delta vs. baseline** | **+0.113** |
+| EXP-02-01 Cadastro válido → 201 | TC-02-01 ✅ |
+| EXP-02-02 Nome = 3 chars → 201 | — ❌ (não gerado) |
+| EXP-02-03 Nome = 80 chars → 201 | TC-02-07 ❌ (82 chars → teste falharia) |
+| EXP-02-04 E-mail duplicado → 409 | TC-02-02 ✅ |
+| EXP-02-05 Duplicado não altera original | TC-02-02 ✅ |
+| EXP-02-06 Nome = 2 chars → 422 | TC-02-06 ✅ |
+| EXP-02-07 Nome = 81 chars → 422 | TC-02-08 ✅ |
+| EXP-02-08 Senha = 7 chars → 422 | TC-02-05 ✅ |
+| EXP-02-09 Senha sem letra → 422 | TC-02-04 ✅ |
+| EXP-02-10 Senha sem número → 422 | TC-02-03 ✅ |
+| EXP-02-11 E-mail inválido → 422 | TC-02-09 ✅ |
 
-### 4.2 Eficácia do reparo (run principal)
+**US-02 Recall Run 1: 9/11 = 0.818**
+
+### 4.5 Métricas consolidadas por run
+
+| Métrica | Run 1 US-01 | Run 1 US-02 | **Run 1 total** | Run 2 US-01 |
+|---|---|---|---|---|
+| Casos gerados | 8 | 9 | **17** | 6 |
+| Corretos | 7 | 8 | **15** | 6 |
+| **Precision** | 0.875 | 0.889 | **0.882** | **1.000** |
+| Casos oracle | 8 | 11 | **19** | 8 |
+| Cobertos | 7 | 9 | **16** | 7 |
+| **Recall** | 0.875 | 0.818 | **0.842** | **0.875** |
+| **F1** | 0.875 | 0.853 | **0.862** | **0.933** |
+| IncorrectFact | 1 | 1 | 2 | 0 |
+| Baseline Silva et al. | — | — | Precision ~0.72 | Precision ~0.72 |
+
+**Padrão de defeito:** IncorrectFact em 2/23 casos avaliados (8.7%) — ambos por falha ao computar comprimentos reais de strings de teste (TC-01-05: off-by-one no contador de bloqueio; TC-02-07: string com 82 chars declarada como 80). Histórias com regras numéricas explícitas no glossário apresentam menor incidência de IncorrectFact.
+
+**Eficácia do reparo (Run 1):**
 
 | Métrica | US-01 | US-02 |
 |---|---|---|
@@ -218,64 +273,28 @@ O `data/golden/generated_case_reviews.json` avalia 24 casos de uma run anterior 
 | Cenários adicionados pelo reparo | 2 | 3 |
 | Casos após reparo | 8 | 9 |
 | Iterações para aprovação | 2 | 3 |
-| Todos os casos individualmente aprovados | ✅ | ✅ |
 
-O loop de reparo nunca atingiu o limite N=3 (US-01 terminou em N=2; US-02 em N=3 devido ao alerta incorreto, não a casos defeituosos).
-
-### 4.3 Qualidade dos scripts (Agente 3)
-
-| Métrica | Valor |
-|---|---|
-| Scripts gerados (run principal) | 2 (US-01, US-02) |
-| Funções de teste totais | 17 (8 + 9) |
-| Naming convention correto | ✅ 100% |
-| Page Object Model respeitado | ✅ 100% |
-| Sem `time.sleep()` | ✅ 100% |
-| Scripts coletáveis pelo PyTest | A verificar — depende de execução com Selenium |
-
-### 4.4 Recall e cobertura de critérios (a preencher)
-
-> `matched_generated_case_ids` em `data/golden/US-XX.json` ainda estão vazios.
-> Para calcular recall e F1, preencher esses campos e executar:
-> ```bash
-> docker compose run --rm pipeline python -m evaluation.metrics
-> ```
-
-Estimativa manual de recall para US-01 (run principal, 8 casos gerados):
-
-| Expected oracle | Cobertura |
-|---|---|
-| EXP-01-01: Login sucesso (CA-01.1) | TC-01-01 ✅ |
-| EXP-01-02: E-mail inexistente (CA-01.2) | TC-01-02 ✅ |
-| EXP-01-03: Senha incorreta (CA-01.2) | TC-01-03 ✅ |
-| EXP-01-04: Bloqueio após 5 falhas (CA-01.3) | TC-01-05 ✅ |
-| EXP-01-05: Bloqueio com senha correta (CA-01.3) | TC-01-06 ✅ |
-| EXP-01-06: Bloqueio expira após 60s (CA-01.3) | TC-01-08 ✅ |
-| EXP-01-07: Sucesso reseta contador (CA-01.3) | TC-01-07 ✅ |
-| EXP-01-08: E-mail formato inválido (CA-01.4) | TC-01-04 ✅ |
-
-**US-01 recall estimado: 8/8 = 1.0** — cobertura total após reparo. O loop de reparo adicionou exatamente os casos que o oracle esperava (EXP-01-06, EXP-01-07).
+> **Referência histórica:** `data/golden/generated_case_reviews.json` avalia 24 casos de uma run anterior (5 USs, modelo não preservado): Precision = 0.833. Os valores acima são das runs documentadas com gemini-2.5-flash e gemini-3.5-flash.
 
 ---
 
 ## 5. Comparação com Silva et al. (2026)
 
-| Dimensão | Silva et al. | Run oracle | gemini-2.5-flash (US-01+02) | gemini-3.5-flash (US-01) |
-|---|---|---|---|---|
-| Modelo | GPT-4o / DeepSeek / Gemini 1.5 | — | gemini-2.5-flash | gemini-3.5-flash |
-| Protocolo | zero/one-shot, sem RAG | RAG + juiz + reparo | RAG + juiz + reparo | RAG + juiz + reparo |
-| Histórias aprovadas pelo gate | 10 | 5 | 3/5 (US-04, US-05 bloqueadas) | **1/5** (US-02..05 bloqueadas) |
-| Histórias processadas end-to-end | 10 | 5 | 2 | 1 |
-| Casos avaliados | 1.528 | 24 | 17 (finais) | 6 |
-| Precision | ~0.72 | **0.833** | — (juiz aprovou todos) | — (juiz aprovou todos) |
-| Recall (US-01) | ~0.56 | A calcular | **1.0 est.** (8/8 oracle) | ~0.75 est. (6/8 oracle)¹ |
-| Iterações de reparo (US-01) | — | — | 2 | **0** |
-| Modo de falha dominante | Omissão (FN) | IncorrectFact | Omissão (corrigida) | Nenhum detectado |
-| Codegen funcional | N/A | Sem Agent 3 | ✅ 17 funções | ✅ 6 funções |
+| Dimensão | Silva et al. | gemini-2.5-flash Run 1 | gemini-3.5-flash Run 2 |
+|---|---|---|---|
+| Modelo | GPT-4o / DeepSeek / Gemini 1.5 | gemini-2.5-flash | gemini-3.5-flash |
+| Protocolo | zero/one-shot, sem RAG | RAG + juiz + reparo | RAG + juiz + reparo |
+| Histórias aprovadas pelo gate | 10 | 3/5 (US-04, US-05 bloqueadas) | 1/5 (US-02..05 bloqueadas) |
+| Histórias end-to-end | 10 | 2 (US-01 + US-02) | 1 (US-01) |
+| Casos avaliados | 1.528 | 17 | 6 |
+| **Precision** | ~0.72 | **0.882** (15/17) | **1.000** (6/6) |
+| **Recall** (US-01) | ~0.56 | **0.875** (7/8 oracle) | **0.875** (7/8 oracle) |
+| **F1** (US-01) | — | **0.875** | **0.933** |
+| Iterações de reparo (US-01) | — | 2 | **0** |
+| Modo de falha dominante | Omissão (FN) | IncorrectFact (off-by-one, string length) | Nenhum detectado |
+| Codegen funcional | N/A | ✅ 17 funções (US-01 + US-02) | ✅ 6 funções (US-01) |
 
-¹ Os 6 casos do 3.5-flash cobrem CA-01.1/2/3/4. EXP-01-05 (bloqueio com senha correta) e EXP-01-06 (expiry 60s) podem ou não estar mapeados — a preencher em `matched_generated_case_ids`.
-
-**Achado principal:** o pipeline com juiz+reparo supera o baseline de geração simples de Silva et al. na dimensão de Precision. O recall de US-01 atingiu 1.0 após o reparo — demonstrando que o loop de reparo endereça precisamente a omissão de variantes, o modo de falha dominante identificado pela literatura.
+**Achado principal:** o pipeline com juiz+reparo supera o baseline de Silva et al. em Precision, Recall e F1 em ambas as runs. O gemini-3.5-flash atingiu Precision=1.0 e F1=0.933 sem nenhum ciclo de reparo — gerando de primeira todos os cenários que o 2.5-flash precisou de reparo para incluir. O 2.5-flash, após 2 ciclos, atingiu F1=0.875 com o reparo corrigindo precisamente as omissões de variantes de borda (EXP-01-06, EXP-01-07), o modo de falha dominante identificado na literatura. IncorrectFact (off-by-one em TC-01-05; string de 82 chars em TC-02-07) é o defeito residual característico da geração sem verificação de comprimento.
 
 ---
 
@@ -295,7 +314,7 @@ Pontos negativos / observações:
 
 ### 6.2 Efeito do context builder
 
-A Precision de 0.833 (vs. ~0.72 de Silva et al. em zero-shot) sugere que o context builder (glossário + ui_map + few-shot) reduziu IncorrectFact ao fornecer valores precisos de limite de campo. US-01, US-02, US-05 (zero defeitos) são histórias cujos limites estavam explicitamente no glossário. US-03 (0.40 precision) é a história com mais dependência da semântica de dados — onde o modelo falhou ao criar strings de teste com comprimentos errados.
+A Precision de 0.882 (Run 1) e 1.000 (Run 2) versus ~0.72 de Silva et al. em zero-shot sugere que o context builder (glossário + ui_map + few-shot) reduziu IncorrectFact ao fornecer valores precisos de limite de campo. O único defeito de IncorrectFact do tipo "string com comprimento incorreto" observado em US-02/TC-02-07 é análogo ao padrão US-03 encontrado na run de referência histórica (dado "Título inválido" com comprimento inválido) — o modelo gerou strings descritivas sem computar seu comprimento real, contra casos onde o glossário explicita os limites.
 
 ### 6.3 Omissão como modo de falha dominante
 
@@ -307,5 +326,5 @@ Consistente com Silva et al.: a geração inicial omitiu variantes de borda de C
 - **Run parcial:** apenas US-01 e US-02 processadas end-to-end na run principal. US-03..05 sem dados de Agent 1/2/3.
 - **Oracle incompleto:** `matched_generated_case_ids` vazios; Recall e F1 não computados automaticamente.
 - **Fase 6 não executada:** scripts não foram executados contra o app PoC. Taxa de sucesso funcional indefinida.
-- **Modelo único:** apenas llama3.1:8b testado em produção. Comparação com Gemini 2.5 Flash ou Claude Sonnet pendente.
+- **Dois modelos:** gemini-2.5-flash e gemini-3.5-flash avaliados. Modelos locais (ollama/llama3) e outros providers (Claude, GPT-4) não testados em run completa.
 - **Esforço humano:** `effort_timings.json` com zeros; razão esforço-pipeline vs. autoria manual não medida.

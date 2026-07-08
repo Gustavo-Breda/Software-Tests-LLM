@@ -77,7 +77,7 @@ Follow this order every session:
 | Summarizer | [—] Fora do escopo (Phase 6 não implementada) |
 | Context builder, glossary, ui_map | ✅ Phase 2 done |
 | Prompts (`pipeline/prompts/`), schemas (`pipeline/schemas/`) | 🚧 Agents 0–3 done; Summarizer pending |
-| Evaluation harness (`evaluation/`) | 🚧 Phase 7: harness done; oracle parcial (Precision=0.833; Recall pendente) |
+| Evaluation harness (`evaluation/`) | ✅ Phase 7: harness done; Run 1 (gemini-2.5-flash) Precision=0.882 Recall=0.842 F1=0.862; Run 2 (gemini-3.5-flash) Precision=1.000 Recall=0.875 F1=0.933 |
 
 ---
 

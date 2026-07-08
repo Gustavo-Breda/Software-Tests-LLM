@@ -1,0 +1,56 @@
+[
+  {
+    "run": "generated2",
+    "model": "gemini-3.5-flash",
+    "story_id": "US-01",
+    "case_id": "TC-01-01",
+    "correct": true,
+    "defect_tags": [],
+    "justificativa": "Login com credenciais válidas retorna 200 com JWT e redireciona para /requests. Cobre EXP-01-01."
+  },
+  {
+    "run": "generated2",
+    "model": "gemini-3.5-flash",
+    "story_id": "US-01",
+    "case_id": "TC-01-02",
+    "correct": true,
+    "defect_tags": [],
+    "justificativa": "Senha incorreta para e-mail cadastrado retorna 401 com mensagem genérica 'E-mail ou senha inválidos.' Cobre EXP-01-03."
+  },
+  {
+    "run": "generated2",
+    "model": "gemini-3.5-flash",
+    "story_id": "US-01",
+    "case_id": "TC-01-03",
+    "correct": true,
+    "defect_tags": [],
+    "justificativa": "E-mail inexistente retorna 401 com a mesma mensagem genérica (anti-enumeração verificada explicitamente: mensagem idêntica para ambos os casos de falha). Cobre EXP-01-02."
+  },
+  {
+    "run": "generated2",
+    "model": "gemini-3.5-flash",
+    "story_id": "US-01",
+    "case_id": "TC-01-04",
+    "correct": true,
+    "defect_tags": [],
+    "justificativa": "5 falhas consecutivas retornam 401; a 6ª tentativa (com senha correta) retorna 423 Locked — modelo de ativação correto de acordo com CA-01.3 e EXP-01-04. O uso de senha correta na 6ª tentativa verifica simultaneamente que o bloqueio persiste mesmo com credencial válida. Cobre EXP-01-04 e EXP-01-05."
+  },
+  {
+    "run": "generated2",
+    "model": "gemini-3.5-flash",
+    "story_id": "US-01",
+    "case_id": "TC-01-05",
+    "correct": true,
+    "defect_tags": [],
+    "justificativa": "4 falhas + login bem-sucedido (logout incluso) + 1 nova falha retorna 401, confirmando que o contador foi zerado pelo login bem-sucedido. Cobre EXP-01-07."
+  },
+  {
+    "run": "generated2",
+    "model": "gemini-3.5-flash",
+    "story_id": "US-01",
+    "case_id": "TC-01-06",
+    "correct": true,
+    "defect_tags": [],
+    "justificativa": "E-mail em formato inválido ('bob_sem_arroba') retorna 422 Unprocessable Entity. Cobre EXP-01-08."
+  }
+]

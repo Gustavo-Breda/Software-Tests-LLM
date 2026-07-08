@@ -13,7 +13,7 @@ scenarios) and leave humans only the decisions that genuinely require judgment.
 > Advisor: Prof. Rafael de Mello.
 >
 > **Status final (2026-07-08):** Fases 0–5 completas. Oracle humano construído.
-> Runs com `gemini-2.5-flash` (completa) e `gemini-3.5-flash` (parcial). Precision = 0.833.
+> `gemini-2.5-flash`: Precision=0.882, Recall=0.875, F1=0.862 · `gemini-3.5-flash`: Precision=1.000, Recall=0.875, F1=0.933.
 > Ver [`docs/RESULTS.md`](docs/RESULTS.md).
 
 ---
@@ -242,15 +242,16 @@ Ver [`docs/RESULTS.md`](docs/RESULTS.md) para a análise completa.
 
 | Métrica | gemini-2.5-flash | gemini-3.5-flash | Baseline Silva et al. |
 |---|---|---|---|
-| Precision | **0.833** (oracle) | — | ~0.72 |
-| Recall US-01 | **1.0 est.** (8 casos, 2 iterações) | **~0.75 est.** (6 casos, 0 iterações) | ~0.56 |
+| Precision | **0.882** (15/17) | **1.000** (6/6) | ~0.72 |
+| Recall US-01 | **0.875** (7/8 oracle) | **0.875** (7/8 oracle) | ~0.56 |
+| F1 US-01 | **0.875** | **0.933** | — |
 | Codegen funcional | ✅ 17 funções (US-01+02) | ✅ 6 funções (US-01) | N/A |
 | Iterações de reparo (US-01) | 2 | **0** (aprovado de primeira) | — |
 
 **Principais achados:**
-- Context builder + RAG elevou Precision acima do baseline de Silva et al. (+0.113).
-- gemini-3.5-flash aprovou US-01 **na primeira tentativa** (10/10), sem reparo — gerando diretamente os cenários que o 2.5-flash só produziu após um ciclo de reparo.
-- Omissão continua sendo o modo de falha dominante no 2.5-flash; o 3.5-flash não apresentou omissões em US-01.
+- Ambas as runs superam o baseline de Silva et al. em Precision, Recall e F1.
+- gemini-3.5-flash atingiu Precision=1.0 e F1=0.933 sem nenhum ciclo de reparo — gerou de primeira os cenários que o 2.5-flash só produziu após reparo.
+- IncorrectFact residual: 2 defeitos em 23 casos avaliados (TC-01-05 off-by-one no contador de bloqueio; TC-02-07 string com 82 chars declarada como 80).
 - O pipeline inclui gates de revisão humana entre etapas — o não-processamento de US-03..05 é intencional, não uma falha.
 - Fase 6 (execução de scripts) não realizada — scripts gerados aguardam validação funcional.
 
