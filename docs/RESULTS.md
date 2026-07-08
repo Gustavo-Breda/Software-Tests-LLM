@@ -14,7 +14,7 @@ Dois artefatos de run estão preservados, cada um com um modelo Gemini diferente
 | Diretório | Modelo | Descrição |
 |---|---|---|
 | `generated1/` | `gemini-2.5-flash` | **Run 1** — US-01 e US-02 processadas end-to-end (Agent 0 → 1 → 2 → 3). |
-| `generated2/` | `gemini-3.5-flash` | **Run 2** — US-01 processada até Agent 2 attempt-0 (run parcial). |
+| `generated2/` | `gemini-3.5-flash` | **Run 2** — US-01 completa (Agent 0 → 1 → 2 → 3); US-02..05 bloqueadas pelo gate. |
 
 O oracle humano em `data/golden/generated_case_reviews.json` avalia casos de uma **run anterior** ao fix G-3,
 cobrindo todas as 5 histórias com 24 casos revisados (modelos/run não preservados).
@@ -28,15 +28,15 @@ Protocolo de corretude: **all-or-nothing** (um defeito = caso inteiro Defective)
 
 ### 2.1 Sumário por história
 
-| História | Casos iniciais | Iterações juiz | Casos finais | Decisão | Scripts gerados |
-|---|---|---|---|---|---|
-| US-01 | 6 | 2 | 8 | ✅ APROVADO | 8 funções |
-| US-02 | 6 | 3 | 9 | ✅ APROVADO | 9 funções |
-| US-03 | ✅ Aprovada pelo gate | — | — | — | Revisão humana pendente | — |
-| US-04 | ⚠️ Bloqueada pelo gate | — | — | — | Precisa esclarecimento | — |
-| US-05 | ⚠️ Bloqueada pelo gate | — | — | — | Precisa esclarecimento | — |
+| História | Agent 0 | Agent 1–3 | Motivo de parada |
+|---|---|---|---|
+| US-01 | ✅ APROVADA | ✅ Completo (8 casos, 8 scripts) | — |
+| US-02 | ✅ APROVADA | ✅ Completo (9 casos, 9 scripts) | — |
+| US-03 | ✅ APROVADA | ❌ Não avançou | Analista não aprovou avanço (gate humano) |
+| US-04 | ⚠️ PRECISA_DE_ESCLARECIMENTO | ❌ Bloqueada | Agent 0 identificou omissões nos critérios |
+| US-05 | ⚠️ PRECISA_DE_ESCLARECIMENTO | ❌ Bloqueada | Agent 0 identificou omissões nos critérios |
 
-US-03 foi aprovada pelo Agent 0 mas não avançou por decisão do analista (gate humano). US-04 e US-05 foram corretamente bloqueadas pelo Agent 0 por omissões nos critérios — o pipeline não avança sem refinamento da história. Esse comportamento é **intencional na arquitetura**.
+US-03 passou no gate técnico mas o analista optou por não avançá-la nesta run — comportamento correto: o pipeline aguarda aprovação humana explícita antes de cada etapa. US-04 e US-05 foram bloqueadas pelo próprio Agent 0 por omissões reais nos critérios de aceitação.
 
 ### 2.2 Agent 0 — Quality Gate (todas as 5 histórias)
 
@@ -107,31 +107,58 @@ def test_tc_01_05_bloqueio_de_conta_apos_5_tentativas_falhas_consecutivas(driver
 
 ---
 
-## 3. Run 2: `gemini-3.5-flash` (`generated2/`) — US-01 end-to-end
+## 3. Pipeline — Run 2: `gemini-3.5-flash` (`generated2/`)
 
-| História | Agent 0 | Casos gerados | Iterações juiz | Cobertura | Decisão | Scripts |
-|---|---|---|---|---|---|---|
-| US-01 | ✅ APROVADA | 6 | 1 | 10/10 | ✅ **APROVADO** | 6 funções |
-| US-02..05 | ✅ APROVADAS | — | — | — | Aguardam revisão humana¹ | — |
+### 3.1 Sumário por história
 
-O Agent 2 aprovou US-01 **na primeira tentativa** com pontuação máxima em todas as dimensões (cobertura=10, fidelidade=10, clareza=10, automatizabilidade=10) e zero cenários omitidos sugeridos. Nenhum ciclo de reparo foi necessário.
+| História | Agent 0 | Agent 1–3 | Motivo de parada |
+|---|---|---|---|
+| US-01 | ✅ APROVADA | ✅ Completo (6 casos, 6 scripts) | — |
+| US-02 | ⚠️ PRECISA_DE_ESCLARECIMENTO | ❌ Bloqueada | Agent 0 identificou omissões nos critérios |
+| US-03 | ⚠️ PRECISA_DE_ESCLARECIMENTO | ❌ Bloqueada | Agent 0 identificou omissões nos critérios |
+| US-04 | ⚠️ PRECISA_DE_ESCLARECIMENTO | ❌ Bloqueada | Agent 0 identificou omissões nos critérios |
+| US-05 | ⚠️ PRECISA_DE_ESCLARECIMENTO | ❌ Bloqueada | Agent 0 identificou omissões nos critérios |
 
-O Agent 3 gerou 6 funções PyTest válidas com Page Object Model e WebDriverWait. Os 6 casos cobrem todas as 4 ACs (CA-01.1, CA-01.2, CA-01.3, CA-01.4), incluindo reset de contador (CA-01.3) e e-mail inválido (CA-01.4) — cenários que o 2.5-flash só incluiu após reparo.
+O 3.5-flash foi mais estrito no gate do que o 2.5-flash: bloqueou 4 histórias vs. 2 da run anterior. Os problemas identificados são legítimos em todos os casos.
 
-### Comparação US-01: gemini-2.5-flash vs. gemini-3.5-flash
+### 3.2 Agent 0 — Quality Gate (todas as 5 histórias)
 
-| Dimensão | gemini-2.5-flash | gemini-3.5-flash |
+| História | Status | Problemas identificados |
 |---|---|---|
-| Casos gerados (1ª tentativa) | 6 | 6 |
-| Iterações para aprovação | 2 | **1** |
-| Cobertura final | 10/10 | 10/10 |
-| Casos finais aprovados | 8 (após reparo) | 6 (sem reparo) |
-| Cenários omitidos na 1ª tentativa | 2 (reset contador, expiry 60s) | 0 |
-| Scripts gerados | 8 funções | 6 funções |
+| US-01 | ✅ APROVADA | Nenhum — critérios "extremamente claros e detalhados" |
+| US-02 | ⚠️ PRECISA_DE_ESCLARECIMENTO | Texto exato da mensagem de sucesso não especificado (CA-02.1); regra de strip/espaços em branco no campo nome ausente (CA-02.3) |
+| US-03 | ⚠️ PRECISA_DE_ESCLARECIMENTO | Comportamento da UI em erro de validação 422 não descrito (CA-03.2); atribuição automática de `owner_id` não explicitada (CA-03.1) |
+| US-04 | ⚠️ PRECISA_DE_ESCLARECIMENTO | Comportamento para acesso não autenticado não especificado; valores inválidos nos filtros sem comportamento definido |
+| US-05 | ⚠️ PRECISA_DE_ESCLARECIMENTO | Comportamento dos botões do diálogo de confirmação não descrito (CA-05.1) |
 
-**Achado:** o gemini-3.5-flash gerou, na primeira tentativa, casos que o 2.5-flash só produziu após um ciclo de reparo. A geração direta já cobriu todos os critérios de aceitação de US-01.
+Nota: o 3.5-flash identificou em US-02 e US-03 problemas que o 2.5-flash não sinalizou, o que sugere um gate mais rigoroso — potencialmente reduzindo IncorrectFact downstream.
 
-US-02..05 têm relatórios do Agent 0 em `generated2/reports/agent0/` (todas APROVADAS), mas não foram processadas nas etapas seguintes nesta run. Isso é **comportamento intencional da arquitetura**: após a aprovação dos casos de teste pelo juiz, o pipeline aguarda revisão e aprovação humana antes de avançar para o Agent 3 (codegen). A run foi encerrada após a revisão de US-01, sem que o analista aprovasse o avanço das demais histórias.
+### 3.3 Agent 1 + Juiz — US-01
+
+| Tentativa | Casos | Cobertura | Fidelidade | Clareza | Automatiz. | Decisão |
+|---|---|---|---|---|---|---|
+| Attempt-0 | 6 | 10 | 10 | 10 | 10 | **APROVADO** |
+
+US-01 aprovada na **primeira tentativa**, com pontuação máxima em todas as dimensões e zero cenários omitidos sugeridos. Nenhum ciclo de reparo foi necessário. Os 6 casos cobrem todas as 4 ACs (CA-01.1, CA-01.2, CA-01.3, CA-01.4), incluindo reset de contador e e-mail inválido — cenários que o 2.5-flash só incluiu após reparo.
+
+### 3.4 Agent 3 — Codegen Selenium/PyTest
+
+| História | Funções geradas | Formato correto | Page Object | WebDriverWait | Sem time.sleep |
+|---|---|---|---|---|---|
+| US-01 | 6 | ✅ `test_tc_01_0X_*` | ✅ `LoginPage`, `RequestsPage` | ✅ | ✅ |
+
+Exemplo de função gerada (US-01):
+```python
+def test_tc_01_04_lockout_seis_tentativas(driver, credentials_lockout):
+    login_page = LoginPage(driver)
+    login_page.navigate()
+    for _ in range(5):
+        login_page.login(credentials_lockout["email"], credentials_lockout["password_incorrect"])
+        assert login_page.get_error_message() == "E-mail ou senha inválidos."
+    login_page.login(credentials_lockout["email"], credentials_lockout["password_correct"])
+    assert "bloqueada" in login_page.get_lockout_message().lower()
+    assert login_page.is_on_page()
+```
 
 ---
 
@@ -237,7 +264,7 @@ Estimativa manual de recall para US-01 (run principal, 8 casos gerados):
 |---|---|---|---|---|
 | Modelo | GPT-4o / DeepSeek / Gemini 1.5 | — | gemini-2.5-flash | gemini-3.5-flash |
 | Protocolo | zero/one-shot, sem RAG | RAG + juiz + reparo | RAG + juiz + reparo | RAG + juiz + reparo |
-| Histórias aprovadas pelo gate | 10 | 5 | 3/5 (US-04, US-05 bloqueadas) | 3/5 (gate idêntico) |
+| Histórias aprovadas pelo gate | 10 | 5 | 3/5 (US-04, US-05 bloqueadas) | **1/5** (US-02..05 bloqueadas) |
 | Histórias processadas end-to-end | 10 | 5 | 2 | 1 |
 | Casos avaliados | 1.528 | 24 | 17 (finais) | 6 |
 | Precision | ~0.72 | **0.833** | — (juiz aprovou todos) | — (juiz aprovou todos) |
