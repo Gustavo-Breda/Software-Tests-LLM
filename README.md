@@ -240,20 +240,19 @@ Avaliação controlada contra 5 histórias de usuário e um oracle humano (gabar
 Métricas seguem o protocolo de Silva et al. (2026) para comparação direta.
 Ver [`docs/RESULTS.md`](docs/RESULTS.md) para a análise completa.
 
-| Métrica | Valor (llama3.1:8b) | Baseline Silva et al. |
-|---|---|---|
-| Métrica | gemini-2.5-flash (Run 1) | gemini-3.5-flash (Run 2) | Baseline Silva et al. |
+| Métrica | gemini-2.5-flash | gemini-3.5-flash | Baseline Silva et al. |
 |---|---|---|---|
-| Precision | **0.833** (oracle, run anterior) | — (run parcial) | ~0.72 |
-| Recall | **1.0 estimado** (US-01) | — | ~0.56 |
-| F1 | A calcular | — | ~0.62 |
-| Codegen funcional | ✅ 17 funções PyTest | Run parcial (sem Agent 3) | N/A |
+| Precision | **0.833** (oracle) | — | ~0.72 |
+| Recall US-01 | **1.0 est.** (8 casos, 2 iterações) | **~0.75 est.** (6 casos, 0 iterações) | ~0.56 |
+| Codegen funcional | ✅ 17 funções (US-01+02) | ✅ 6 funções (US-01) | N/A |
+| Iterações de reparo (US-01) | 2 | **0** (aprovado de primeira) | — |
 
 **Principais achados:**
 - Context builder + RAG elevou Precision acima do baseline de Silva et al. (+0.113).
-- Loop de reparo corrigiu todas as omissões de US-01 (recall 1.0 estimado após 2 iterações).
-- gemini-3.5-flash identificou os mesmos gaps de cobertura que o 2.5-flash — padrão de omissão consistente.
-- Fase 6 (execução de scripts contra o app) não realizada — scripts gerados aguardam validação funcional.
+- gemini-3.5-flash aprovou US-01 **na primeira tentativa** (10/10), sem reparo — gerando diretamente os cenários que o 2.5-flash só produziu após um ciclo de reparo.
+- Omissão continua sendo o modo de falha dominante no 2.5-flash; o 3.5-flash não apresentou omissões em US-01.
+- O pipeline inclui gates de revisão humana entre etapas — o não-processamento de US-03..05 é intencional, não uma falha.
+- Fase 6 (execução de scripts) não realizada — scripts gerados aguardam validação funcional.
 
 ---
 

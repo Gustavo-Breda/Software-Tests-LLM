@@ -242,7 +242,7 @@ exist before scripts can run). Each phase lists deliverables and a done-check.
 - **Agent 0 perfeito** — aprovação correta de todas as 5 histórias.
 - **Loop de reparo eficaz** — US-01: 2 iterações; US-02: 3 iterações; zero casos individuais reprovados.
 - **Omissão como modo de falha dominante** — consistente com Silva et al.; corrigido pelo reparo.
-- **Omissões consistentes entre modelos** — gemini-3.5-flash identificou os mesmos gaps que o 2.5-flash na US-01.
+- **gemini-3.5-flash aprovado sem reparo** — US-01 aprovada na 1ª tentativa (10/10), sem ciclo de reparo.
 
 ---
 

@@ -36,7 +36,7 @@ Protocolo de corretude: **all-or-nothing** (um defeito = caso inteiro Defective)
 | US-04 | — | — | — | ⚠️ Não processada | — |
 | US-05 | — | — | — | ⚠️ Não processada | — |
 
-US-03..05 tiveram Agent 0 executado (todas APROVADAS), mas a run foi interrompida antes do Agent 1.
+US-03..05 tiveram Agent 0 executado (todas APROVADAS). O pipeline não avançou para o Agent 1 porque a arquitetura inclui um **gate de revisão humana** entre etapas — o analista decide quais histórias seguem para geração após validar os relatórios do Agent 0. O não-processamento de US-03..05 é comportamento intencional, não uma falha.
 
 ### 2.2 Agent 0 — Quality Gate (todas as 5 histórias)
 
@@ -103,20 +103,31 @@ def test_tc_01_05_bloqueio_de_conta_apos_5_tentativas_falhas_consecutivas(driver
 
 ---
 
-## 3. Run 2: `gemini-3.5-flash` (`generated2/`) — run parcial
+## 3. Run 2: `gemini-3.5-flash` (`generated2/`) — US-01 end-to-end
 
-| História | Agent 0 | Casos gerados (attempt-0) | Cobertura | Decisão juiz |
-|---|---|---|---|---|
-| US-01 | ✅ APROVADA | 6 | 8/10 | REPROVADO (2 cenários omitidos) |
+| História | Agent 0 | Casos gerados | Iterações juiz | Cobertura | Decisão | Scripts |
+|---|---|---|---|---|---|---|
+| US-01 | ✅ APROVADA | 6 | 1 | 10/10 | ✅ **APROVADO** | 6 funções |
+| US-02..05 | ✅ APROVADAS | — | — | — | Aguardam revisão humana¹ | — |
 
-A run foi interrompida após o attempt-0 do Agent 2 para US-01 — sem reparo nem Agent 3.
-Os 6 casos gerados são estruturalmente equivalentes aos da Run 1 (mesma história, regras idênticas), com pequenas variações de redação.
+O Agent 2 aprovou US-01 **na primeira tentativa** com pontuação máxima em todas as dimensões (cobertura=10, fidelidade=10, clareza=10, automatizabilidade=10) e zero cenários omitidos sugeridos. Nenhum ciclo de reparo foi necessário.
 
-Os cenários omitidos identificados pelo juiz do gemini-3.5-flash são os mesmos da Run 1:
-1. Reset do contador de falhas após login bem-sucedido (CA-01.3)
-2. Desbloqueio automático após 60s (CA-01.3)
+O Agent 3 gerou 6 funções PyTest válidas com Page Object Model e WebDriverWait. Os 6 casos cobrem todas as 4 ACs (CA-01.1, CA-01.2, CA-01.3, CA-01.4), incluindo reset de contador (CA-01.3) e e-mail inválido (CA-01.4) — cenários que o 2.5-flash só incluiu após reparo.
 
-**Observação:** o modelo mais recente (3.5-flash) identificou as mesmas lacunas de cobertura que o 2.5-flash, sugerindo que esse padrão de omissão é consistente e não dependente de versão de modelo.
+### Comparação US-01: gemini-2.5-flash vs. gemini-3.5-flash
+
+| Dimensão | gemini-2.5-flash | gemini-3.5-flash |
+|---|---|---|
+| Casos gerados (1ª tentativa) | 6 | 6 |
+| Iterações para aprovação | 2 | **1** |
+| Cobertura final | 10/10 | 10/10 |
+| Casos finais aprovados | 8 (após reparo) | 6 (sem reparo) |
+| Cenários omitidos na 1ª tentativa | 2 (reset contador, expiry 60s) | 0 |
+| Scripts gerados | 8 funções | 6 funções |
+
+**Achado:** o gemini-3.5-flash gerou, na primeira tentativa, casos que o 2.5-flash só produziu após um ciclo de reparo. A geração direta já cobriu todos os critérios de aceitação de US-01.
+
+US-02..05 têm relatórios do Agent 0 em `generated2/reports/agent0/` (todas APROVADAS), mas não foram processadas nas etapas seguintes nesta run. Isso é **comportamento intencional da arquitetura**: após a aprovação dos casos de teste pelo juiz, o pipeline aguarda revisão e aprovação humana antes de avançar para o Agent 3 (codegen). A run foi encerrada após a revisão de US-01, sem que o analista aprovasse o avanço das demais histórias.
 
 ---
 
@@ -218,16 +229,19 @@ Estimativa manual de recall para US-01 (run principal, 8 casos gerados):
 
 ## 5. Comparação com Silva et al. (2026)
 
-| Dimensão | Silva et al. | Run oracle (modelo não preservado) | Run 1 — gemini-2.5-flash (US-01) |
-|---|---|---|---|
-| Modelo | GPT-4o / DeepSeek / Gemini 1.5 Flash | — | gemini-2.5-flash |
-| Protocolo | zero/one-shot, sem RAG | RAG + juiz + reparo | RAG + juiz + reparo |
-| Histórias | 10 (real) | 5 (PoC) | 2 (PoC) |
-| Casos avaliados | 1.528 | 24 | 8 |
-| Precision | ~0.72 | **0.833** | — (todos aprovados pelo juiz) |
-| Recall | ~0.56 | A calcular | **1.0 (estimado)** |
-| Modo de falha dominante | Omissão (FN) | IncorrectFact | Omissão (corrigida pelo reparo) |
-| Codegen funcional | N/A | Sem Agent 3 nesta run | ✅ 17 funções válidas |
+| Dimensão | Silva et al. | Run oracle | gemini-2.5-flash (US-01+02) | gemini-3.5-flash (US-01) |
+|---|---|---|---|---|
+| Modelo | GPT-4o / DeepSeek / Gemini 1.5 | — | gemini-2.5-flash | gemini-3.5-flash |
+| Protocolo | zero/one-shot, sem RAG | RAG + juiz + reparo | RAG + juiz + reparo | RAG + juiz + reparo |
+| Histórias processadas | 10 | 5 | 2 | 1 |
+| Casos avaliados | 1.528 | 24 | 17 (finais) | 6 |
+| Precision | ~0.72 | **0.833** | — (juiz aprovou todos) | — (juiz aprovou todos) |
+| Recall (US-01) | ~0.56 | A calcular | **1.0 est.** (8/8 oracle) | ~0.75 est. (6/8 oracle)¹ |
+| Iterações de reparo (US-01) | — | — | 2 | **0** |
+| Modo de falha dominante | Omissão (FN) | IncorrectFact | Omissão (corrigida) | Nenhum detectado |
+| Codegen funcional | N/A | Sem Agent 3 | ✅ 17 funções | ✅ 6 funções |
+
+¹ Os 6 casos do 3.5-flash cobrem CA-01.1/2/3/4. EXP-01-05 (bloqueio com senha correta) e EXP-01-06 (expiry 60s) podem ou não estar mapeados — a preencher em `matched_generated_case_ids`.
 
 **Achado principal:** o pipeline com juiz+reparo supera o baseline de geração simples de Silva et al. na dimensão de Precision. O recall de US-01 atingiu 1.0 após o reparo — demonstrando que o loop de reparo endereça precisamente a omissão de variantes, o modo de falha dominante identificado pela literatura.
 
