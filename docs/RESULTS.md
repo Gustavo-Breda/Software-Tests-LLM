@@ -32,21 +32,25 @@ Protocolo de corretude: **all-or-nothing** (um defeito = caso inteiro Defective)
 |---|---|---|---|---|---|
 | US-01 | 6 | 2 | 8 | ✅ APROVADO | 8 funções |
 | US-02 | 6 | 3 | 9 | ✅ APROVADO | 9 funções |
-| US-03 | — | — | — | ⚠️ Não processada | — |
-| US-04 | — | — | — | ⚠️ Não processada | — |
-| US-05 | — | — | — | ⚠️ Não processada | — |
+| US-03 | ✅ Aprovada pelo gate | — | — | — | Revisão humana pendente | — |
+| US-04 | ⚠️ Bloqueada pelo gate | — | — | — | Precisa esclarecimento | — |
+| US-05 | ⚠️ Bloqueada pelo gate | — | — | — | Precisa esclarecimento | — |
 
-US-03..05 tiveram Agent 0 executado (todas APROVADAS). O pipeline não avançou para o Agent 1 porque a arquitetura inclui um **gate de revisão humana** entre etapas — o analista decide quais histórias seguem para geração após validar os relatórios do Agent 0. O não-processamento de US-03..05 é comportamento intencional, não uma falha.
+US-03 foi aprovada pelo Agent 0 mas não avançou por decisão do analista (gate humano). US-04 e US-05 foram corretamente bloqueadas pelo Agent 0 por omissões nos critérios — o pipeline não avança sem refinamento da história. Esse comportamento é **intencional na arquitetura**.
 
 ### 2.2 Agent 0 — Quality Gate (todas as 5 histórias)
 
-Todas as 5 histórias aprovadas sem problemas ou pedidos de esclarecimento:
-- US-01: `APROVADA` — derivavel, passos observáveis, regras mensuráveis
-- US-02: `APROVADA`
-- US-03: `APROVADA` — "Prosseguir para geração de casos de teste."
-- US-04 e US-05: `APROVADA` (relatórios disponíveis em `generated1/reports/agent0/`)
+| História | Status | Problemas identificados |
+|---|---|---|
+| US-01 | ✅ APROVADA | Nenhum |
+| US-02 | ✅ APROVADA | Nenhum |
+| US-03 | ✅ APROVADA | Nenhum |
+| US-04 | ⚠️ PRECISA_DE_ESCLARECIMENTO | Comportamento para acesso não autenticado não especificado; valores inválidos nos filtros sem comportamento definido; paginação não especificada |
+| US-05 | ⚠️ PRECISA_DE_ESCLARECIMENTO | Feedback de UI para erros 403, 404 e 409 não descrito nos critérios; mensagem de erro do 404 ausente no critério CA-05.2 |
 
-**Conclusão:** `gemini-2.5-flash` avalia qualidade de histórias de usuário com fidelidade. Não houve falsos positivos nem falsos negativos no gate.
+US-04 e US-05 foram corretamente bloqueadas pelo gate. Os problemas identificados são legítimos — sem saber o comportamento da UI nos cenários de erro, o Agent 1 teria que inventar regras, gerando casos de teste com fatos incorretos. Esse é exatamente o tipo de omissão que o Agent 0 deve pegar antes da geração.
+
+O gate também explica por que o pipeline só avançou com US-01, US-02 e US-03: as demais histórias precisariam de refinamento humano antes de prosseguir — **comportamento intencional da arquitetura**.
 
 ### 2.3 Agent 1 + Juiz + Reparo — US-01
 
@@ -233,7 +237,8 @@ Estimativa manual de recall para US-01 (run principal, 8 casos gerados):
 |---|---|---|---|---|
 | Modelo | GPT-4o / DeepSeek / Gemini 1.5 | — | gemini-2.5-flash | gemini-3.5-flash |
 | Protocolo | zero/one-shot, sem RAG | RAG + juiz + reparo | RAG + juiz + reparo | RAG + juiz + reparo |
-| Histórias processadas | 10 | 5 | 2 | 1 |
+| Histórias aprovadas pelo gate | 10 | 5 | 3/5 (US-04, US-05 bloqueadas) | 3/5 (gate idêntico) |
+| Histórias processadas end-to-end | 10 | 5 | 2 | 1 |
 | Casos avaliados | 1.528 | 24 | 17 (finais) | 6 |
 | Precision | ~0.72 | **0.833** | — (juiz aprovou todos) | — (juiz aprovou todos) |
 | Recall (US-01) | ~0.56 | A calcular | **1.0 est.** (8/8 oracle) | ~0.75 est. (6/8 oracle)¹ |
@@ -252,7 +257,7 @@ Estimativa manual de recall para US-01 (run principal, 8 casos gerados):
 ### 6.1 gemini-2.5-flash como modelo de pipeline (Run 1)
 
 Pontos positivos:
-- Agent 0 (quality gate): fidelidade alta, zero falsos positivos/negativos
+- Agent 0 (quality gate): bloqueou US-04 e US-05 corretamente por omissões reais nos critérios; aprovou US-01..03 com justificativas precisas
 - Agent 1 (geração): casos estruturalmente corretos, regras numéricas capturadas com precisão
 - Agent 2 (juiz): gaps de cobertura identificados corretamente; não produziu falsos positivos nos casos individuais
 - Agent 3 (codegen): gerou scripts PyTest válidos com Page Object Model, naming correto e WebDriverWait
