@@ -1,0 +1,32 @@
+{
+  "status_geral": "REPROVADO",
+  "pontuacao": {
+    "cobertura": 9,
+    "fidelidade_ao_requisito": 9,
+    "clareza": 10,
+    "automatizabilidade": 10
+  },
+  "casos_aprovados": [
+    "TC-02-01",
+    "TC-02-02",
+    "TC-02-03",
+    "TC-02-04",
+    "TC-02-05",
+    "TC-02-06",
+    "TC-02-07",
+    "TC-02-08",
+    "TC-02-09"
+  ],
+  "casos_reprovados": [],
+  "problemas": [
+    {
+      "caso_de_teste": "GERAL",
+      "tipo": "fato_incorreto",
+      "descricao": "O alerta final sugere a verificação do limite superior de 128 caracteres para a senha, afirmando que esta regra está no 'glossário de domínio'. No entanto, o 'system_context' na seção 'Regras de validação por campo' para 'Registro | password' não especifica um limite superior, apenas '≥8 caracteres; ao menos 1 letra E 1 número'. O glossário de domínio (seção 1. Entidades) também não menciona esta regra. A sugestão de cenário omitido extrapola os requisitos fornecidos.",
+      "evidencia_na_historia": "system_context -> 4. Regras de validação por campo -> Registro | password: '≥8 caracteres; ao menos 1 letra E 1 número'. O glossário de domínio (seção 1. Entidades) não detalha validações de senha.",
+      "acao_recomendada": "Remover o alerta sobre a omissão de testes de limite superior da senha, pois a regra de 128 caracteres não está especificada nos requisitos ou contexto fornecidos. A avaliação deve se ater estritamente ao que está escrito."
+    }
+  ],
+  "cenarios_omitidos_sugeridos": [],
+  "decisao": "REPROVADO"
+}

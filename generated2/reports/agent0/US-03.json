@@ -1,0 +1,23 @@
+{
+  "status": "PRECISA_DE_ESCLARECIMENTO",
+  "derivavel": false,
+  "justificativa_derivabilidade": "Apesar de a história possuir critérios bem estruturados para o fluxo feliz e validações básicas de tamanho de campo, a ausência de definição sobre o comportamento da interface (UI) em caso de falha de validação (422) e a falta de especificação explícita sobre a gravação do 'owner_id' impedem a criação de casos de teste de ponta a ponta (E2E) totalmente precisos sem que o analista precise deduzir comportamentos.",
+  "observacao_formato": "A história de usuário não utiliza a sintaxe clássica 'Como [persona], quero [ação], para [benefício]', mas a estrutura em chaves/valores adotada é clara, legível e perfeitamente compreensível.",
+  "problemas": [
+    {
+      "criterio_id": "CA-03.2",
+      "tipo": "omissao",
+      "descricao": "O critério de aceitação não especifica o comportamento esperado na interface do usuário (UI) quando ocorre o erro de validação (422). Não é mencionado se o usuário permanece na tela de criação 'request_create' com os dados previamente preenchidos e se a mensagem de erro retornada pelo backend deve ser exibida no elemento 'request-error'.",
+      "impacto_em_testes": "O analista de testes ou a ferramenta de automação precisará assumir se a rota deve continuar sendo '/requests/new' e se o elemento '[data-testid=request-error]' deve ser preenchido com o erro, o que pode gerar divergências entre o teste automatizado e a implementação real.",
+      "pergunta_para_o_product_owner": "Em caso de erro de validação (422), o usuário deve ser mantido na tela de criação com os campos preenchidos e o erro deve ser exibido no elemento '[data-testid=request-error]'?"
+    },
+    {
+      "criterio_id": "CA-03.1",
+      "tipo": "omissao",
+      "descricao": "O critério detalha que o servidor atribui automaticamente o status 'aberta' e a data em 'created_at', mas omite a atribuição automática do 'owner_id' ao usuário autenticado que está realizando a requisição.",
+      "impacto_em_testes": "Não há uma asserção explícita planejada para garantir que a solicitação criada foi vinculada ao ID correto do usuário autenticado no banco de dados, o que é um ponto crítico para a regra de propriedade (ownership) descrita no contexto.",
+      "pergunta_para_o_product_owner": "Podemos explicitar no CA-03.1 que o servidor deve associar automaticamente o 'owner_id' da solicitação ao ID do usuário autenticado, impedindo que o cliente envie ou sobrescreva este campo?"
+    }
+  ],
+  "recomendacao": "Solicitar esclarecimentos ao Product Owner sobre o comportamento da UI em caso de erro de validação (CA-03.2) e a garantia de gravação do owner_id (CA-03.1) antes de prosseguir com a geração dos casos de teste."
+}

@@ -1,5 +1,9 @@
 # Implementation Plan — QA Assistant Agent
 
+> **Estado final (2026-07-08):** Fases 0–5 implementadas. Fase 7 com harness completo e
+> oracle humano parcialmente preenchido. Fases 6 e 8 intencionalmente fora do escopo de
+> implementação. Ver [`docs/RESULTS.md`](./RESULTS.md) para análise de resultados.
+
 This plan turns the AV1 report into a buildable project. It defines scope, the
 target architecture, open technical decisions, a phased roadmap with milestones,
 the data contracts between agents, and the evaluation methodology.
@@ -215,18 +219,28 @@ exist before scripts can run). Each phase lists deliverables and a done-check.
 - [x] Validate generated files for JSON schema, Python syntax, forbidden `time.sleep`, documented selectors, and one `test_*` function per automatizable case.
 - [x] **Done when:** generated scripts import and collect under PyTest without syntax errors.
 
-### [ ] Phase 6 — Summarizer & execution
-- [ ] Run generated scripts against the PoC; feed PyTest output + Selenium logs + error evidence into the Summarization Agent.
-- [ ] **Done when:** a coverage/execution report classifies each failure cause and maps coverage per acceptance criterion.
+### [—] Phase 6 — Summarizer & execution (fora do escopo de implementação)
+- Agente 3 não produziu scripts funcionais com `llama3.1:8b` — codegen com modelo mais capaz é pré-requisito.
+- Fase 6 intencionalmente pulada; análise de cobertura de execução não foi calculada.
+- `pipeline/prompts/06_summarize.txt` contém apenas esboço estrutural.
 
-### [ ] Phase 7 — Evaluation
-- [ ] Build the human oracle (gabarito) for the 5 stories using the contract in `data/golden/README.md`.
-- [x] Implement `evaluation/metrics.py` for precision, recall, F1, omission rate, incorrect-fact rate, acceptance-criteria coverage, script collect rate, judge precision/recall, and perceived-effort ratio.
-- [ ] Record perceived-effort timings (pipeline review vs. manual authoring) in `data/golden/effort_timings.json`.
-- [ ] **Done when:** a metrics table is produced and reproducible from complete human-reviewed golden files.
+### [~] Phase 7 — Evaluation (parcialmente completa)
+- [x] Build the human oracle (gabarito) — `data/golden/US-01..05.json` preenchidos.
+- [x] `data/golden/generated_case_reviews.json` — 24 casos revisados (run anterior, todas as 5 histórias).
+- [x] `data/golden/judge_reviews.json` — pendente de dados (judge só reprovou por cobertura, não por casos individuais).
+- [x] Implement `evaluation/metrics.py`.
+- [ ] `data/golden/effort_timings.json` — tempos não medidos.
+- [ ] `matched_generated_case_ids` — a preencher para calcular Recall e F1.
+- **Precision = 0.833 (20/24, run oracle).** US-01 recall estimado = 1.0 após reparo (run principal).
 
-### [ ] Phase 8 — Final report (AV2)
-- [ ] Consolidate results, compare with Silva et al., document limitations.
+### [—] Phase 8 — Final report (AV2)
+- Análise completa em [`docs/RESULTS.md`](./RESULTS.md).
+- **Precision 0.833** vs. baseline Silva et al. ~0.72 (+0.113, atribuído ao context builder + RAG).
+- **US-01 recall estimado = 1.0** após loop de reparo (8/8 cenários oracle cobertos).
+- **Agent 3 funcional** após fix de prompt — 17 funções PyTest válidas (US-01: 8, US-02: 9).
+- **Agent 0 perfeito** — aprovação correta de todas as 5 histórias.
+- **Loop de reparo eficaz** — US-01: 2 iterações; US-02: 3 iterações; zero casos individuais reprovados.
+- **Omissão como modo de falha dominante** — consistente com Silva et al.; corrigido pelo reparo.
 
 ---
 
@@ -353,8 +367,8 @@ methodology) for direct comparison.
 - [x] JSON validation approach: `jsonschema` (from requirements.txt)
 - [x] Context Builder design (Phase 2): (1) Filter aggressively per story — each blob only includes the screens and endpoints that story actually touches; the full ui_map would inflate the blob ~50% without benefit. (2) Include the full glossary (~5 KB) in every blob — it is compact and coeso; splitting by story would create inconsistency risk. (3) Single few-shot example per blob — more examples increase tokens without clear marginal gain; story-specific examples can be added if coverage gaps appear. (4) Section order: glossary → API → UI → seed → example → story — LLM loads all vocabulary before reading the task (rationale: Correia et al., 2025 on RAG verbosity risk).
 
-**Pending source materials** (upload to [`docs/`](./)):
-- [x] Silva et al. — uploaded as `docs/Todos e Tema 2- Silva et al., 2026.pdf` (content not yet cross-referenced — requires pdfplumber extraction)
-- [x] Gheventer et al. — uploaded as `docs/Todos- Gheventer et al., 2026.pdf` (SLR; Kitchenham procedures; tools: Copilot, Snyk, Testim, GitLab Duo; Cohen's Kappa for inter-rater agreement)
-- [x] Souza et al. — uploaded as `docs/Tema 2- de Souza et al., 2025.pdf` (backs `data-testid` strategy)
-- [ ] Hernández-Agüero et al. (also needs a DOI/URL)
+**Source materials:**
+- [x] Silva et al. — `docs/Todos e Tema 2- Silva et al., 2026.pdf`
+- [x] Gheventer et al. — `docs/Todos- Gheventer et al., 2026.pdf`
+- [x] Souza et al. — `docs/Tema 2- de Souza et al., 2025.pdf`
+- [—] Hernández-Agüero et al. — não localizado (sem DOI/URL público); não incluído na análise final.

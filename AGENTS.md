@@ -4,8 +4,9 @@ Guidance for AI coding agents (Claude Code, Cursor, Copilot, etc.) working in
 this repository. Humans: see [`README.md`](./README.md) for the project overview
 and [`docs/PLAN.md`](./docs/PLAN.md) for the full roadmap and data contracts.
 
-> **Repo stage:** Phases 0–5 complete. Phase 6 (Summarizer) is next.
-> Always verify a path exists before editing or running it.
+> **Repo stage:** Fases 0–5 completas. Phase 7 com oracle parcial. Projeto encerrado (2026-07-08).
+> Phase 6 (Summarizer) e Phase 8 (relatório final) fora do escopo de implementação.
+> Ver [`docs/RESULTS.md`](./docs/RESULTS.md) para análise de resultados.
 
 ---
 
@@ -73,10 +74,10 @@ Follow this order every session:
 | PoC frontend — React (`app/frontend/`) | ✅ Phase 1 done (React + Vite + data-testid) |
 | Agents 0–2 quality gate + generation + judge/repair | ✅ Phase 4 done (schemas + JSON validation + runner integration) |
 | Agent 3 codegen | ✅ Phase 5 done (Selenium/PyTest codegen + validation) |
-| Summarizer | ❌ Phase 6 |
+| Summarizer | [—] Fora do escopo (Phase 6 não implementada) |
 | Context builder, glossary, ui_map | ✅ Phase 2 done |
 | Prompts (`pipeline/prompts/`), schemas (`pipeline/schemas/`) | 🚧 Agents 0–3 done; Summarizer pending |
-| Evaluation harness (`evaluation/`) | 🚧 Phase 7 harness done; human oracle files pending |
+| Evaluation harness (`evaluation/`) | 🚧 Phase 7: harness done; oracle parcial (Precision=0.833; Recall pendente) |
 
 ---
 

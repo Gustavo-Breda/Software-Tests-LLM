@@ -1,0 +1,8 @@
+{
+  "status": "APROVADA",
+  "derivavel": true,
+  "justificativa_derivabilidade": "A história de usuário e seus critérios de aceitação estão extremamente claros, detalhados e perfeitamente integrados ao contexto do sistema. Cada critério de aceitação define com precisão as condições de entrada (credenciais corretas/incorretas, limites de tentativas, formatos inválidos), as ações correspondentes e os resultados esperados observáveis tanto na API (códigos de status HTTP 200, 401, 423, 422, headers e tokens) quanto na interface do usuário (redirecionamento de tela). Isso permite a derivação direta de casos de teste de caminho feliz, fluxos negativos e de borda sem a necessidade de suposições por parte do analista de testes.",
+  "observacao_formato": "A história de usuário segue perfeitamente a estrutura recomendada de Persona, Ação e Benefício, além de mapear corretamente as telas e endpoints afetados.",
+  "problemas": [],
+  "recomendacao": "Prosseguir para geração de casos de teste."
+}

@@ -1,0 +1,40 @@
+{
+  "status_geral": "REPROVADO",
+  "pontuacao": {
+    "cobertura": 7,
+    "fidelidade_ao_requisito": 10,
+    "clareza": 10,
+    "automatizabilidade": 10
+  },
+  "casos_aprovados": [
+    "TC-02-01",
+    "TC-02-02",
+    "TC-02-03",
+    "TC-02-04",
+    "TC-02-05",
+    "TC-02-06"
+  ],
+  "casos_reprovados": [],
+  "problemas": [],
+  "cenarios_omitidos_sugeridos": [
+    {
+      "descricao": "Cadastro com nome de 80 caracteres (limite superior válido).",
+      "criterio_relacionado": "CA-02.1",
+      "justificativa": "CA-02.1 especifica que o nome deve ter '3 a 80 caracteres'. É importante testar o limite superior válido para garantir que nomes com exatamente 80 caracteres sejam aceitos.",
+      "tipo_sugerido": "borda"
+    },
+    {
+      "descricao": "Cadastro com nome de 81 caracteres (limite superior inválido).",
+      "criterio_relacionado": "CA-02.3",
+      "justificativa": "CA-02.3 especifica que 'nome fora de 3-80 caracteres' deve retornar 422. É crucial testar um nome com 81 caracteres para cobrir o limite superior inválido da validação.",
+      "tipo_sugerido": "borda"
+    },
+    {
+      "descricao": "Cadastro com e-mail em formato inválido.",
+      "criterio_relacionado": "CA-02.1",
+      "justificativa": "CA-02.1 exige 'e-mail em formato válido'. A ausência de um caso de teste para e-mail com formato inválido (ex: 'emailinvalido', 'email@dominio') deixa uma validação fundamental sem cobertura, conforme também reforçado na seção 'Regras de validação por campo' do contexto do sistema.",
+      "tipo_sugerido": "negativo"
+    }
+  ],
+  "decisao": "REPROVADO"
+}

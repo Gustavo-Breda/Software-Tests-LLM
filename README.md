@@ -9,8 +9,11 @@ of the early stages (reading requirements, extracting rules, writing baseline
 scenarios) and leave humans only the decisions that genuinely require judgment.
 
 > Academic project — UFRJ, B.Sc. in Computer Science, *Oficina de
-> Desenvolvimento de Software I*. Partial report (AV1), Group 4.
+> Desenvolvimento de Software I*. Final implementation (AV2), Group 4.
 > Advisor: Prof. Rafael de Mello.
+>
+> **Status final (2026-07-08):** Fases 0–5 completas. Oracle humano construído.
+> Precision = 0.833 com `llama3.1:8b`. Ver [`docs/RESULTS.md`](docs/RESULTS.md).
 
 ---
 
@@ -232,15 +235,23 @@ traceability matrix.
 
 ## Evaluation
 
-Evaluated via a controlled PoC against a fixed set of user stories and a human
-oracle (gabarito). Metrics follow Silva et al. to allow direct comparison.
+Avaliação controlada contra 5 histórias de usuário e um oracle humano (gabarito).
+Métricas seguem o protocolo de Silva et al. (2026) para comparação direta.
+Ver [`docs/RESULTS.md`](docs/RESULTS.md) para a análise completa.
 
-- **Test-case quality:** precision, recall, F1, omission rate, incorrect-fact
-  rate, acceptance-criteria coverage.
-- **Automation quality:** executable-scripts rate. Functional success rate stays
-  out of Phase 7 while Phase 6 is intentionally skipped.
-- **Pipeline-component efficacy:** judge precision/recall (vs. human review),
-  perceived human effort (review time vs. manual authoring time).
+| Métrica | Valor (llama3.1:8b) | Baseline Silva et al. |
+|---|---|---|
+| Precision | **0.833** (20/24) | ~0.72 |
+| Recall | A calcular | ~0.56 |
+| F1 | A calcular | ~0.62 |
+| Modo de falha dominante | Omissão + IncorrectFact | Omissão |
+| Codegen funcional | ❌ 0% (modelo insuficiente) | N/A |
+
+**Principais achados:**
+- Context builder (RAG) elevou Precision acima do baseline de Silva et al.
+- `llama3.1:8b` falhou completamente no Agente 3 — instrução-following insuficiente para o contrato de codegen.
+- Omissão de variantes de borda persiste mesmo com juiz+reparo — modo de falha dominante, consistente com a literatura.
+- Fase 6 (execução de scripts) não foi completada — depende de modelo mais capaz para o Agente 3.
 
 ---
 
@@ -279,9 +290,9 @@ oracle (gabarito). Metrics follow Silva et al. to allow direct comparison.
 └── .env.example               # LLM_PROVIDER/LLM_MODEL + API keys (no secrets)
 ```
 
-> Phases 0–5 are implemented. Phase 7 has the metrics harness, but requires
-> human oracle files under `data/golden/` before it can produce final results.
-> Phase 6 is intentionally skipped for the current implementation plan.
+> Fases 0–5 implementadas. Phase 7: harness completo + oracle humano parcialmente
+> preenchido (Precision computável; Recall pendente de `matched_generated_case_ids`).
+> Fase 6 (execução de scripts) fora do escopo de implementação.
 
 ---
 
