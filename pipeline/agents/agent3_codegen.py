@@ -139,6 +139,7 @@ def _validate_semantics(
 
     _validate_test_functions(generation, files[expected_test_file])
     _validate_test_files_do_not_embed_selectors(files)
+    _validate_pages_imports(files)
     _validate_selectors_are_documented(files, _documented_testids())
 
 
@@ -166,6 +167,29 @@ def _validate_test_functions(generation: GenerationOutput, test_file: str) -> No
             raise AgentOutputError(
                 f"Agent 3 semantic validation failed: missing test function for {case.id}."
             )
+
+
+def _validate_pages_imports(files: dict[str, str]) -> None:
+    """Ensure every name imported from pages.py in test files is actually defined there."""
+    pages_module = _parse_python("pages.py", files.get("pages.py", ""))
+    defined_in_pages = {
+        node.name
+        for node in ast.walk(pages_module)
+        if isinstance(node, (ast.ClassDef, ast.FunctionDef))
+    }
+    for filename, content in files.items():
+        if not filename.startswith("test_"):
+            continue
+        module = _parse_python(filename, content)
+        for node in ast.walk(module):
+            if not (isinstance(node, ast.ImportFrom) and node.module == "pages"):
+                continue
+            for alias in node.names:
+                if alias.name not in defined_in_pages:
+                    raise AgentOutputError(
+                        f"Agent 3 semantic validation failed: {filename} imports "
+                        f"'{alias.name}' from pages.py but it is not defined there."
+                    )
 
 
 def _validate_test_files_do_not_embed_selectors(files: dict[str, str]) -> None:
