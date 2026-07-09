@@ -3,6 +3,7 @@ name: LLM-tests
 services:
   ollama:
     container_name: LLM-tests-ollama
+    profiles: ["ollama"]
     build:
       context: .
       dockerfile: docker/Dockerfile.ollama
@@ -102,16 +103,13 @@ services:
     build:
       context: .
       dockerfile: docker/Dockerfile.pipeline
-    depends_on:
-      ollama:
-        condition: service_healthy
     volumes:
       - .:/app
     networks:
       - llm-tests-network
     environment:
-      - LLM_PROVIDER=${LLM_PROVIDER:-ollama}
-      - LLM_MODEL=${LLM_MODEL:-llama3}
+      - LLM_PROVIDER=${LLM_PROVIDER:-gemini}
+      - LLM_MODEL=${LLM_MODEL:-gemini-3.1-flash-lite}
       - GOOGLE_API_KEY=${GOOGLE_API_KEY}
       - ANTHROPIC_API_KEY=${ANTHROPIC_API_KEY}
       - GEMINI_MODEL=${GEMINI_MODEL}

@@ -112,15 +112,21 @@ ANTHROPIC_API_KEY=your-key-here
 docker compose up -d --build
 ```
 
-Services started:
+Services started by default:
 | Service | URL | Purpose |
 |---|---|---|
-| `ollama` | — | Local open models (Llama, Qwen, DeepSeek, Mistral…) |
 | `backend` | http://localhost:8001 | FastAPI PoC app |
 | `frontend` | http://localhost:5173 | React PoC app |
-| `selenium` | — | Browser for Selenium tests (enabled in Phase 6) |
+| `selenium` | http://localhost:4444 | Browser for Selenium tests (Phase 6) |
 
-### 3. Pull a local model (first run only, when using Ollama)
+> **Ollama is optional.** It is not started by default (`docker compose up -d`).
+> It is only needed when `LLM_PROVIDER=ollama`. To include it, use the `ollama` profile:
+>
+> ```bash
+> docker compose --profile ollama up -d --build
+> ```
+
+### 3. Pull a local model (only when using Ollama)
 
 ```bash
 docker compose exec ollama ollama pull llama3
