@@ -20,6 +20,27 @@ _REPO_ROOT = Path(__file__).resolve().parents[2]
 log = logging.getLogger("runner")
 
 
+def _run_pytest_streaming(story_dir: Path) -> tuple[str, int]:
+    """Run pytest, stream output to stdout in real-time, and return (full_output, returncode)."""
+    env = dict(os.environ)
+    existing = env.get("PYTHONPATH", "")
+    env["PYTHONPATH"] = str(story_dir) + (os.pathsep + existing if existing else "")
+    proc = subprocess.Popen(
+        [sys.executable, "-m", "pytest", str(story_dir), "--tb=short", "-v", "--no-header"],
+        stdout=subprocess.PIPE,
+        stderr=subprocess.STDOUT,
+        text=True,
+        cwd=str(_REPO_ROOT),
+        env=env,
+    )
+    lines: list[str] = []
+    for line in proc.stdout:
+        print(line, end="", flush=True)
+        lines.append(line)
+    proc.wait()
+    return "".join(lines).strip(), proc.returncode
+
+
 def run_phase6(
     client: Any,
     *,
@@ -65,20 +86,14 @@ def run_phase6(
             continue
 
         log.info("[%s] Running pytest against %s ...", story_id, story_dir)
-        proc = subprocess.run(
-            [sys.executable, "-m", "pytest", str(story_dir), "--tb=short", "-v", "--no-header"],
-            capture_output=True,
-            text=True,
-            cwd=str(_REPO_ROOT),
-        )
-        pytest_output = (proc.stdout + proc.stderr).strip()
+        pytest_output, returncode = _run_pytest_streaming(story_dir)
         log.info(
             "[%s] pytest done returncode=%d output_chars=%d",
             story_id,
-            proc.returncode,
+            returncode,
             len(pytest_output),
         )
-        print(f"[runner] pytest done story={story_id} returncode={proc.returncode}")
+        print(f"[runner] pytest done story={story_id} returncode={returncode}")
 
         try:
             output = summarizer.run(pytest_output, blob, client)
