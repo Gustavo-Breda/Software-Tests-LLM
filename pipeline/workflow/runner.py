@@ -103,7 +103,7 @@ def run_phase6(
                 {
                     "story_id": story_id,
                     "ok": True,
-                    "pytest_returncode": proc.returncode,
+                    "pytest_returncode": returncode,
                     "resumo": output.resumo,
                     "path": str(report_path),
                 }

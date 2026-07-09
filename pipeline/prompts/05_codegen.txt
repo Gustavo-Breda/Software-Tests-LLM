@@ -38,7 +38,8 @@ em scripts funcionais de UI contra o app PoC.
     deve ter escopo `function` e chamar `driver.quit()` no teardown.
     Exemplo mínimo de conftest.py:
     ```python
-    import os, pytest
+    import os, sys, pytest
+    sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
     from selenium import webdriver
     from selenium.webdriver.chrome.options import Options
 
