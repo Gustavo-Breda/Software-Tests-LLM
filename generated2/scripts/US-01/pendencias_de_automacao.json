@@ -1,4 +1,0 @@
-[
-  "Não há seletor de erro mapeado na UI para exibir mensagens de erro de validação de formato de e-mail (422), impossibilitando a asserção visual específica no TC-01-06.",
-  "O teste de lockout (TC-01-04) altera o estado do usuário 'bob@example.com' por 60 segundos, o que pode causar falhas em outros testes paralelos que utilizem o mesmo usuário."
-]

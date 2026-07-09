@@ -1,8 +1,0 @@
-{
-  "status": "APROVADA",
-  "derivavel": true,
-  "justificativa_derivabilidade": "Todos os critérios de aceitação são claros, verificáveis e mensuráveis, cobrindo os fluxos positivo, negativo e de borda esperados para a funcionalidade de login. As regras de negócio e validações necessárias estão explicitamente detalhadas nos critérios e são consistentes com o contexto do sistema fornecido, permitindo a derivação direta de casos de teste funcionais sem a necessidade de inferir comportamentos ou dados. A história de usuário está bem definida e os pontos de integração (telas e endpoints) são claros.",
-  "observacao_formato": "A história de usuário segue o formato esperado 'Como [papel], quero [ação], para [benefício]'.",
-  "problemas": [],
-  "recomendacao": "Prosseguir para geração de casos de teste."
-}

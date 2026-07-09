@@ -1,3 +1,0 @@
-[
-  "TC-01-08: A verificação do desbloqueio automático de conta após 60 segundos requer uma espera de tempo real que não pode ser automatizada com `time.sleep()`. O teste automatizado pode apenas verificar que a conta está bloqueada após as tentativas falhas. A parte de aguardar 60 segundos e verificar o login bem-sucedido precisa ser executada manualmente ou com ferramentas de manipulação de tempo no ambiente de teste. O teste atual verifica que a conta *permanece* bloqueada imediatamente após as tentativas falhas."
-]
