@@ -1,0 +1,155 @@
+[
+  {
+    "run": "generated1",
+    "model": "gemini-2.5-flash",
+    "story_id": "US-01",
+    "case_id": "TC-01-01",
+    "correct": true,
+    "defect_tags": [],
+    "justificativa": "Login com credenciais válidas retorna 200 com JWT e redireciona para /requests. Cobre EXP-01-01."
+  },
+  {
+    "run": "generated1",
+    "model": "gemini-2.5-flash",
+    "story_id": "US-01",
+    "case_id": "TC-01-02",
+    "correct": true,
+    "defect_tags": [],
+    "justificativa": "E-mail não cadastrado retorna 401 com mensagem genérica 'E-mail ou senha inválidos.' Cobre EXP-01-02."
+  },
+  {
+    "run": "generated1",
+    "model": "gemini-2.5-flash",
+    "story_id": "US-01",
+    "case_id": "TC-01-03",
+    "correct": true,
+    "defect_tags": [],
+    "justificativa": "Senha incorreta para e-mail cadastrado retorna 401 com a mesma mensagem genérica. Cobre EXP-01-03."
+  },
+  {
+    "run": "generated1",
+    "model": "gemini-2.5-flash",
+    "story_id": "US-01",
+    "case_id": "TC-01-04",
+    "correct": true,
+    "defect_tags": [],
+    "justificativa": "E-mail em formato inválido ('email_sem_arroba') retorna 422 Unprocessable Entity. Cobre EXP-01-08."
+  },
+  {
+    "run": "generated1",
+    "model": "gemini-2.5-flash",
+    "story_id": "US-01",
+    "case_id": "TC-01-05",
+    "correct": false,
+    "defect_tags": ["IncorrectFact"],
+    "justificativa": "Off-by-one no mecanismo de bloqueio: o caso executa 4 falhas (loop) e na 5ª tentativa espera retorno 423 Locked. CA-01.3 e EXP-01-04 especificam que o bloqueio ocorre após 5 tentativas falhas — a 6ª tentativa é que retorna 423, enquanto a 5ª ainda deve retornar 401. Gerado1/TC-01-04 do generated2 confirma o modelo correto (5 falhas + 6ª → 423). Em execução real, a 5ª tentativa retornaria 401 e o assert de bloqueio falharia."
+  },
+  {
+    "run": "generated1",
+    "model": "gemini-2.5-flash",
+    "story_id": "US-01",
+    "case_id": "TC-01-06",
+    "correct": true,
+    "defect_tags": [],
+    "justificativa": "Durante o bloqueio ativo, tentativa de login com senha correta retorna 423 Locked com header Retry-After. Cobre EXP-01-05."
+  },
+  {
+    "run": "generated1",
+    "model": "gemini-2.5-flash",
+    "story_id": "US-01",
+    "case_id": "TC-01-07",
+    "correct": true,
+    "defect_tags": [],
+    "justificativa": "4 falhas consecutivas seguidas de um login bem-sucedido zeram o contador: nova falha subsequente retorna 401 (não 423). Cobre EXP-01-07."
+  },
+  {
+    "run": "generated1",
+    "model": "gemini-2.5-flash",
+    "story_id": "US-01",
+    "case_id": "TC-01-08",
+    "correct": true,
+    "defect_tags": [],
+    "justificativa": "Após 60 segundos de bloqueio, login com credenciais válidas retorna 200 com JWT. Cobre EXP-01-06."
+  },
+  {
+    "run": "generated1",
+    "model": "gemini-2.5-flash",
+    "story_id": "US-02",
+    "case_id": "TC-02-01",
+    "correct": true,
+    "defect_tags": [],
+    "justificativa": "Cadastro com nome (17 chars), e-mail válido e senha correta retorna 201, exibe mensagem de sucesso e redireciona para /login. Cobre EXP-02-01."
+  },
+  {
+    "run": "generated1",
+    "model": "gemini-2.5-flash",
+    "story_id": "US-02",
+    "case_id": "TC-02-02",
+    "correct": true,
+    "defect_tags": [],
+    "justificativa": "E-mail duplicado retorna 409 com mensagem literal 'E-mail já cadastrado.' e a conta original permanece inalterada (verificada via login subsequente com senha original). Cobre EXP-02-04 e EXP-02-05."
+  },
+  {
+    "run": "generated1",
+    "model": "gemini-2.5-flash",
+    "story_id": "US-02",
+    "case_id": "TC-02-03",
+    "correct": true,
+    "defect_tags": [],
+    "justificativa": "Senha apenas com letras ('ApenasLetras', sem número) retorna 422. Cobre EXP-02-10."
+  },
+  {
+    "run": "generated1",
+    "model": "gemini-2.5-flash",
+    "story_id": "US-02",
+    "case_id": "TC-02-04",
+    "correct": true,
+    "defect_tags": [],
+    "justificativa": "Senha apenas com dígitos ('123456789', sem letra) retorna 422. Cobre EXP-02-09."
+  },
+  {
+    "run": "generated1",
+    "model": "gemini-2.5-flash",
+    "story_id": "US-02",
+    "case_id": "TC-02-05",
+    "correct": true,
+    "defect_tags": [],
+    "justificativa": "Senha com 7 caracteres ('Scurta1', abaixo do mínimo de 8) retorna 422. Cobre EXP-02-08."
+  },
+  {
+    "run": "generated1",
+    "model": "gemini-2.5-flash",
+    "story_id": "US-02",
+    "case_id": "TC-02-06",
+    "correct": true,
+    "defect_tags": [],
+    "justificativa": "Nome com 2 caracteres ('Eu', abaixo do mínimo de 3) retorna 422. Cobre EXP-02-06."
+  },
+  {
+    "run": "generated1",
+    "model": "gemini-2.5-flash",
+    "story_id": "US-02",
+    "case_id": "TC-02-07",
+    "correct": false,
+    "defect_tags": ["IncorrectFact"],
+    "justificativa": "O dado 'NomeMuitoLongoParaTesteComExatamenteOitentaCaracteresParaValidacaoDoLimiteSuperior' tem 82 caracteres (contados: 82), não 80. O limite superior válido é 80 chars; com 82, o backend retornaria 422 (rejeição), não 201 (sucesso esperado). O modelo não computou o comprimento real da string. EXP-02-03 (nome de exatamente 80 chars → 201) não está coberto."
+  },
+  {
+    "run": "generated1",
+    "model": "gemini-2.5-flash",
+    "story_id": "US-02",
+    "case_id": "TC-02-08",
+    "correct": true,
+    "defect_tags": [],
+    "justificativa": "Nome com comprimento acima de 80 chars retorna 422. Mesmo que o dado seja mais longo que 81, o resultado esperado (422) é correto para qualquer comprimento > 80. Cobre EXP-02-07."
+  },
+  {
+    "run": "generated1",
+    "model": "gemini-2.5-flash",
+    "story_id": "US-02",
+    "case_id": "TC-02-09",
+    "correct": true,
+    "defect_tags": [],
+    "justificativa": "E-mail em formato inválido ('emailinvalido') retorna 422 no cadastro. Cobre EXP-02-11."
+  }
+]

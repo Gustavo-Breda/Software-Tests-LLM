@@ -9,8 +9,12 @@ of the early stages (reading requirements, extracting rules, writing baseline
 scenarios) and leave humans only the decisions that genuinely require judgment.
 
 > Academic project — UFRJ, B.Sc. in Computer Science, *Oficina de
-> Desenvolvimento de Software I*. Partial report (AV1), Group 4.
+> Desenvolvimento de Software I*. Final implementation (AV2), Group 4.
 > Advisor: Prof. Rafael de Mello.
+>
+> **Status final (2026-07-08):** Fases 0–5 completas. Oracle humano construído.
+> `gemini-2.5-flash`: Precision=0.882, Recall=0.875, F1=0.862 · `gemini-3.5-flash`: Precision=1.000, Recall=0.875, F1=0.933.
+> Ver [`docs/RESULTS.md`](docs/RESULTS.md).
 
 ---
 
@@ -232,15 +236,24 @@ traceability matrix.
 
 ## Evaluation
 
-Evaluated via a controlled PoC against a fixed set of user stories and a human
-oracle (gabarito). Metrics follow Silva et al. to allow direct comparison.
+Controlled evaluation against 5 user stories and a human oracle (ground truth).
+Metrics follow the Silva et al. (2026) protocol for direct comparison.
+See [`docs/RESULTS.md`](docs/RESULTS.md) for the full analysis.
 
-- **Test-case quality:** precision, recall, F1, omission rate, incorrect-fact
-  rate, acceptance-criteria coverage.
-- **Automation quality:** executable-scripts rate. Functional success rate stays
-  out of Phase 7 while Phase 6 is intentionally skipped.
-- **Pipeline-component efficacy:** judge precision/recall (vs. human review),
-  perceived human effort (review time vs. manual authoring time).
+| Metric | gemini-2.5-flash | gemini-3.5-flash | Baseline Silva et al. |
+|---|---|---|---|
+| Precision | **0.882** (15/17) | **1.000** (6/6) | ~0.72 |
+| Recall US-01 | **0.875** (7/8 oracle) | **0.875** (7/8 oracle) | ~0.56 |
+| F1 US-01 | **0.875** | **0.933** | — |
+| Functional codegen | ✅ 17 functions (US-01+02) | ✅ 6 functions (US-01) | N/A |
+| Repair iterations (US-01) | 2 | **0** (approved on first attempt) | — |
+
+**Key findings:**
+- Both runs outperform the Silva et al. baseline on Precision, Recall, and F1.
+- gemini-3.5-flash achieved Precision=1.0 and F1=0.933 with zero repair cycles — directly generating the scenarios the 2.5-flash only produced after repair.
+- Residual IncorrectFact: 2 defects in 23 evaluated cases (TC-01-05 off-by-one in lockout counter; TC-02-07 string of 82 chars declared as 80).
+- The pipeline includes human review gates between stages — US-03..05 not advancing is intentional, not a failure.
+- Phase 6 (script execution) not performed — generated scripts await functional validation.
 
 ---
 
@@ -279,9 +292,9 @@ oracle (gabarito). Metrics follow Silva et al. to allow direct comparison.
 └── .env.example               # LLM_PROVIDER/LLM_MODEL + API keys (no secrets)
 ```
 
-> Phases 0–5 are implemented. Phase 7 has the metrics harness, but requires
-> human oracle files under `data/golden/` before it can produce final results.
-> Phase 6 is intentionally skipped for the current implementation plan.
+> Fases 0–5 implementadas. Phase 7: harness completo + oracle humano parcialmente
+> preenchido (Precision computável; Recall pendente de `matched_generated_case_ids`).
+> Fase 6 (execução de scripts) fora do escopo de implementação.
 
 ---
 

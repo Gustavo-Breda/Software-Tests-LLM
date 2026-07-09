@@ -16,16 +16,22 @@ em scripts funcionais de UI contra o app PoC.
 {approved_test_cases_json}
 
 [REGRAS OBRIGATÓRIAS]
-1. Retorne exclusivamente JSON válido conforme `pipeline/schemas/agent3_out.json`.
+1. Retorne exclusivamente JSON válido conforme `pipeline/schemas/agent3_out.json`. Em particular, o array `pendencias_de_automacao` deve conter apenas strings descrevendo as pendências (não objetos).
 2. Gere `conftest.py`, `pages.py` e exatamente um arquivo `test_{story_id}.py` em minúsculas.
 3. Use PyTest + Selenium WebDriver.
 4. Use Page Object Model: seletores e ações de tela ficam em `pages.py`; funções `test_*` não devem conter seletores raw.
-5. Use seletores `data-testid` documentados no UI map. Não invente seletores. Se faltar seletor, registre em `pendencias_de_automacao`.
-6. Não use `time.sleep()`. Use `WebDriverWait` com expected conditions explícitas.
-7. Crie uma função por caso automatizável: `test_{case_id}_{descricao_curta}`, com comentário contendo ID e objetivo.
+5. Use seletores `data-testid` documentados no UI map. Atenção: o Selenium NÃO possui `By.DATA_TEST_ID`. Para localizar elementos por data-testid, use `By.CSS_SELECTOR` no formato `(By.CSS_SELECTOR, "[data-testid=nome-do-seletor]")`. Não invente seletores. Se faltar seletor, registre em `pendencias_de_automacao`.
+6. É ABSOLUTAMENTE PROIBIDO usar `time.sleep()` em qualquer parte de qualquer arquivo (inclusive conftest.py, pages.py e testes). Se houver necessidade de esperas ou lockout (ex: lockout de 60 segundos), não utilize `time.sleep()`; em vez disso, utilize `WebDriverWait` ou registre o caso como limitação em `pendencias_de_automacao` e remova a espera do teste automatizado.
+7. Crie UMA função por caso automatizável com nome exatamente no formato `test_{case_id_em_minúsculas}_{descricao_curta}`.
+   Exemplo: caso TC-02-01 → `def test_tc_02_01_cadastro_bem_sucedido(driver):`.
+   PROIBIDO usar @pytest.mark.parametrize para agrupar casos distintos em uma única função.
+   PROIBIDO criar funções genéricas como `test_case`, `test_run`, `test_all`.
+   Cada caso de teste deve ter EXATAMENTE uma função própria identificável pelo seu ID.
 8. Dados de teste devem ficar em fixtures no `conftest.py`, nunca literais dentro das funções `test_*`.
 9. Prefira código simples, determinístico e coletável por PyTest sem executar browser durante import.
 10. Se um caso exigir comportamento impossível sem execução longa ou controle de tempo, automatize a parte viável e registre pendência.
+11. Se um caso de teste estiver marcado como 'automatizavel: true' mas for um teste focado em API (como validações HTTP diretas de parâmetros), você DEVE mesmo assim gerar a função de teste correspondente. Para testes de API, você pode usar chamadas diretas com a biblioteca `requests` para verificar códigos HTTP e payloads. Nunca omita funções de teste para casos marcados como automatizáveis.
+12. Escreva o código dos testes e page objects de forma extremamente enxuta, objetiva e concisa. Evite comentários longos, explicações prolixas e código redundante, para garantir que todos os arquivos caibam dentro do limite de tamanho da resposta do modelo e evitar truncamento.
 
 [FORMATO DE SAÍDA]
 {
@@ -34,5 +40,7 @@ em scripts funcionais de UI contra o app PoC.
     "pages.py": "...",
     "test_us_01.py": "..."
   },
-  "pendencias_de_automacao": []
+  "pendencias_de_automacao": [
+    "Descrição de alguma pendência de automação (ex: seletor ausente para o botão X)"
+  ]
 }

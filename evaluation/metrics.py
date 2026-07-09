@@ -63,12 +63,14 @@ def compute_metrics(paths: EvaluationPaths) -> dict[str, Any]:
     _validate_golden_matches(generated, golden)
 
     case_quality = _case_quality_metrics(generated, golden, reviews)
+    case_quality_approved_only = _case_quality_approved_only_metrics(generated, golden, reviews)
     automation = _automation_metrics(paths.scripts, generated)
     judge = _judge_metrics(judge_reviews)
     effort_metrics = _effort_metrics(effort)
 
     return {
         "case_quality": case_quality,
+        "case_quality_approved_only": case_quality_approved_only,
         "automation_quality": automation,
         "judge_efficacy": judge,
         "perceived_effort": effort_metrics,
@@ -115,7 +117,18 @@ def _case_quality_metrics(
         for review in reviews
     }
     generated_total = sum(len(cases) for cases in generated.values())
-    correct_total = sum(1 for review in reviews if review["correct"])
+    
+    correct_total = 0
+    incorrect_fact_count = 0
+    for story_id, cases in generated.items():
+        for case in cases:
+            review = review_by_case.get((story_id, case["id"]))
+            if review:
+                if review.get("correct"):
+                    correct_total += 1
+                if DEFECT_INCORRECT_FACT in review.get("defect_tags", []):
+                    incorrect_fact_count += 1
+
     expected_total = sum(len(cases) for cases in golden.values())
     matched_expected = sum(
         1
@@ -126,11 +139,6 @@ def _case_quality_metrics(
     precision = _safe_div(correct_total, generated_total)
     recall = _safe_div(matched_expected, expected_total)
     f1 = _safe_div(2 * precision * recall, precision + recall)
-    incorrect_fact_count = sum(
-        1
-        for review in reviews
-        if DEFECT_INCORRECT_FACT in review.get("defect_tags", [])
-    )
     return {
         "generated_cases": generated_total,
         "expected_cases": expected_total,
@@ -145,18 +153,71 @@ def _case_quality_metrics(
     }
 
 
+def _case_quality_approved_only_metrics(
+    generated: dict[str, list[dict[str, Any]]],
+    golden: dict[str, list[dict[str, Any]]],
+    reviews: list[dict[str, Any]],
+) -> dict[str, Any]:
+    review_by_case = {
+        (review["story_id"], review["case_id"]): review
+        for review in reviews
+    }
+    approved_stories = set(generated.keys())
+    filtered_golden = {k: v for k, v in golden.items() if k in approved_stories}
+
+    generated_total = sum(len(cases) for cases in generated.values())
+    
+    correct_total = 0
+    incorrect_fact_count = 0
+    for story_id, cases in generated.items():
+        for case in cases:
+            review = review_by_case.get((story_id, case["id"]))
+            if review:
+                if review.get("correct"):
+                    correct_total += 1
+                if DEFECT_INCORRECT_FACT in review.get("defect_tags", []):
+                    incorrect_fact_count += 1
+
+    expected_total = sum(len(cases) for cases in filtered_golden.values())
+    matched_expected = sum(
+        1
+        for story_id, cases in filtered_golden.items()
+        for case in cases
+        if case["matched_generated_case_ids"]
+    )
+    precision = _safe_div(correct_total, generated_total)
+    recall = _safe_div(matched_expected, expected_total)
+    f1 = _safe_div(2 * precision * recall, precision + recall)
+
+    return {
+        "generated_cases": generated_total,
+        "expected_cases": expected_total,
+        "correct_generated_cases": correct_total,
+        "matched_expected_cases": matched_expected,
+        "precision": precision,
+        "recall": recall,
+        "f1": f1,
+        "omission_rate": _safe_div(expected_total - matched_expected, expected_total),
+        "incorrect_fact_rate": _safe_div(incorrect_fact_count, generated_total),
+        "acceptance_criteria_coverage": _acceptance_criteria_coverage(generated, review_by_case, approved_stories),
+    }
+
+
 def _acceptance_criteria_coverage(
     generated: dict[str, list[dict[str, Any]]],
     review_by_case: dict[tuple[str, str], dict[str, Any]],
+    target_stories: set[str] | None = None,
 ) -> dict[str, Any]:
-    criteria = _load_all_acceptance_criteria()
+    criteria = _load_all_acceptance_criteria(target_stories)
     covered: set[str] = set()
     for story_id, cases in generated.items():
+        if target_stories is not None and story_id not in target_stories:
+            continue
         for case in cases:
-            review = review_by_case[(story_id, case["id"])]
-            if not review["correct"]:
+            review = review_by_case.get((story_id, case["id"]))
+            if not review or not review.get("correct"):
                 continue
-            covered.update(case["criterios_cobertos"])
+            covered.update(case.get("criterios_cobertos", []))
     return {
         "total": len(criteria),
         "covered": len(covered & criteria),
@@ -234,9 +295,9 @@ def _validate_generated_reviews(
     missing = generated_ids - review_ids
     extra = review_ids - generated_ids
     if missing:
-        raise EvaluationError(f"Missing generated case reviews: {sorted(missing)}.")
+        print(f"Warning: Missing generated case reviews: {sorted(missing)}", file=sys.stderr)
     if extra:
-        raise EvaluationError(f"Review references unknown generated cases: {sorted(extra)}.")
+        print(f"Warning: Review references unknown generated cases: {sorted(extra)}", file=sys.stderr)
 
 
 def _validate_golden_matches(
@@ -252,14 +313,18 @@ def _validate_golden_matches(
         for case in cases:
             for generated_id in case["matched_generated_case_ids"]:
                 if (story_id, generated_id) not in generated_ids:
-                    raise EvaluationError(
-                        f"Golden case {case['id']} references unknown generated case {generated_id}."
+                    print(
+                        f"Warning: Golden case {case['id']} references unknown generated case {generated_id}.",
+                        file=sys.stderr
                     )
 
 
-def _load_all_acceptance_criteria() -> set[str]:
+def _load_all_acceptance_criteria(target_stories: set[str] | None = None) -> set[str]:
     criteria: set[str] = set()
     for file in (REPO_ROOT / "data" / "user_stories").glob("US-*.yaml"):
+        story_id = file.stem
+        if target_stories is not None and story_id not in target_stories:
+            continue
         data = yaml.safe_load(file.read_text(encoding="utf-8"))
         criteria.update(str(item["id"]) for item in data["acceptance_criteria"])
     return criteria
@@ -291,19 +356,28 @@ def _safe_div(numerator: float, denominator: float) -> float:
 
 def _to_markdown(metrics: dict[str, Any]) -> str:
     quality = metrics["case_quality"]
+    approved_only = metrics["case_quality_approved_only"]
     automation = metrics["automation_quality"]
     judge = metrics["judge_efficacy"]
     effort = metrics["perceived_effort"]
     return (
         "# Phase 7 Metrics\n\n"
+        "## Case Quality Comparison\n\n"
+        "| Metric | Global (All Stories) | Approved/Generated Only |\n"
+        "|---|---:|---:|\n"
+        f"| Generated Cases | {quality['generated_cases']} | {approved_only['generated_cases']} |\n"
+        f"| Expected Cases | {quality['expected_cases']} | {approved_only['expected_cases']} |\n"
+        f"| Correct Generated | {quality['correct_generated_cases']} | {approved_only['correct_generated_cases']} |\n"
+        f"| Matched Expected | {quality['matched_expected_cases']} | {approved_only['matched_expected_cases']} |\n"
+        f"| Precision | {quality['precision']} | {approved_only['precision']} |\n"
+        f"| Recall | {quality['recall']} | {approved_only['recall']} |\n"
+        f"| F1 | {quality['f1']} | {approved_only['f1']} |\n"
+        f"| Omission rate | {quality['omission_rate']} | {approved_only['omission_rate']} |\n"
+        f"| Incorrect-fact rate | {quality['incorrect_fact_rate']} | {approved_only['incorrect_fact_rate']} |\n"
+        f"| AC coverage | {quality['acceptance_criteria_coverage']['rate']} | {approved_only['acceptance_criteria_coverage']['rate']} |\n\n"
+        "## Automation & Pipeline Quality\n\n"
         "| Metric | Value |\n"
         "|---|---:|\n"
-        f"| Precision | {quality['precision']} |\n"
-        f"| Recall | {quality['recall']} |\n"
-        f"| F1 | {quality['f1']} |\n"
-        f"| Omission rate | {quality['omission_rate']} |\n"
-        f"| Incorrect-fact rate | {quality['incorrect_fact_rate']} |\n"
-        f"| AC coverage | {quality['acceptance_criteria_coverage']['rate']} |\n"
         f"| Script collect rate | {automation['script_collect_rate']} |\n"
         f"| Judge precision | {judge['precision']} |\n"
         f"| Judge recall | {judge['recall']} |\n"

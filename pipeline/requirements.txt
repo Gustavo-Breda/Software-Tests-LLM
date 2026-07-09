@@ -13,3 +13,6 @@ tqdm>=4.67,<5.0
 pyyaml>=6.0,<7.0
 pytest>=8.0,<9.0
 selenium>=4.20,<5.0
+
+# lib that agents tends to use
+webdriver-manager>=4.0

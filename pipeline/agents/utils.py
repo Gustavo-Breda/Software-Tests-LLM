@@ -55,7 +55,7 @@ def load_prompt(name: str) -> str:
 
 
 def extract_json_object(text: str) -> dict[str, Any]:
-    decoder = json.JSONDecoder()
+    decoder = json.JSONDecoder(strict=False)
     for index, char in enumerate(text):
         if char != "{":
             continue

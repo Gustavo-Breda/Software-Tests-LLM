@@ -303,6 +303,11 @@ def _validate_semantics(
         raise AgentOutputError(
             "Agent 2 semantic validation failed: same case cannot be both approved and rejected."
         )
+    unclassified = valid_case_ids - approved - rejected
+    if unclassified:
+        raise AgentOutputError(
+            f"Agent 2 semantic validation failed: cases not classified (neither approved nor rejected): {sorted(unclassified)}."
+        )
     if data["status_geral"] != data["decisao"]:
         raise AgentOutputError(
             "Agent 2 semantic validation failed: status_geral must match decisao."
@@ -359,7 +364,6 @@ def _merge_preserved_approved_cases(
     }
     preserve_ids = set(judge.casos_aprovados) - problem_ids
     previous_by_id = {case.id: case for case in previous.test_cases}
-    repaired_by_id = {case.id: case for case in repaired.test_cases}
 
     merged_cases: list[TestCase] = []
     seen: set[str] = set()
