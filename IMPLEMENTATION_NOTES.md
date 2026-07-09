@@ -51,11 +51,11 @@
 - **Impacto:** acesso via browser no host (`http://localhost:5173`) agora chama
   `http://backend:8000` que **não é resolvível fora do Docker**. Para dev no host:
   ```bash
-  VITE_API_BASE_URL=http://localhost:8001 docker compose up frontend
+  VITE_API_BASE_URL=http://localhost:8000 docker compose up frontend
   ```
   Ou adicionar ao `.env` local (não commitado):
   ```
-  VITE_API_BASE_URL=http://localhost:8001
+  VITE_API_BASE_URL=http://localhost:8000
   ```
 
 **Prompt 05_codegen.txt:** scripts novos gerados pelo Agent 3 já incluirão `webdriver.Remote`.

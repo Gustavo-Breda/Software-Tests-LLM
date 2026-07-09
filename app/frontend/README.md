@@ -34,7 +34,7 @@ pnpm install
 pnpm dev
 ```
 
-Open `http://localhost:5173`. The backend must be running on `http://localhost:8001`.
+Open `http://localhost:5173`. The backend must be running on `http://localhost:8000`.
 
 ## Routes
 
@@ -54,4 +54,4 @@ See [`pipeline/context/ui_map.json`](../../pipeline/context/ui_map.json) for the
 
 | Variable | Default | Description |
 |---|---|---|
-| `VITE_API_BASE_URL` | `http://localhost:8001` | Backend base URL |
+| `VITE_API_BASE_URL` | `http://localhost:8000` | Backend base URL |

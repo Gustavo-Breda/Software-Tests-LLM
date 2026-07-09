@@ -1,6 +1,6 @@
 import type { AuthResponse, User, ServiceRequest, RequestListResponse, RequestPriority } from './types'
 
-const BASE: string = import.meta.env.VITE_API_BASE_URL || 'http://localhost:8001'
+const BASE: string = import.meta.env.VITE_API_BASE_URL || 'http://localhost:8000'
 
 export class ApiError extends Error {
     constructor(

@@ -115,7 +115,7 @@ docker compose up -d --build
 Services started by default:
 | Service | URL | Purpose |
 |---|---|---|
-| `backend` | http://localhost:8001 | FastAPI PoC app |
+| `backend` | http://localhost:8000 | FastAPI PoC app |
 | `frontend` | http://localhost:5173 | React PoC app |
 | `selenium` | http://localhost:4444 | Browser for Selenium tests (Phase 6) |
 

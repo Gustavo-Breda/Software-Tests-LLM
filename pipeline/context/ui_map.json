@@ -3,7 +3,7 @@
 
     "base_urls": {
         "frontend": "http://localhost:5173",
-        "backend":  "http://localhost:8001"
+        "backend":  "http://localhost:8000"
     },
 
     "api": {

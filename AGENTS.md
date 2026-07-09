@@ -131,7 +131,7 @@ The full stack runs in Docker. No host Python/Node needed.
 |---|---|---|
 | `ollama` | 11434 | Local open models (Llama, Qwen, DeepSeek, Mistral…) |
 | `pipeline` | — | Pipeline runner + generated tests |
-| `backend` | 8001 | FastAPI PoC app |
+| `backend` | 8000 | FastAPI PoC app |
 | `frontend` | 5173 | React PoC app |
 | `selenium` | 4444 | Browser for generated tests (commented out until Phase 6) |
 

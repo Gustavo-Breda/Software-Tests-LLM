@@ -29,7 +29,7 @@ services:
       context: ./
       dockerfile: docker/Dockerfile.backend
     ports:
-      - "8001:8000"
+      - "8000:8000"
     volumes:
       - ./app/backend:/app
       - backend_data:/data
@@ -60,17 +60,11 @@ services:
       - "5173:5173"
     environment:
       - CHOKIDAR_USEPOLLING=true
-      # http://backend:8000 is the Docker-internal hostname.
-      # Selenium tests run inside Docker and the browser (in the selenium container)
-      # resolves this via the shared network. Host browser access requires overriding
-      # this to http://localhost:8001 (e.g. `VITE_API_BASE_URL=http://localhost:8001
-      # docker compose up frontend`).
       - VITE_API_BASE_URL=${VITE_API_BASE_URL:-http://backend:8000}
     depends_on:
       backend:
         condition: service_healthy
     healthcheck:
-      # node:22-alpine has wget via BusyBox
       test: ["CMD-SHELL", "wget -qO- http://localhost:5173/ > /dev/null || exit 1"]
       interval: 10s
       timeout: 10s
