@@ -32,6 +32,34 @@ em scripts funcionais de UI contra o app PoC.
 10. Se um caso exigir comportamento impossível sem execução longa ou controle de tempo, automatize a parte viável e registre pendência.
 11. Se um caso de teste estiver marcado como 'automatizavel: true' mas for um teste focado em API (como validações HTTP diretas de parâmetros), você DEVE mesmo assim gerar a função de teste correspondente. Para testes de API, você pode usar chamadas diretas com a biblioteca `requests` para verificar códigos HTTP e payloads. Nunca omita funções de teste para casos marcados como automatizáveis.
 12. Escreva o código dos testes e page objects de forma extremamente enxuta, objetiva e concisa. Evite comentários longos, explicações prolixas e código redundante, para garantir que todos os arquivos caibam dentro do limite de tamanho da resposta do modelo e evitar truncamento.
+13. No `conftest.py`, use `webdriver.Remote` com `command_executor` lido da variável de ambiente
+    `SELENIUM_REMOTE_URL` (padrão: `"http://selenium:4444/wd/hub"`). Nunca instancie um driver local
+    (Chrome, Firefox). Adicione `--headless` e `--no-sandbox` nas ChromeOptions. A fixture `driver`
+    deve ter escopo `function` e chamar `driver.quit()` no teardown.
+    Exemplo mínimo de conftest.py:
+    ```python
+    import os, pytest
+    from selenium import webdriver
+    from selenium.webdriver.chrome.options import Options
+
+    SELENIUM_URL = os.environ.get("SELENIUM_REMOTE_URL", "http://selenium:4444/wd/hub")
+    BASE_URL = os.environ.get("BASE_URL", "http://frontend:5173")
+
+    @pytest.fixture
+    def base_url():
+        return BASE_URL
+
+    @pytest.fixture
+    def driver():
+        opts = Options()
+        opts.add_argument("--headless")
+        opts.add_argument("--no-sandbox")
+        opts.add_argument("--disable-dev-shm-usage")
+        d = webdriver.Remote(command_executor=SELENIUM_URL, options=opts)
+        yield d
+        d.quit()
+    ```
+14. Toda navegação nos page objects deve usar `base_url` injetado via fixture, nunca URLs literais.
 
 [FORMATO DE SAÍDA]
 {

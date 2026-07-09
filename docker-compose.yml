@@ -38,6 +38,12 @@ services:
       - RESET_DB_ON_STARTUP=${RESET_DB_ON_STARTUP:-1}
       - DATABASE_URL=sqlite:////data/app.db
       - CORS_ORIGINS=http://localhost:5173,http://frontend:5173
+    healthcheck:
+      test: ["CMD-SHELL", "curl -f http://localhost:8000/docs --max-time 5 || exit 1"]
+      interval: 10s
+      timeout: 10s
+      retries: 5
+      start_period: 15s
     networks:
       - llm-tests-network
 
@@ -53,19 +59,43 @@ services:
       - "5173:5173"
     environment:
       - CHOKIDAR_USEPOLLING=true
-      - VITE_API_BASE_URL=http://localhost:8001
+      # http://backend:8000 is the Docker-internal hostname.
+      # Selenium tests run inside Docker and the browser (in the selenium container)
+      # resolves this via the shared network. Host browser access requires overriding
+      # this to http://localhost:8001 (e.g. `VITE_API_BASE_URL=http://localhost:8001
+      # docker compose up frontend`).
+      - VITE_API_BASE_URL=${VITE_API_BASE_URL:-http://backend:8000}
+    depends_on:
+      backend:
+        condition: service_healthy
+    healthcheck:
+      # node:22-alpine has wget via BusyBox
+      test: ["CMD-SHELL", "wget -qO- http://localhost:5173/ > /dev/null || exit 1"]
+      interval: 10s
+      timeout: 10s
+      retries: 10
+      start_period: 20s
     networks:
       - llm-tests-network
 
-  # selenium:
-  #     container_name: LLM-tests-selenium
-  #     image: selenium/standalone-chrome:latest
-  #     ports:
-  #         - "4444:4444"
-  #         - "7900:7900"
-  #     shm_size: "2gb"
-  #     networks:
-  #         - llm-tests-network
+  selenium:
+    container_name: LLM-tests-selenium
+    image: selenium/standalone-chrome:latest
+    ports:
+      - "4444:4444"
+      - "7900:7900"
+    shm_size: "2gb"
+    depends_on:
+      frontend:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD-SHELL", "curl -f http://localhost:4444/wd/hub/status --max-time 5 || exit 1"]
+      interval: 5s
+      timeout: 10s
+      retries: 15
+      start_period: 20s
+    networks:
+      - llm-tests-network
 
   pipeline:
     container_name: LLM-tests-pipeline
@@ -88,6 +118,8 @@ services:
       - CLAUDE_MODEL=${CLAUDE_MODEL}
       - OLLAMA_BASE_URL=${OLLAMA_BASE_URL:-http://ollama:11434}
       - OLLAMA_PULL_MODELS=${OLLAMA_PULL_MODELS}
+      - SELENIUM_REMOTE_URL=${SELENIUM_REMOTE_URL:-http://selenium:4444/wd/hub}
+      - BASE_URL=${BASE_URL:-http://frontend:5173}
 
 networks:
   llm-tests-network:

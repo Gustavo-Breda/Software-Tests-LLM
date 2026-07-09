@@ -1,39 +1,5 @@
-# Phase 4 — Agent 2: LLM-as-a-Judge + Repair Loop
-#
-# Avalia os casos gerados pelo Agent 1 em quatro dimensões e decide se o
-# batch inteiro está APROVADO ou REPROVADO. Casos reprovados voltam para o
-# Agent 1 via repair branch (prompt 04_repair.txt), limitado a N=3 tentativas.
-#
-# O repair loop fica aqui (não no runner) para manter o estado de tentativas
-# encapsulado. O runner só chama judge(blob, cases, client) e recebe o resultado final.
-#
-# Prompt avaliação : pipeline/prompts/03_judge.txt
-# Prompt reparo    : pipeline/prompts/04_repair.txt  (repassado ao Agent 1)
-# Schema           : pipeline/schemas/agent2_out.json
-#
-# Contrato de saída (PLAN.md §7):
-#   {
-#     "status_geral": "APROVADO" | "REPROVADO",
-#     "pontuacao": {
-#       "cobertura": 0-10,
-#       "fidelidade_ao_requisito": 0-10,
-#       "clareza": 0-10,
-#       "automatizabilidade": 0-10
-#     },
-#     "casos_aprovados": ["TC-XX-YY", ...],
-#     "casos_reprovados": ["TC-XX-ZZ", ...],
-#     "problemas": [{...}],
-#     "cenarios_omitidos_sugeridos": [{...}],
-#     "decisao": "APROVADO" | "REPROVADO"
-#   }
-#
-# Estratégia de avaliação (evitar viés):
-#   - Pontuar por DIMENSÃO, não só pass/fail global — juiz que só reprova tudo
-#     tem viés de estilo; medir judge precision/recall vs. oráculo humano (Phase 7).
-#   - Estratificar por tipo (positivo / negativo / borda) para que casos positivos
-#     fáceis não inflacionem o score (cf. Qin et al. DAJ, PLAN.md §8).
-
 import json
+
 from dataclasses import asdict, dataclass, field
 from typing import Any
 

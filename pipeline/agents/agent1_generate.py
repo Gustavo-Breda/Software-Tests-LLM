@@ -1,21 +1,9 @@
-# Phase 3 — Agent 1: Test Case Generation
-#
-# Gera casos de teste estruturados (JSON) a partir da story + contexto.
-# Também é chamado na fase de reparo (Phase 4) com o prompt 04_repair.txt
-# e o feedback do juiz — NÃO criar uma função separada para reparo,
-# só trocar o prompt e adicionar o campo "correcao_aplicada" no output.
-#
-# Técnicas: Equivalence Partitioning + Boundary Analysis; persona de QA Sênior/ISTQB.
-# Prompt geração : pipeline/prompts/02_generate.txt
-# Prompt reparo  : pipeline/prompts/04_repair.txt
-# Schema         : pipeline/schemas/agent1_out.json
-#
-import json
 import re
+import json
+import yaml
+
 from dataclasses import asdict, dataclass, field
 from typing import Any
-
-import yaml
 
 from ..llm.adapter import LLMClient, LLMResponse
 from ..context import ContextBlob

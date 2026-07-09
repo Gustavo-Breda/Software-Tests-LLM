@@ -1,9 +1,10 @@
 import json
+from unittest.mock import MagicMock, patch
 
 from pipeline.context import ContextBuilder
 from pipeline.agents.utils import RawAgentResponseError
 from pipeline.llm.adapter import LLMClient, LLMResponse
-from pipeline.workflow.runner import _save_raw_error, run_phase4, run_phase5
+from pipeline.workflow.runner import _save_raw_error, run_phase4, run_phase5, run_phase6
 
 
 class SequenceClient(LLMClient):
@@ -342,3 +343,67 @@ def test_runner_saves_raw_response_with_context_label_without_overwrite(tmp_path
     assert second_path == tmp_path / "raw" / "agent1" / "US-03_repair-attempt-1.json"
     assert json.loads(first_path.read_text(encoding="utf-8"))["context_label"] == "generate"
     assert json.loads(second_path.read_text(encoding="utf-8"))["raw_response"] == '{"second": true}'
+
+
+def _summarizer_payload(story_number: str) -> dict:
+    story = ContextBuilder.from_repo().build(f"US-{story_number}").story
+    criteria = story.acceptance_criteria
+    return {
+        "resumo": {"total_casos": 1, "aprovados": 1, "reprovados": 0, "taxa_execucao": 1.0},
+        "falhas": [],
+        "cobertura_por_criterio": [
+            {
+                "criterio_id": c["id"],
+                "coberto": True,
+                "casos_associados": [f"TC-{story_number}-01"],
+            }
+            for c in criteria[:1]
+        ],
+        "alertas_de_qualidade": [],
+        "proximos_passos": [],
+    }
+
+
+def test_runner_phase6_summarizes_test_results(tmp_path):
+    script_dir = tmp_path / "scripts" / "US-01"
+    script_dir.mkdir(parents=True)
+    (script_dir / "test_us_01.py").write_text(
+        "def test_tc_01_01_login_valido(): assert True\n"
+    )
+
+    fake_pytest_output = (
+        "test_us_01.py::test_tc_01_01_login_valido PASSED\n"
+        "1 passed in 0.1s"
+    )
+    client = SequenceClient([json.dumps(_summarizer_payload("01"))])
+
+    mock_proc = MagicMock()
+    mock_proc.stdout = fake_pytest_output
+    mock_proc.stderr = ""
+    mock_proc.returncode = 0
+
+    with patch("pipeline.workflow.runner.subprocess.run", return_value=mock_proc):
+        aggregate, exit_code = run_phase6(
+            client,
+            scripts_dir=tmp_path / "scripts",
+            reports_dir=tmp_path / "reports",
+        )
+
+    assert exit_code == 0
+    assert aggregate["summary"]["ok"] == 1
+    assert aggregate["summary"]["errors"] == 0
+    assert (tmp_path / "reports" / "US-01.json").is_file()
+    report = json.loads((tmp_path / "reports" / "US-01.json").read_text())
+    assert report["resumo"]["total_casos"] == 1
+    assert report["resumo"]["aprovados"] == 1
+
+
+def test_runner_phase6_fails_when_scripts_dir_missing(tmp_path):
+    client = SequenceClient([])
+    aggregate, exit_code = run_phase6(
+        client,
+        scripts_dir=tmp_path / "nonexistent",
+        reports_dir=tmp_path / "reports",
+    )
+    assert exit_code == 1
+    assert aggregate["summary"]["stories_processed"] == 0

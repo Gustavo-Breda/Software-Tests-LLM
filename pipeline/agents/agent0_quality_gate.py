@@ -1,17 +1,8 @@
-# Phase 3 — Agent 0: Story Quality Gate
-#
-# Avalia a user story e os critérios de aceitação ANTES de qualquer geração.
-# Retorna APROVADA ou PRECISA_DE_ESCLARECIMENTO com problemas detalhados.
-# Rubrica: critérios INVEST (Hernández-Agüero et al.) — Independent, Negotiable,
-# Valuable, Estimable, Small, Testable.
-#
-# Prompt : pipeline/prompts/01_quality_gate.txt
-# Schema : pipeline/schemas/agent0_out.json
+import yaml
 import json
+
 from dataclasses import asdict, dataclass, field
 from typing import Any
-
-import yaml
 
 from ..llm.adapter import LLMClient, LLMResponse
 from ..context import ContextBlob

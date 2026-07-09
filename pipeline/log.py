@@ -1,4 +1,5 @@
 import logging
+
 from pathlib import Path
 
 _FMT = "%(asctime)s | %(levelname)-8s | %(name)-10s | %(message)s"

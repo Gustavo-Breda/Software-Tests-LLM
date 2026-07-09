@@ -1,0 +1,53 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://software-tests-llm.local/schemas/summarizer_out.json",
+  "title": "Summarizer Agent Output",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["resumo", "falhas", "cobertura_por_criterio", "alertas_de_qualidade", "proximos_passos"],
+  "properties": {
+    "resumo": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["total_casos", "aprovados", "reprovados", "taxa_execucao"],
+      "properties": {
+        "total_casos": {"type": "integer", "minimum": 0},
+        "aprovados":   {"type": "integer", "minimum": 0},
+        "reprovados":  {"type": "integer", "minimum": 0},
+        "taxa_execucao": {"type": "number", "minimum": 0.0, "maximum": 1.0}
+      }
+    },
+    "falhas": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["caso_id", "categoria", "descricao", "evidencia"],
+        "properties": {
+          "caso_id":   {"type": "string", "minLength": 1},
+          "categoria": {
+            "type": "string",
+            "enum": ["sistema", "teste", "seletor", "dado", "ambiente"]
+          },
+          "descricao": {"type": "string", "minLength": 1},
+          "evidencia": {"type": "string"}
+        }
+      }
+    },
+    "cobertura_por_criterio": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["criterio_id", "coberto", "casos_associados"],
+        "properties": {
+          "criterio_id":      {"type": "string", "minLength": 1},
+          "coberto":          {"type": "boolean"},
+          "casos_associados": {"type": "array", "items": {"type": "string"}}
+        }
+      }
+    },
+    "alertas_de_qualidade": {"type": "array", "items": {"type": "string"}},
+    "proximos_passos":      {"type": "array", "items": {"type": "string"}}
+  }
+}

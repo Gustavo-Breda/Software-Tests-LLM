@@ -1,37 +1,7 @@
-# Phase 5 — Agent 3: Selenium/PyTest Code Generation
-#
-# Recebe os casos de teste aprovados (Agent 1/2) e gera três arquivos Python
-# prontos para execução com PyTest + Selenium.
-#
-# Regras obrigatórias de geração (PLAN.md §7 e AGENTS.md):
-#   - Page Object Model: cada tela é uma classe em pages.py; ZERO seletores
-#     raw dentro das funções de teste.
-#   - Seletores: preferir data-testid (de pipeline/context/ui_map.json);
-#     só cair em CSS/XPath se o seletor não estiver documentado — nesse caso
-#     registrar em pendencias_de_automacao.
-#   - Sem time.sleep() — usar WebDriverWait com condições explícitas.
-#   - Uma função por caso: test_{id}_{descricao_curta}
-#     com comentário indicando o ID e objetivo do caso.
-#   - Dados de teste vindos de fixtures/JSON, nunca hardcoded na função.
-#
-# Prompt : pipeline/prompts/05_codegen.txt
-# Schema : pipeline/schemas/agent3_out.json
-#
-# Contrato de saída (PLAN.md §7):
-#   {
-#     "arquivos": {
-#       "conftest.py": "...código...",
-#       "pages.py":    "...código...",
-#       "test_us_XX.py": "...código..."
-#     },
-#     "pendencias_de_automacao": [
-#       "Seletor do botão X não documentado em ui_map — automatização parcial"
-#     ]
-#   }
-
+import re
 import ast
 import json
-import re
+
 from dataclasses import asdict, dataclass, field
 from pathlib import Path
 from typing import Any

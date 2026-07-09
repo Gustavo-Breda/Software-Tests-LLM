@@ -1,52 +1,29 @@
-# Phase 6 — Summarization Agent
-#
-# Recebe o output do PyTest (stdout/stderr/JSON report) + logs do Selenium
-# e produz um relatório estruturado classificando falhas e calculando cobertura
-# por critério de aceitação.
-#
-# Categorias de falha (para o LLM classificar cada teste que falhou):
-#   "sistema"    — bug real no app (o teste está correto)
-#   "teste"      — o script de teste está errado (seletor, lógica, dado)
-#   "seletor"    — seletor quebrou (UI mudou, data-testid removido)
-#   "dado"       — problema com fixtures ou seed data
-#   "ambiente"   — falha de infra (timeout de container, rede, Selenium)
-#
-# Prompt : pipeline/prompts/06_summarize.txt
-# Schema : pipeline/schemas/summarizer_out.json
-#
-# Contrato de saída (PLAN.md §7):
-#   {
-#     "resumo": {
-#       "total_casos": 0,
-#       "aprovados": 0,
-#       "reprovados": 0,
-#       "taxa_execucao": 0.0
-#     },
-#     "falhas": [{
-#       "caso_id": "TC-XX-YY",
-#       "categoria": "sistema" | "teste" | "seletor" | "dado" | "ambiente",
-#       "descricao": "...",
-#       "evidencia": "trecho do log relevante"
-#     }],
-#     "cobertura_por_criterio": [{
-#       "criterio_id": "CA-XX.Y",
-#       "coberto": true | false,
-#       "casos_associados": ["TC-XX-YY"]
-#     }],
-#     "alertas_de_qualidade": ["..."],
-#     "proximos_passos": ["..."]
-#   }
+import json
 
-from dataclasses import dataclass, field
 from typing import Any
+from pathlib import Path
+from dataclasses import asdict, dataclass, field
 
+from ..context import ContextBlob
 from ..llm.adapter import LLMClient, LLMResponse
+from .utils import (
+    AgentOutputError,
+    extract_json_object,
+    load_prompt,
+    validate_schema,
+    wrap_raw_response_error,
+)
+
+_SYSTEM_PROMPT = (
+    "Você responde apenas com JSON válido e segue estritamente o contrato solicitado."
+)
+_MAX_PYTEST_OUTPUT_CHARS = 8_000
 
 
 @dataclass
 class FailureSummary:
     caso_id: str
-    categoria: str      # "sistema" | "teste" | "seletor" | "dado" | "ambiente"
+    categoria: str  # "sistema" | "teste" | "seletor" | "dado" | "ambiente"
     descricao: str
     evidencia: str
 
@@ -67,22 +44,67 @@ class SummarizerOutput:
     proximos_passos: list[str] = field(default_factory=list)
     raw_response: LLMResponse | None = None
 
-
-def run(pytest_output: str, selenium_logs: str, client: LLMClient) -> SummarizerOutput:
-    # TODO(Phase 6):
-    # 1. Carregar pipeline/prompts/06_summarize.txt
-    # 2. Injetar pytest_output + selenium_logs (truncar se muito longos — risco de
-    #    extrapolar contexto; priorizar stderr e falhas sobre stdout de testes ok)
-    # 3. Chamar client.complete(prompt, system=..., temperature=0.2)
-    # 4. Parsear JSON da resposta
-    # 5. Validar contra pipeline/schemas/summarizer_out.json
-    # 6. Calcular taxa_execucao = aprovados / total_casos
-    # 7. Para cada criterio da story, verificar se há ao menos 1 caso aprovado associado
-    # 8. Retornar SummarizerOutput
-    raise NotImplementedError("Phase 6")
+    def to_dict(self) -> dict[str, Any]:
+        data = asdict(self)
+        data.pop("raw_response", None)
+        return data
 
 
-def save_report(output: SummarizerOutput, dest_path: str) -> None:
-    # TODO(Phase 6):
-    # Salvar o relatório como JSON em generated/reports/<story_id>_report.json
-    raise NotImplementedError("Phase 6")
+def run(pytest_output: str, blob: ContextBlob, client: LLMClient) -> SummarizerOutput:
+    print(f"[summarizer] start story={blob.story_id} output_chars={len(pytest_output)}")
+    prompt = _build_prompt(pytest_output, blob)
+    response = client.complete(prompt, system=_SYSTEM_PROMPT, temperature=0.2, max_tokens=4096)
+    try:
+        data = extract_json_object(response.text)
+        validate_schema(data, "summarizer_out.json")
+    except AgentOutputError as exc:
+        raise wrap_raw_response_error(exc, response) from exc
+    output = SummarizerOutput(
+        resumo=data["resumo"],
+        falhas=[FailureSummary(**f) for f in data["falhas"]],
+        cobertura_por_criterio=[CriterioCoverage(**c) for c in data["cobertura_por_criterio"]],
+        alertas_de_qualidade=data["alertas_de_qualidade"],
+        proximos_passos=data["proximos_passos"],
+        raw_response=response,
+    )
+    print(
+        f"[summarizer] done story={blob.story_id} "
+        f"total={output.resumo.get('total_casos', 0)} "
+        f"passed={output.resumo.get('aprovados', 0)} "
+        f"failed={output.resumo.get('reprovados', 0)} "
+        f"latency={response.latency_seconds:.2f}s"
+    )
+    return output
+
+
+def save_report(output: SummarizerOutput, dest_path: Path) -> None:
+    dest_path.parent.mkdir(parents=True, exist_ok=True)
+    dest_path.write_text(
+        json.dumps(output.to_dict(), ensure_ascii=False, indent=2) + "\n",
+        encoding="utf-8",
+    )
+
+
+def _truncate_pytest_output(text: str) -> str:
+    """Preserve the tail of pytest output (failures appear last)."""
+    if len(text) <= _MAX_PYTEST_OUTPUT_CHARS:
+        return text
+    return "[... output truncado — início omitido ...]\n" + text[-_MAX_PYTEST_OUTPUT_CHARS:]
+
+
+def _build_prompt(pytest_output: str, blob: ContextBlob) -> str:
+    prompt = load_prompt("06_summarize.txt")
+    criteria_lines = "\n".join(
+        f"- {c.get('id', '?')}: {c.get('description', str(c))}"
+        for c in blob.story.acceptance_criteria
+    )
+    replacements = {
+        "pytest_output": _truncate_pytest_output(pytest_output),
+        "acceptance_criteria": criteria_lines or "(sem critérios de aceitação disponíveis)",
+    }
+    for key, value in replacements.items():
+        placeholder = "{" + key + "}"
+        if placeholder not in prompt:
+            raise AgentOutputError(f"Missing prompt placeholder: {placeholder}")
+        prompt = prompt.replace(placeholder, value)
+    return prompt

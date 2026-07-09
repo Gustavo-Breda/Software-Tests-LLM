@@ -1,12 +1,13 @@
 import logging
 import os
+import re
+import subprocess
 import sys
 import json
-import re
 from pathlib import Path
 from typing import Any
 
-from pipeline.agents import agent0_quality_gate, agent1_generate, agent2_judge, agent3_codegen
+from pipeline.agents import agent0_quality_gate, agent1_generate, agent2_judge, agent3_codegen, summarizer
 from pipeline.agents.agent1_generate import GenerationOutput, TestCase
 from pipeline.context import ContextBuilder
 from pipeline.log import setup
@@ -14,7 +15,108 @@ from pipeline.settings import get_settings
 from pipeline.llm.factory import get_client
 from pipeline.agents.utils import RawAgentResponseError
 
+_REPO_ROOT = Path(__file__).resolve().parents[2]
+
 log = logging.getLogger("runner")
+
+
+def run_phase6(
+    client: Any,
+    *,
+    scripts_dir: Path | None = None,
+    reports_dir: Path | None = None,
+) -> tuple[dict[str, Any], int]:
+    """Execute generated scripts against the running PoC app and summarize results.
+
+    Prerequisite: phase5 must have been run and scripts must exist in scripts_dir.
+    Selenium, backend, and frontend services must be running.
+    """
+    scripts_source = scripts_dir or Path("generated") / "scripts"
+    reports_dest = reports_dir or Path("generated") / "reports" / "summarizer"
+    reports_dest.mkdir(parents=True, exist_ok=True)
+
+    if not scripts_source.exists() or not any(scripts_source.iterdir()):
+        log.error(
+            "scripts_dir is empty or missing: %s — run PIPELINE_PHASE=phase5 first",
+            scripts_source,
+        )
+        return {
+            "stage": "phase6_execution_summary",
+            "results": [],
+            "summary": {"ok": 0, "errors": 0, "stories_processed": 0},
+        }, 1
+
+    builder = ContextBuilder.from_repo()
+    blobs = {blob.story_id: blob for blob in builder.build_all()}
+
+    story_dirs = sorted(
+        [d for d in scripts_source.iterdir() if d.is_dir()],
+        key=lambda d: d.name,
+    )
+
+    results: list[dict[str, Any]] = []
+    errors: list[dict[str, Any]] = []
+
+    for story_dir in story_dirs:
+        story_id = story_dir.name
+        blob = blobs.get(story_id)
+        if blob is None:
+            log.warning("[%s] No context blob found — skipping", story_id)
+            continue
+
+        log.info("[%s] Running pytest against %s ...", story_id, story_dir)
+        proc = subprocess.run(
+            [sys.executable, "-m", "pytest", str(story_dir), "--tb=short", "-v", "--no-header"],
+            capture_output=True,
+            text=True,
+            cwd=str(_REPO_ROOT),
+        )
+        pytest_output = (proc.stdout + proc.stderr).strip()
+        log.info(
+            "[%s] pytest done returncode=%d output_chars=%d",
+            story_id,
+            proc.returncode,
+            len(pytest_output),
+        )
+        print(f"[runner] pytest done story={story_id} returncode={proc.returncode}")
+
+        try:
+            output = summarizer.run(pytest_output, blob, client)
+            report_path = reports_dest / f"{story_id}.json"
+            summarizer.save_report(output, report_path)
+            results.append(
+                {
+                    "story_id": story_id,
+                    "ok": True,
+                    "pytest_returncode": proc.returncode,
+                    "resumo": output.resumo,
+                    "path": str(report_path),
+                }
+            )
+            print(f"[runner] summarizer done story={story_id} path={report_path}")
+        except Exception as exc:
+            log.error("[%s] Summarizer FAILED: %s: %s", story_id, type(exc).__name__, exc)
+            error = _error_payload(story_id, "summarizer", exc)
+            results.append(error)
+            errors.append(error)
+            print(f"[runner] summarizer error story={story_id} type={type(exc).__name__}: {exc}")
+
+    aggregate = {
+        "stage": "phase6_execution_summary",
+        "results": results,
+        "summary": {
+            "ok": sum(1 for r in results if r.get("ok")),
+            "errors": len(errors),
+            "stories_processed": len(results),
+        },
+    }
+    print(
+        f"[runner] phase6 done "
+        f"ok={aggregate['summary']['ok']} "
+        f"errors={aggregate['summary']['errors']} "
+        f"stories_processed={aggregate['summary']['stories_processed']}"
+    )
+    return aggregate, 1 if errors else 0
 
 
 def run_phase5(
@@ -463,7 +565,9 @@ def main() -> None:
 
     print(f"[runner] client ready provider={provider} model={model}")
     phase = os.getenv("PIPELINE_PHASE", "phase4").strip().lower()
-    if phase == "phase5":
+    if phase == "phase6":
+        aggregate, exit_code = run_phase6(client)
+    elif phase == "phase5":
         aggregate, exit_code = run_phase5(client)
     elif phase == "phase4":
         aggregate, exit_code = run_phase4(client)
